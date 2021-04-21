@@ -2,7 +2,7 @@
 
 *Datum: maandag 19 april 2021 - 16:15*
 
-**TODO's en deadlines**
+<h4>TODO's en deadlines</h4>
 - Zo snel mogelijk een afspraak maken met client
 	- Requirements opstellen -> met voorkeur volgens het MoSCoW model
 	- Alvast beginnen aan een project plan
@@ -15,7 +15,8 @@
 
 <br/>
 
-**Algemene mededelingen**
+<h4>Algemene mededelingen</h4>
+
 - **Issueboard bijhouden is een must**
 	- Is onderdeel van 'process' en dus 20% van het eindcijfer
 
