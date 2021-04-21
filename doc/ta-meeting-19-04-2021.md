@@ -1,6 +1,6 @@
 <h1>TA Meeting</h1>
 
-*Datum: maandag 19 april 2021*
+*Datum: maandag 19 april 2021 - 16:15*
 
 **TODO's en deadlines**
 - Zo snel mogelijk een afspraak maken met client
