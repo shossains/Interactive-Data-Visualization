@@ -19,4 +19,4 @@
 	- Bespreken van het project plan
 
 - Midterm meeting 27 mei 2021 09:00-09:30 
-- Medium van communicatie per voorkeur via email: [f.a.oliehoek@tudelft.nl]
+- Medium van communicatie per voorkeur via email: f.a.oliehoek@tudelft.nl
