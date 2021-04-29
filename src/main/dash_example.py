@@ -8,10 +8,10 @@ import plotly.express as px
 # Load the dataset
 avocado = pd.read_csv('data/avocado-updated-2020.csv')
 
-# Create the Dash app
+# Create the Dash src
 app = dash.Dash()
 
-# Set up the app layout
+# Set up the src layout
 app.layout = html.Div(children=[
     html.H1(children='Avocado Prices Dashboard'),
     dcc.Dropdown(id='geo-dropdown',
