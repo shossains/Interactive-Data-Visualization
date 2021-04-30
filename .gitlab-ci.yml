@@ -18,8 +18,8 @@ build:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
     paths:
-      ./target
-      ./pybuilder
+       - ./target
+       - ./pybuilder
 #flake8:
 #	stage: validate
 #	script:
