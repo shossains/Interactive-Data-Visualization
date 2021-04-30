@@ -1,37 +1,37 @@
 image: pypi/pybuilder:latest
 
 stages:
-	- build
-	- validate
-	- test
-	- coverage
+  - build
+  - validate
+  - test
+  - coverage
 
 #before_script:
 #	- (wss niet nodig dus ignore)
- 
+
 build:
-	stage: build
-	script: pyb
+  stage: build
+  script: pyb
 #	pyb --start-project
 #		(dit moet een command zijn die alleen pyb build, dus geen test en gen coverage. je moet wss ff in documentation kijken of pyb --help runnen en kijken of je zo een command kan vinden - het is wss iets van 'pyb build', of zoiets)
-	cache:
-		key: "$CI_COMMIT_REF_NAME"
-		policy: push
-		paths:
-			./target
-			./pybuilder
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      ./target
+      ./pybuilder
 #flake8:
 #	stage: validate
 #	script:
 #		(vgm zag ik op de pybuilder site iets van flake8 maar dan ingebouwd fso, idk of er een command voor zoals 'pyb flake8' maar dat zou heel chill zijn)
 #
 test:
-	stage: test
-	script: 
-		pyb run_unit_test
+  stage: test
+  script:
+    pyb run_unit_test
 #		(er is een command om alleen unit test te runnen idk meer wat het precies was)
-		
-		
+
+
 #coverage: (dit kan je ff negeren for now, je kan et uitcommenten, of als je heel gemotiveerd bent uitvogelen hoe je in shell script en awk de coverage uit die .xml of .json file kan halen met RegEx)
 #	stage: coverage
 #	script:
