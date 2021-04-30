@@ -3,3 +3,8 @@
 .idea/
 
 venv/
+env
+
+.coverage
+__pycache__
+target
