@@ -1,10 +1,17 @@
-*.log
-
-.idea/
-
-venv/
-env
-
+# Unit test / coverage reports
 .coverage
-__pycache__
-target
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+.Python
+env/
+venv/
+
+# PyBuilder
+target/
+.pybuilder/
+
+# Idea
+.idea
