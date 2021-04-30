@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.express as px
 
 # Load the dataset
-avocado = pd.read_csv('data/avocado-updated-2020.csv')
+avocado = pd.read_csv('../data/avocado-updated-2020.csv')
 
 # Create the Dash src
 app = dash.Dash()
