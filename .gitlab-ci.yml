@@ -38,7 +38,7 @@ test:
     # pyb run_integration_tests
 
 
-coverage:
+cov:
   stage: coverage
   dependencies:
     - test
