@@ -1,17 +1,20 @@
 image: pypi/pybuilder:latest
 
 stages:
+  - prebuild
   - build
 #   - validate
   - test
-#   - coverage
+  - coverage
 
-before_script:
+prebuild:
+  stage: prebuild
+  script:
     ["python -m venv venv",
-    "source venv/bin/activate",
-    "pip install pybuilder",
-    "ls",
-    "pyb clean"]
+     "source venv/bin/activate",
+     "pip install pybuilder",
+     "ls",
+     "pyb clean"]
 
 build:
   stage: build
@@ -36,8 +39,10 @@ test:
     # pyb run_integration_tests
 
 
-#coverage:
-#	stage: coverage
-#	script:
-#		- coverage=$(awk -F"," '{ branches += $6 + $7; covered += $7 } END { print "Total" ,int(100*covered/branches), "%% covered" } file.fileType)
-#		coverage: '\d+(\.\d+)?'
+coverage:
+	stage: coverage
+	script:
+      - pyb coverage
+      - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
+      - printf "$coverage"
+      coverage: '\d+(\.\d+)?'
