@@ -31,7 +31,6 @@ build:
 # 	script:
 #         pyb 
 
-
 test:
   stage: test
   script:
@@ -40,9 +39,11 @@ test:
 
 
 coverage:
-	stage: coverage
-	script:
-      - pyb coverage
-      - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
-      - printf "$coverage"
-      coverage: '\d+(\.\d+)?'
+  stage: coverage
+  dependencies:
+    - test
+  script:
+    - pyb coverage
+    - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
+    - printf "$coverage"
+  coverage: '\d+(\.\d+)?'
