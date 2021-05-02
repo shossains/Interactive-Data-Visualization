@@ -7,8 +7,7 @@ stages:
 #   - coverage
 
 before_script:
-    ["cd $CI_BUILDS_DIR",
-    "python -m venv venv",
+    ["python -m venv venv",
     "source venv/bin/activate",
     "pip install pybuilder",
     "ls",
