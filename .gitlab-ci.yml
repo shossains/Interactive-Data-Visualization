@@ -46,4 +46,4 @@ cov:
     - pyb coverage
     - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
     - printf "$coverage"
-  coverage: \d+(\.\d+)?
+  coverage: '/Code coverage: \d+\.\d+/'
