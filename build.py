@@ -12,14 +12,14 @@ use_plugin("python.install_dependencies")
 name = "Interactive Data Visualization"
 
 # command 'pyb' will run:
-default_task = ["clean", "install_build_dependencies", "run_unit_tests", "coverage"]
+default_task = ["clean", "install_build_dependencies", "verify", "run_unit_tests", "coverage"]
 
 
 @init
 def set_properties(project):
     # Dependencies
     project.build_depends_on("mockito")
-    project.build_depends_on("dash")
+    # project.build_depends_on("dash")
 
     # Plugin settings
     project.set_property("dir_docs", "doc")
