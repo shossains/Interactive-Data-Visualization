@@ -110,14 +110,29 @@ def update_table(contents, filename):
 
 
         table = html.Div([
+            html.H4("Select machine learning tool"),
             dcc.Dropdown(
-                id='demo-dropdown',
+                id='select-tool',
+                options=[
+                    {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+                    {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+                    # {'label': 'New York City', 'value': 'NYC'},
+                    # {'label': 'Montreal', 'value': 'MTL'},
+                    # {'label': 'San Francisco', 'value': 'SF'}
+
+                ],
+                # value='NYC'
+            ),
+            html.H4("Select variable 1"),
+            dcc.Dropdown(
+                id='select-variables',
                 options=[
                     {'label': i, 'value': i} for i in df.columns
                     # {'label': 'New York City', 'value': 'NYC'},
                     # {'label': 'Montreal', 'value': 'MTL'},
                     # {'label': 'San Francisco', 'value': 'SF'}
                 ],
+                multi=True,
                 # value='NYC'
             ),
 
