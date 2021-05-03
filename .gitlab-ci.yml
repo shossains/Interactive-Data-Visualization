@@ -47,6 +47,6 @@ coverage:
   script:
     - pyb coverage
     # - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
-    - coverage=$(grep "overall_coverage" target/reports/interactive-data-visualization_coverage.json| cut -d ":" -f 2)
+    - coverage=$(grep "overall_coverage" target/reports/Interactive Data Visualization_coverage.json| cut -d ":" -f 2)
     - printf "Overall code coverage = $coverage"
   coverage: '/Code coverage: \d+\.\d+/'
