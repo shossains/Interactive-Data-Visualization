@@ -1,98 +1,131 @@
 import base64
 import datetime
 import io
+import plotly.graph_objs as go
+import cufflinks as cf
 
 import dash
-import dash_html_components as html
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
-from dash.dependencies import Input, Output
-import pandas as pd
+import dash_html_components as html
+import dash_table
 import plotly.express as px
+import pandas as pd
 
-# Load the dataset
-avocado = pd.read_csv('../data/avocado-updated-2020.csv')
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-# Create the Dash src
-app = dash.Dash()
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
-# Set up the src layout
+colors = {
+    "graphBackground": "#F5F5F5",
+    "background": "#ffffff",
+    "text": "#000000"
+}
 
-app.layout = html.Div(children=[
+app.layout = html.Div([
     dcc.Upload(
-                id='upload-data',
-                children=html.Div([
-                    'Drag and Drop or ',
-                    html.A('Select Files')
-                ]),
-                style={
-                    'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px'
-                },
-                # Allow multiple files to be uploaded
-                multiple=True
-            ),
-    html.Div(id='output-data-upload'),
-    html.H1(children='Avocado Prices Dashboard'),
+        id='upload-data',
+        children=html.Div([
+            'Drag and Drop or ',
+            html.A('Select Files')
+        ]),
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px'
+        },
+        # Allow multiple files to be uploaded
+        multiple=True
+    ),
+    dcc.Graph(id='Mygraph'),
+    html.Div(id='output-data-upload')
 ])
 
-def parse_contents(contents, filename, date):
+def parse_data(contents, filename):
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
     try:
         if 'csv' in filename:
-            # Assume that the user uploaded a CSV file
+            # Assume that the user uploaded a CSV or TXT file
             df = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
+        elif 'txt' or 'tsv' in filename:
+            # Assume that the user upl, delimiter = r'\s+'oaded an excel file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')), delimiter = r'\s+')
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
 
-    return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
-
-        dash_table.DataTable(
-            data=df.to_dict('records'),
-            columns=[{'name': i, 'id': i} for i in df.columns]
-        ),
-
-        html.Hr(),  # horizontal line
-
-        # For debugging, display the raw contents provided by the web browser
-        html.Div('Raw Content'),
-        html.Pre(contents[0:200] + '...', style={
-            'whiteSpace': 'pre-wrap',
-            'wordBreak': 'break-all'
-        })
-    ])
+    return df
 
 
-# Set up the callback function
-@app.callback(
-    Output(component_id='price-graph', component_property='figure'),
-    Input(component_id='geo-dropdown', component_property='value')
-)
-def update_graph(selected_geography):
-    filtered_avocado = avocado[avocado['geography'] == selected_geography]
-    line_fig = px.line(filtered_avocado,
-                       x='date', y='average_price',
-                       color='type',
-                       title=f'Avocado Prices in {selected_geography}')
-    return line_fig
+@app.callback(Output('Mygraph', 'figure'),
+            [
+                Input('upload-data', 'contents'),
+                Input('upload-data', 'filename')
+            ])
+#for now it's hardcoded wich column it uses and what kind of plot (scatter/line etc.). TODO: Need to change to select what kind of plot and select wich data.
+def update_graph(contents, filename):
+    fig = {
+        'layout': go.Layout(
+            plot_bgcolor=colors["graphBackground"],
+            paper_bgcolor=colors["graphBackground"])
+    }
+
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_data(contents, filename)
+        df = df.set_index(df.columns[0])
+        fig['data'] = df.iplot(asFigure=True, kind='scatter', mode='lines+markers', size=1)
 
 
-# Run local server
+    return fig
+
+@app.callback(Output('output-data-upload', 'children'),
+            [
+                Input('upload-data', 'contents'),
+                Input('upload-data', 'filename')
+            ])
+def update_table(contents, filename):
+    table = html.Div()
+
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_data(contents, filename)
+
+        table = html.Div([
+            html.H5(filename),
+            dash_table.DataTable(
+                data=df.to_dict('rows'),
+                columns=[{'name': i, 'id': i} for i in df.columns]
+            ),
+            html.Hr(),
+            html.Div('Raw Content'),
+            html.Pre(contents[0:200] + '...', style={
+                'whiteSpace': 'pre-wrap',
+                'wordBreak': 'break-all'
+            })
+        ])
+
+    return table
+
+
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)
