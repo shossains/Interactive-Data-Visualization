@@ -48,5 +48,6 @@ coverage:
     - pyb coverage
     # - coverage=$(awk '$1 ~ "overall_coverage"' target/reports/pybuilder.plugins.python.unittest_plugin.run_unit_tests_coverage.json)
     - coverage=$(grep "overall_coverage" target/reports/Interactive\ Data\ Visualization_coverage.json| cut -d ":" -f 2)
-    - printf "Total $coverage % covered"
-  coverage: '/Code coverage: \d+\.\d+ %/'
+    - printf $coverage "% covered"
+#  coverage: '/Total *?([0-9]{1,3}) %/'
+  coverage: '/Code coverage: \d+\.\d+/'
