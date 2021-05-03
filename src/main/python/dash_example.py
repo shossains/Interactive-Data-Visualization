@@ -108,7 +108,19 @@ def update_table(contents, filename):
         filename = filename[0]
         df = parse_data(contents, filename)
 
+
         table = html.Div([
+            dcc.Dropdown(
+                id='demo-dropdown',
+                options=[
+                    {'label': i, 'value': i} for i in df.columns
+                    # {'label': 'New York City', 'value': 'NYC'},
+                    # {'label': 'Montreal', 'value': 'MTL'},
+                    # {'label': 'San Francisco', 'value': 'SF'}
+                ],
+                # value='NYC'
+            ),
+
             html.H5(filename),
             dash_table.DataTable(
                 data=df.to_dict('rows'),
@@ -116,6 +128,8 @@ def update_table(contents, filename):
             ),
             html.Hr(),
             html.Div('Raw Content'),
+
+
             html.Pre(contents[0:200] + '...', style={
                 'whiteSpace': 'pre-wrap',
                 'wordBreak': 'break-all'
