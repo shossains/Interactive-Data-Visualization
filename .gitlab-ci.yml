@@ -1,12 +1,15 @@
 image: pypi/pybuilder:latest
 
 stages:
+  - prebuild
   - build
 #   - validate
   - test
   - coverage
 
-before_script:
+prebuild:
+  stage: prebuild
+  script:
     ["python -m venv venv",
      "source venv/bin/activate",
      "pip install pybuilder",
