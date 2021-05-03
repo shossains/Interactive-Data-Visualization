@@ -1,5 +1,5 @@
 #   -*- coding: utf-8 -*-
-from pybuilder.core import init, use_plugin
+from pybuilder.core import use_plugin, init
 
 use_plugin("python.core")
 use_plugin("python.unittest")
@@ -12,7 +12,7 @@ use_plugin("python.install_dependencies")
 name = "Interactive Data Visualization"
 
 # command 'pyb' will run:
-default_task = ["clean", "analyze", "publish"]
+default_task = ["clean", "install_build_dependencies", "run_unit_tests", "coverage"]
 
 
 @init
@@ -23,6 +23,5 @@ def set_properties(project):
 
     # Plugin settings
     project.set_property("dir_docs", "doc")
-    project.set_property("flake8_break_build", False)
-    project.set_property("coverage_break_build", False)
-    pass
+    project.set_property("flake8_break_build", True)
+    project.set_property("coverage_break_build", True)
