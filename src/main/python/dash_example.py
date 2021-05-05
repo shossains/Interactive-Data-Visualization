@@ -72,28 +72,58 @@ def parse_data(contents, filename):
     return df
 
 
-@app.callback(Output('Mygraph', 'figure'),
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename')
-            ])
-#for now it's hardcoded wich column it uses and what kind of plot (scatter/line etc.). TODO: Need to change to select what kind of plot and select wich data.
+@app.callback(Output('Mygraph', 'figure'), [
+Input('upload-data', 'contents'),
+Input('upload-data', 'filename')
+])
 def update_graph(contents, filename):
-    fig = {
-        'layout': go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            paper_bgcolor=colors["graphBackground"])
-    }
-
+    x = []
+    y = []
     if contents:
         contents = contents[0]
         filename = filename[0]
         df = parse_data(contents, filename)
-        df = df.set_index(df.columns[0])
-        fig['data'] = df.iplot(asFigure=True, kind='scatter', mode='lines+markers', size=1)
-
-
+        df = df.reset_index()
+        x=df['a']
+        y=df['b']
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=x,
+                y=y,
+                mode='lines+markers')
+            ],
+        layout=go.Layout(
+            plot_bgcolor=colors["graphBackground"],
+            paper_bgcolor=colors["graphBackground"]
+        ))
     return fig
+
+# @app.callback(Output('Mygraph', 'figure'),
+#             [
+#                 Input('upload-data', 'contents'),
+#                 Input('upload-data', 'filename')
+#             ])
+# #for now it's hardcoded wich column it uses and what kind of plot (scatter/line etc.). TODO: Need to change to select what kind of plot and select wich data.
+# def update_graph(contents, filename):
+#     fig = {
+#         'layout': go.Layout(
+#             plot_bgcolor=colors["graphBackground"],
+#             paper_bgcolor=colors["graphBackground"])
+#
+#     }
+#
+#
+#     if contents:
+#         contents = contents[0]
+#         print(contents)
+#         filename = filename[0]
+#         df = parse_data(contents, filename)
+#         df = df.set_index(df.columns[0])
+#
+#         fig['data'] = df.iplot(asFigure=True, kind='scatter', mode='lines+markers', size=1)
+#
+#     return fig
 
 @app.callback(Output('output-data-upload', 'children'),
             [
@@ -152,9 +182,6 @@ def update_table(contents, filename):
         ])
 
     return table
-
-
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
