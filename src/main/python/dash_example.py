@@ -43,9 +43,140 @@ app.layout = html.Div([
         # Allow multiple files to be uploaded
         multiple=True
     ),
+    html.H4("Select machine learning tool"),
+    dcc.Dropdown(
+                id='select-tool',
+                options=[
+                    {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+                    {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+                ],
+                value='T-sne'
+            ),
+    html.H4("Select variable x"),
+    dcc.Dropdown(id='select-variable-x'),
+    html.H4("Select variable y"),
+    dcc.Dropdown(
+        id='select-variable-y',
+        multi=True),
+    html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')
 ])
+
+
+
+@app.callback(Output('select-variable-x', 'options'),
+            [
+                Input('upload-data', 'contents'),
+                Input('upload-data', 'filename'),
+            ])
+def set_options_variable_x(contents, filename):
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+    df = parse_data(contents, filename)
+    df = df.reset_index()
+
+    return [{'label': i, 'value': i} for i in df.columns]
+
+
+@app.callback(Output('select-variable-x', 'value'),
+            [
+                Input('select-variable-x', 'options')
+            ])
+def set_variable_x(options_x ):
+    return options_x[0]['value']
+
+
+@app.callback(Output('select-variable-y', 'options'),
+            [
+                Input('upload-data', 'contents'),
+                Input('upload-data', 'filename'),
+            ])
+def set_options_variable_y(contents, filename):
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+    df = parse_data(contents, filename)
+    df = df.reset_index()
+
+    return [{'label': i, 'value': i} for i in df.columns]
+
+
+@app.callback(Output('select-variable-y', 'value'),
+            [
+                Input('select-variable-y', 'options')
+            ])
+def set_variable_x(options_y ):
+    return options_y[0]['value']
+
+
+
+@app.callback(Output('Mygraph', 'figure'), [
+Input('upload-data', 'contents'),
+Input('upload-data', 'filename'),
+Input('select-variable-x', 'value'),
+Input('select-variable-y', 'value'),
+])
+def update_graph(contents, filename, xvalue, yvalue):
+    x = []
+    y = []
+
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+    df = parse_data(contents, filename)
+    df = df.reset_index()
+    print("xvalue: {} yvalue: {}".format(xvalue, yvalue))
+    x = df['{}'.format(xvalue)]
+    for ycol in yvalue:
+        print(ycol)
+        y = df[ycol]
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=x,
+                y=y,
+                mode='lines+markers')
+            ],
+        layout=go.Layout(
+            plot_bgcolor=colors["graphBackground"],
+            paper_bgcolor=colors["graphBackground"]
+        ))
+    return fig
+
+@app.callback(Output('output-data-upload', 'children'),
+            [
+                Input('upload-data', 'contents'),
+                Input('upload-data', 'filename')
+            ])
+def update_table(contents, filename):
+    table = html.Div()
+
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_data(contents, filename)
+
+
+        table = html.Div([
+        
+            html.H5(filename),
+            dash_table.DataTable(
+                data=df.to_dict('rows'),
+                columns=[{'name': i, 'id': i} for i in df.columns]
+            ),
+            html.Hr(),
+            html.Div('Raw Content'),
+
+
+            html.Pre(contents[0:200] + '...', style={
+                'whiteSpace': 'pre-wrap',
+                'wordBreak': 'break-all'
+            })
+        ])
+
+    return table
 
 def parse_data(contents, filename):
     content_type, content_string = contents.split(',')
@@ -70,118 +201,6 @@ def parse_data(contents, filename):
         ])
 
     return df
-
-
-@app.callback(Output('Mygraph', 'figure'), [
-Input('upload-data', 'contents'),
-Input('upload-data', 'filename')
-])
-def update_graph(contents, filename):
-    x = []
-    y = []
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        df = parse_data(contents, filename)
-        df = df.reset_index()
-        x=df['a']
-        y=df['b']
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=x,
-                y=y,
-                mode='lines+markers')
-            ],
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            paper_bgcolor=colors["graphBackground"]
-        ))
-    return fig
-
-# @app.callback(Output('Mygraph', 'figure'),
-#             [
-#                 Input('upload-data', 'contents'),
-#                 Input('upload-data', 'filename')
-#             ])
-# #for now it's hardcoded wich column it uses and what kind of plot (scatter/line etc.). TODO: Need to change to select what kind of plot and select wich data.
-# def update_graph(contents, filename):
-#     fig = {
-#         'layout': go.Layout(
-#             plot_bgcolor=colors["graphBackground"],
-#             paper_bgcolor=colors["graphBackground"])
-#
-#     }
-#
-#
-#     if contents:
-#         contents = contents[0]
-#         print(contents)
-#         filename = filename[0]
-#         df = parse_data(contents, filename)
-#         df = df.set_index(df.columns[0])
-#
-#         fig['data'] = df.iplot(asFigure=True, kind='scatter', mode='lines+markers', size=1)
-#
-#     return fig
-
-@app.callback(Output('output-data-upload', 'children'),
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename')
-            ])
-def update_table(contents, filename):
-    table = html.Div()
-
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        df = parse_data(contents, filename)
-
-
-        table = html.Div([
-            html.H4("Select machine learning tool"),
-            dcc.Dropdown(
-                id='select-tool',
-                options=[
-                    {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-                    {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-                    # {'label': 'New York City', 'value': 'NYC'},
-                    # {'label': 'Montreal', 'value': 'MTL'},
-                    # {'label': 'San Francisco', 'value': 'SF'}
-
-                ],
-                # value='NYC'
-            ),
-            html.H4("Select variable 1"),
-            dcc.Dropdown(
-                id='select-variables',
-                options=[
-                    {'label': i, 'value': i} for i in df.columns
-                    # {'label': 'New York City', 'value': 'NYC'},
-                    # {'label': 'Montreal', 'value': 'MTL'},
-                    # {'label': 'San Francisco', 'value': 'SF'}
-                ],
-                multi=True,
-                # value='NYC'
-            ),
-
-            html.H5(filename),
-            dash_table.DataTable(
-                data=df.to_dict('rows'),
-                columns=[{'name': i, 'id': i} for i in df.columns]
-            ),
-            html.Hr(),
-            html.Div('Raw Content'),
-
-
-            html.Pre(contents[0:200] + '...', style={
-                'whiteSpace': 'pre-wrap',
-                'wordBreak': 'break-all'
-            })
-        ])
-
-    return table
 
 if __name__ == '__main__':
     app.run_server(debug=True)
