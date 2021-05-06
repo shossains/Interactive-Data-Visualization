@@ -1,15 +1,13 @@
 import base64
-import datetime
 import io
 import plotly.graph_objs as go
-import cufflinks as cf
+import time
 
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-import plotly.express as px
 import pandas as pd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -17,7 +15,6 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
-df = pd.DataFrame({})
 
 colors = {
     "graphBackground": "#F5F5F5",
@@ -81,9 +78,7 @@ def set_options_variable(contents, filename):
             filename = filename[0]
             df = parse_data(contents, filename)
             df = df.reset_index()
-
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
-
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value')],
@@ -91,13 +86,10 @@ def set_options_variable(contents, filename):
                 Input('select-variable-x', 'options'),
                 Input('select-variable-y', 'options')
             ])
-def set_variable_x(options_x, options_y):
-    if (len(options_y) <= 0 or (len(options_x) <= 0)):
+def set_variables(options_x, options_y):
+    if len(options_y) <= 0 or (len(options_x) <= 0):
         return None, None
-
     return options_x[0]['value'], options_y[0]['value']
-
-
 
 @app.callback(Output('Mygraph', 'figure'), [
 Input('upload-data', 'contents'),
@@ -119,6 +111,7 @@ def update_graph(contents, filename, xvalue, yvalue):
         filename = filename[0]
     df = parse_data(contents, filename)
     if (df is not None):
+
         df = df.reset_index()
         x = df['{}'.format(xvalue)]
         y = df['{}'.format(yvalue)]
@@ -150,7 +143,6 @@ def update_table(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
-        global df
         df = parse_data(contents, filename)
 
 
@@ -195,7 +187,6 @@ def parse_data(contents, filename):
         return html.Div([
             'There was an error processing this file.'
         ])
-
     return df
 
 if __name__ == '__main__':
