@@ -17,7 +17,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
-data = pd.DataFrame({})
+df = pd.DataFrame({})
 
 colors = {
     "graphBackground": "#F5F5F5",
@@ -67,12 +67,13 @@ app.layout = html.Div([
     html.Div(id='output-data-upload')
 ])
 
-@app.callback(Output('select-variable-x', 'options'),
+@app.callback([Output('select-variable-x', 'options'),
+               Output('select-variable-y', 'options')],
             [
                 Input('upload-data', 'contents'),
                 Input('upload-data', 'filename'),
             ])
-def set_options_variable_x(contents, filename):
+def set_options_variable(contents, filename):
     df = pd.DataFrame({})
     if (contents is not None):
         if contents:
@@ -81,44 +82,20 @@ def set_options_variable_x(contents, filename):
             df = parse_data(contents, filename)
             df = df.reset_index()
 
-    return [{'label': i, 'value': i} for i in df.columns]
+    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
 
 
-@app.callback(Output('select-variable-x', 'value'),
+@app.callback([Output('select-variable-x', 'value'),
+               Output('select-variable-y', 'value')],
             [
-                Input('select-variable-x', 'options')
-            ])
-def set_variable_x(options_x):
-    if (len(options_x) <= 0):
-        return
-    return options_x[0]['value']
-
-
-@app.callback(Output('select-variable-y', 'options'),
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename'),
-            ])
-def set_options_variable_y(contents, filename):
-    df = pd.DataFrame({})
-    if (contents is not None):
-        if contents:
-            contents = contents[0]
-            filename = filename[0]
-            df = parse_data(contents, filename)
-            df = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns]
-
-
-@app.callback(Output('select-variable-y', 'value'),
-            [
+                Input('select-variable-x', 'options'),
                 Input('select-variable-y', 'options')
             ])
-def set_variable_x(options_y ):
-    if (len(options_y) <= 0):
-        return
+def set_variable_x(options_x, options_y):
+    if (len(options_y) <= 0 or (len(options_x) <= 0)):
+        return None, None
 
-    return options_y[0]['value']
+    return options_x[0]['value'], options_y[0]['value']
 
 
 
@@ -173,11 +150,11 @@ def update_table(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
+        global df
         df = parse_data(contents, filename)
 
 
         table = html.Div([
-        
             html.H5(filename),
             dash_table.DataTable(
                 data=df.to_dict('rows'),
@@ -185,7 +162,6 @@ def update_table(contents, filename):
             ),
             html.Hr(),
             html.Div('Raw Content'),
-
 
             html.Pre(contents[0:200] + '...', style={
                 'whiteSpace': 'pre-wrap',
