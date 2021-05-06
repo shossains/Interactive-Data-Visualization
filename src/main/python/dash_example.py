@@ -17,6 +17,8 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+data = pd.DataFrame({})
+
 colors = {
     "graphBackground": "#F5F5F5",
     "background": "#ffffff",
@@ -56,8 +58,7 @@ app.layout = html.Div([
     dcc.Dropdown(id='select-variable-x'),
     html.H4("Select variable y"),
     dcc.Dropdown(
-        id='select-variable-y',
-        multi=True),
+        id='select-variable-y'),
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')
@@ -71,11 +72,13 @@ app.layout = html.Div([
                 Input('upload-data', 'filename'),
             ])
 def set_options_variable_x(contents, filename):
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    df = df.reset_index()
+    df = pd.DataFrame({})
+    if (contents is not None):
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            df = parse_data(contents, filename)
+            df = df.reset_index()
 
     return [{'label': i, 'value': i} for i in df.columns]
 
@@ -84,7 +87,9 @@ def set_options_variable_x(contents, filename):
             [
                 Input('select-variable-x', 'options')
             ])
-def set_variable_x(options_x ):
+def set_variable_x(options_x):
+    if (len(options_x) <= 0):
+        return
     return options_x[0]['value']
 
 
@@ -94,11 +99,13 @@ def set_variable_x(options_x ):
                 Input('upload-data', 'filename'),
             ])
 def set_options_variable_y(contents, filename):
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    df = df.reset_index()
+    df = pd.DataFrame({})
+    if (contents is not None):
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            df = parse_data(contents, filename)
+            df = df.reset_index()
 
     return [{'label': i, 'value': i} for i in df.columns]
 
@@ -108,6 +115,9 @@ def set_options_variable_y(contents, filename):
                 Input('select-variable-y', 'options')
             ])
 def set_variable_x(options_y ):
+    if (len(options_y) <= 0):
+        return
+
     return options_y[0]['value']
 
 
@@ -126,24 +136,26 @@ def update_graph(contents, filename, xvalue, yvalue):
         contents = contents[0]
         filename = filename[0]
     df = parse_data(contents, filename)
-    df = df.reset_index()
-    print("xvalue: {} yvalue: {}".format(xvalue, yvalue))
-    x = df['{}'.format(xvalue)]
-    for ycol in yvalue:
-        print(ycol)
-        y = df[ycol]
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=x,
-                y=y,
-                mode='lines+markers')
-            ],
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            paper_bgcolor=colors["graphBackground"]
-        ))
-    return fig
+    if (df is not None):
+        df = df.reset_index()
+        x = df['{}'.format(xvalue)]
+        for ycol in yvalue:
+            y = df[ycol]
+        fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode='lines+markers')
+                ],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+                paper_bgcolor=colors["graphBackground"]
+            ))
+        return fig
+    else:
+        return {}
+
 
 @app.callback(Output('output-data-upload', 'children'),
             [
@@ -179,6 +191,9 @@ def update_table(contents, filename):
     return table
 
 def parse_data(contents, filename):
+    if (contents is None):
+        return
+
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
