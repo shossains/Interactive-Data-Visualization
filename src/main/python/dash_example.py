@@ -144,8 +144,8 @@ def update_graph(contents, filename, xvalue, yvalue):
     if (df is not None):
         df = df.reset_index()
         x = df['{}'.format(xvalue)]
-        for ycol in yvalue:
-            y = df[ycol]
+        y = df['{}'.format(yvalue)]
+
         fig = go.Figure(
             data=[
                 go.Scatter(
