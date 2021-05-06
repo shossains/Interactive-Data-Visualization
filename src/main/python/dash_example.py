@@ -55,16 +55,17 @@ app.layout = html.Div([
                 value='T-sne'
             ),
     html.H4("Select variable x"),
-    dcc.Dropdown(id='select-variable-x'),
+    dcc.Dropdown(
+        id='select-variable-x',
+        placeholder = 'Select ...'),
     html.H4("Select variable y"),
     dcc.Dropdown(
-        id='select-variable-y'),
+        id='select-variable-y',
+        placeholder = 'Select ...'),
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')
 ])
-
-
 
 @app.callback(Output('select-variable-x', 'options'),
             [
@@ -106,7 +107,6 @@ def set_options_variable_y(contents, filename):
             filename = filename[0]
             df = parse_data(contents, filename)
             df = df.reset_index()
-
     return [{'label': i, 'value': i} for i in df.columns]
 
 
@@ -129,6 +129,11 @@ Input('select-variable-x', 'value'),
 Input('select-variable-y', 'value'),
 ])
 def update_graph(contents, filename, xvalue, yvalue):
+    if (xvalue is None or yvalue is None):
+        return {}
+    if (xvalue == "index" or yvalue == "index"):
+        return {}
+
     x = []
     y = []
 
