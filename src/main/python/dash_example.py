@@ -61,11 +61,15 @@ app.layout = html.Div([
     html.H4("Select variable y"),
     dcc.Dropdown(
         id='select-variable-y',
-        placeholder = 'Select ...'),
+        placeholder='Select ...'),
+    html.H4("Select characteristic to display on hover"),
+    dcc.Dropdown(
+        id='select-characteristics',
+        placeholder='Select ...'),
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')],
-    id='t-sne', style= {'display': 'block'}),
+    id='t-sne', style={'display': 'block'}),
 ])
 
 @app.callback(
@@ -88,7 +92,8 @@ def show_hide_element(visibility_state):
         return {'display': 'none'}
 
 @app.callback([Output('select-variable-x', 'options'),
-               Output('select-variable-y', 'options')],
+               Output('select-variable-y', 'options'),
+               Output('select-characteristics', 'options')],
             [
                 Input('upload-data', 'contents'),
                 Input('upload-data', 'filename'),
@@ -108,32 +113,35 @@ def set_options_variable(contents, filename):
             filename = filename[0]
             df = parse_data(contents, filename)
             df = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
 
 @app.callback([Output('select-variable-x', 'value'),
-               Output('select-variable-y', 'value')],
+               Output('select-variable-y', 'value'),
+               Output('select-characteristics', 'value')],
             [
                 Input('select-variable-x', 'options'),
-                Input('select-variable-y', 'options')
+                Input('select-variable-y', 'options'),
+                Input('select-characteristics', 'options')
             ])
-def set_variables(options_x, options_y):
+def set_variables(options_x, options_y, options_char):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
     :param options_y: All possible x-axis options
     :return: The choosen x-axis and y-axis
     """
-    if len(options_y) <= 0 or (len(options_x) <= 0):
-        return None, None
-    return options_x[0]['value'], options_y[0]['value']
+    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
+        return None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-Input('upload-data', 'contents'),
-Input('upload-data', 'filename'),
-Input('select-variable-x', 'value'),
-Input('select-variable-y', 'value'),
+    Input('upload-data', 'contents'),
+    Input('upload-data', 'filename'),
+    Input('select-variable-x', 'value'),
+    Input('select-variable-y', 'value'),
+    Input('select-characteristics', 'value')
 ])
-def update_graph(contents, filename, xvalue, yvalue):
+def update_graph(contents, filename, xvalue, yvalue, charvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
     TODO: Make different graphic plots possible.
@@ -147,11 +155,12 @@ def update_graph(contents, filename, xvalue, yvalue):
     """
     if (xvalue is None or yvalue is None):
         return {}
-    if (xvalue == "index" or yvalue == "index"):
+    if (xvalue == "index" or yvalue == "index" or charvalue == "index"):
         return {}
 
     x = []
     y = []
+
 
     if contents:
         contents = contents[0]
@@ -168,7 +177,8 @@ def update_graph(contents, filename, xvalue, yvalue):
                 go.Scatter(
                     x=x,
                     y=y,
-                    mode='lines+markers')
+                    mode='markers',
+                    text=df[charvalue])
                 ],
             layout=go.Layout(
                 plot_bgcolor=colors["graphBackground"],
