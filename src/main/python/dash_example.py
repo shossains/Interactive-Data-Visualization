@@ -1,15 +1,13 @@
 import base64
-import datetime
 import io
 import plotly.graph_objs as go
-import cufflinks as cf
+import time
 
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-import plotly.express as px
 import pandas as pd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -17,12 +15,12 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
+
 colors = {
     "graphBackground": "#F5F5F5",
     "background": "#ffffff",
     "text": "#000000"
 }
-
 
 app.layout = html.Div([
     dcc.Upload(
@@ -48,27 +46,27 @@ app.layout = html.Div([
     dcc.Dropdown(
                 id='select-tool',
                 options=[
-                    {'label': 'choose label', 'value': 'index'},
+                    {'label': 'Choose ML method', 'value': 'index'},
                     {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
                     {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
                 ],
                 value='index'
             ),
     # When T-sne choosen this one will be visible
-    html.Div(
-        [html.H4("Select variable x"),
-        dcc.Dropdown(id='select-variable-x'),
-        html.H4("Select variable y"),
-        dcc.Dropdown(
-            id='select-variable-y',
-            multi=True),
-        html.Div(id='output-select-data'),
-        dcc.Graph(id='Mygraph'),
-        html.Div(id='output-data-upload')],
-        id='t-sne', style= {'display': 'block'}),
+    html.Div([
+    html.H4("Select variable x"),
+    dcc.Dropdown(
+        id='select-variable-x',
+        placeholder = 'Select ...'),
+    html.H4("Select variable y"),
+    dcc.Dropdown(
+        id='select-variable-y',
+        placeholder = 'Select ...'),
+    html.Div(id='output-select-data'),
+    dcc.Graph(id='Mygraph'),
+    html.Div(id='output-data-upload')],
+    id='t-sne', style= {'display': 'block'}),
 ])
-
-
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -89,79 +87,45 @@ def show_hide_element(visibility_state):
     if visibility_state == 'index':
         return {'display': 'none'}
 
-
-@app.callback(Output('select-variable-x', 'options'),
+@app.callback([Output('select-variable-x', 'options'),
+               Output('select-variable-y', 'options')],
             [
                 Input('upload-data', 'contents'),
                 Input('upload-data', 'filename'),
             ])
-def set_options_variable_x(contents, filename):
+def set_options_variable(contents, filename):
     """
-    loads in possible parameters for the x-axis from the data.
+    loads in possible parameters for the x and y-axis from the data.
     TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
     :param contents: contents of the data
     :param filename: filename of the data
     :return: Possible options for dropdown x-axis.
     """
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    df = df.reset_index()
+    df = pd.DataFrame({})
+    if (contents is not None):
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            df = parse_data(contents, filename)
+            df = df.reset_index()
+    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
 
-    return [{'label': i, 'value': i} for i in df.columns]
-
-
-@app.callback(Output('select-variable-x', 'value'),
+@app.callback([Output('select-variable-x', 'value'),
+               Output('select-variable-y', 'value')],
             [
-                Input('select-variable-x', 'options')
-            ])
-def set_variable_x(options_x ):
-    """
-    Gets the ouput of the dropdown of the 'select-variable-x'.
-    :param options_x: All possible x-axis options
-    :return: The choosen x-axis
-    """
-    return options_x[0]['value']
-
-
-@app.callback(Output('select-variable-y', 'options'),
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename'),
-            ])
-
-def set_options_variable_y(contents, filename):
-    """
-    loads in possible multiple parameters for the y-axis from the data.
-    TODO: Let it choose which type of plotting you want (scatter/ connected etc.)
-    TODO: Let it choose which type of plotting you want: separate graphs or in the same graph.
-    :param contents: contents of the data
-    :param filename: filename of the data
-    :return: Possible options for dropdown y-axis.
-    """
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    df = df.reset_index()
-
-    return [{'label': i, 'value': i} for i in df.columns]
-
-
-@app.callback(Output('select-variable-y', 'value'),
-            [
+                Input('select-variable-x', 'options'),
                 Input('select-variable-y', 'options')
             ])
-def set_variable_x(options_y ):
+def set_variables(options_x, options_y):
     """
-    Gets the ouput of the dropdown of the 'select-variable-y'.
+    Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
+    :param options_x: All possible x-axis options
     :param options_y: All possible x-axis options
-    :return: The choosen y-axis
+    :return: The choosen x-axis and y-axis
     """
-    return options_y[0]['value']
-
-
+    if len(options_y) <= 0 or (len(options_x) <= 0):
+        return None, None
+    return options_x[0]['value'], options_y[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
 Input('upload-data', 'contents'),
@@ -178,9 +142,14 @@ def update_graph(contents, filename, xvalue, yvalue):
     :param contents: contents of the data
     :param filename: filename of the data
     :param xvalue: Value of the x-axis
-    :param yvalue: List of values of the y-axis
+    :param yvalue: value of the y-axis
     :return:  graph
     """
+    if (xvalue is None or yvalue is None):
+        return {}
+    if (xvalue == "index" or yvalue == "index"):
+        return {}
+
     x = []
     y = []
 
@@ -188,25 +157,27 @@ def update_graph(contents, filename, xvalue, yvalue):
         contents = contents[0]
         filename = filename[0]
     df = parse_data(contents, filename)
-    df = df.reset_index()
-    print("xvalue: {} yvalue: {}".format(xvalue, yvalue))
-    x = df['{}'.format(xvalue)]
-    for ycol in yvalue:
-        print(ycol)
-        y = df[ycol]
+    if (df is not None):
 
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=x,
-                y=y,
-                mode='lines+markers')
-            ],
-        layout=go.Layout(
-            plot_bgcolor=colors["graphBackground"],
-            paper_bgcolor=colors["graphBackground"]
-        ))
-    return fig
+        df = df.reset_index()
+        x = df['{}'.format(xvalue)]
+        y = df['{}'.format(yvalue)]
+
+        fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode='lines+markers')
+                ],
+            layout=go.Layout(
+                plot_bgcolor=colors["graphBackground"],
+                paper_bgcolor=colors["graphBackground"]
+            ))
+        return fig
+    else:
+        return {}
+
 
 @app.callback(Output('output-data-upload', 'children'),
             [
@@ -229,7 +200,6 @@ def update_table(contents, filename):
 
 
         table = html.Div([
-        
             html.H5(filename),
             dash_table.DataTable(
                 data=df.to_dict('rows'),
@@ -237,7 +207,6 @@ def update_table(contents, filename):
             ),
             html.Hr(),
             html.Div('Raw Content'),
-
 
             html.Pre(contents[0:200] + '...', style={
                 'whiteSpace': 'pre-wrap',
@@ -255,6 +224,9 @@ def parse_data(contents, filename):
     :param filename: filename of the data
     :return: Dataframe
     """
+    if (contents is None):
+        return
+
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
@@ -275,7 +247,6 @@ def parse_data(contents, filename):
         return html.Div([
             'There was an error processing this file.'
         ])
-
     return df
 
 if __name__ == '__main__':
