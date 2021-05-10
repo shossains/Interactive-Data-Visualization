@@ -190,7 +190,8 @@ def update_graph(contents, filename, xvalue, yvalue):
                 go.Scatter(
                     x=x,
                     y=y,
-                    mode='lines+markers')
+
+                    mode='markers')
                 ],
             layout=go.Layout(
                 plot_bgcolor=colors["graphBackground"],
