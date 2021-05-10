@@ -10,6 +10,8 @@ import dash_html_components as html
 import dash_table
 import pandas as pd
 
+df = pd.DataFrame({})
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -66,7 +68,23 @@ app.layout = html.Div([
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')],
     id='t-sne', style= {'display': 'block'}),
+    html.P(id='dummy')
 ])
+
+@app.callback(Output('dummy', 'children'),
+                [
+                    Input('upload-data', 'contents'),
+                    Input('upload-data', 'filename')
+                ])
+def update_dataframe(contents, filename):
+    print("called")
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        global df
+        df = parse_data(contents, filename)
+        df = df.reset_index()
+        print(len(df))
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -90,10 +108,10 @@ def show_hide_element(visibility_state):
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options')],
             [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename'),
+                Input('dummy', 'children')
             ])
-def set_options_variable(contents, filename):
+def set_options_variable(dummy):
+    print("THIS IS cALLed")
     """
     loads in possible parameters for the x and y-axis from the data.
     TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
@@ -101,14 +119,20 @@ def set_options_variable(contents, filename):
     :param filename: filename of the data
     :return: Possible options for dropdown x-axis.
     """
-    df = pd.DataFrame({})
-    if (contents is not None):
-        if contents:
-            contents = contents[0]
-            filename = filename[0]
-            df = parse_data(contents, filename)
-            df = df.reset_index()
+    # df = pd.DataFrame({})
+    # if (contents is not None):
+    #     if contents:
+    #         contents = contents[0]
+    #         filename = filename[0]
+    #         global df
+    #         df = df.reset_index()
+    # return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+
+    if dummy:
+        global df
+        # df = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value')],
@@ -128,12 +152,12 @@ def set_variables(options_x, options_y):
     return options_x[0]['value'], options_y[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-Input('upload-data', 'contents'),
-Input('upload-data', 'filename'),
+# Input('upload-data', 'contents'),
+# Input('upload-data', 'filename'),
 Input('select-variable-x', 'value'),
 Input('select-variable-y', 'value'),
 ])
-def update_graph(contents, filename, xvalue, yvalue):
+def update_graph(xvalue, yvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
     TODO: Make different graphic plots possible.
@@ -153,13 +177,13 @@ def update_graph(contents, filename, xvalue, yvalue):
     x = []
     y = []
 
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
+    # if contents:
+    #     contents = contents[0]
+    #     filename = filename[0]
+    global df
     if (df is not None):
 
-        df = df.reset_index()
+        # df = df.reset_index()
         x = df['{}'.format(xvalue)]
         y = df['{}'.format(yvalue)]
 
@@ -178,13 +202,11 @@ def update_graph(contents, filename, xvalue, yvalue):
     else:
         return {}
 
-
 @app.callback(Output('output-data-upload', 'children'),
             [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename')
+               Input('dummy', 'children')
             ])
-def update_table(contents, filename):
+def update_table(dummy):
     """
     Makes a table from the uploaded data.
     :param contents: contents of the data
@@ -193,12 +215,11 @@ def update_table(contents, filename):
     """
     table = html.Div()
 
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        df = parse_data(contents, filename)
-
-
+    # if contents:
+    #     contents = contents[0]
+    #     filename = filename[0]
+    if dummy:
+        global df
         table = html.Div([
             html.H5(filename),
             dash_table.DataTable(
@@ -233,6 +254,7 @@ def parse_data(contents, filename):
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV or TXT file
+            global df
             df = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
