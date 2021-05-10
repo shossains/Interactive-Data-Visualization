@@ -46,11 +46,14 @@ app.layout = html.Div([
     dcc.Dropdown(
                 id='select-tool',
                 options=[
+                    {'label': 'Choose ML method', 'value': 'index'},
                     {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
                     {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
                 ],
-                value='T-sne'
+                value='index'
             ),
+    # When T-sne choosen this one will be visible
+    html.Div([
     html.H4("Select variable x"),
     dcc.Dropdown(
         id='select-variable-x',
@@ -61,8 +64,28 @@ app.layout = html.Div([
         placeholder = 'Select ...'),
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
-    html.Div(id='output-data-upload')
+    html.Div(id='output-data-upload')],
+    id='t-sne', style= {'display': 'block'}),
 ])
+
+@app.callback(
+    Output(component_id='t-sne', component_property='style'),
+    [Input(component_id='select-tool', component_property='value')])
+
+def show_hide_element(visibility_state):
+    """
+    Looks at wich tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
+    TODO: Add more return states for more tools.
+    Joost knows this^
+    :param visibility_state:
+    :return: visibility style
+    """
+    if visibility_state == 'T-sne':
+        return {'display': 'block'}
+    if visibility_state == 'other_ml_tool':
+        return {'display': 'none'}
+    if visibility_state == 'index':
+        return {'display': 'none'}
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options')],
@@ -71,6 +94,13 @@ app.layout = html.Div([
                 Input('upload-data', 'filename'),
             ])
 def set_options_variable(contents, filename):
+    """
+    loads in possible parameters for the x and y-axis from the data.
+    TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Possible options for dropdown x-axis.
+    """
     df = pd.DataFrame({})
     if (contents is not None):
         if contents:
@@ -87,6 +117,12 @@ def set_options_variable(contents, filename):
                 Input('select-variable-y', 'options')
             ])
 def set_variables(options_x, options_y):
+    """
+    Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
+    :param options_x: All possible x-axis options
+    :param options_y: All possible x-axis options
+    :return: The choosen x-axis and y-axis
+    """
     if len(options_y) <= 0 or (len(options_x) <= 0):
         return None, None
     return options_x[0]['value'], options_y[0]['value']
@@ -98,6 +134,17 @@ Input('select-variable-x', 'value'),
 Input('select-variable-y', 'value'),
 ])
 def update_graph(contents, filename, xvalue, yvalue):
+    """
+    Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
+    TODO: Make different graphic plots possible.
+    TODO: Make multiple y-axis in the same graph possible.
+    TODO: Make separate graphic plots possible
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :param xvalue: Value of the x-axis
+    :param yvalue: value of the y-axis
+    :return:  graph
+    """
     if (xvalue is None or yvalue is None):
         return {}
     if (xvalue == "index" or yvalue == "index"):
@@ -138,6 +185,12 @@ def update_graph(contents, filename, xvalue, yvalue):
                 Input('upload-data', 'filename')
             ])
 def update_table(contents, filename):
+    """
+    Makes a table from the uploaded data.
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Table
+    """
     table = html.Div()
 
     if contents:
@@ -164,6 +217,13 @@ def update_table(contents, filename):
     return table
 
 def parse_data(contents, filename):
+    """
+    Parses the data in a pandas dataframe.
+    TODO: Make the dataframe global accessible.
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Dataframe
+    """
     if (contents is None):
         return
 
