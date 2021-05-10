@@ -24,4 +24,4 @@ def set_properties(project):
     # Plugin settings
     project.set_property("dir_docs", "doc")
     project.set_property("flake8_break_build", True)
-    project.set_property("coverage_break_build", True)
+    project.set_property("coverage_break_build", False)
