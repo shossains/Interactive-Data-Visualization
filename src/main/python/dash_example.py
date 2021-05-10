@@ -23,6 +23,7 @@ colors = {
     "text": "#000000"
 }
 
+
 app.layout = html.Div([
     dcc.Upload(
         id='upload-data',
@@ -47,22 +48,46 @@ app.layout = html.Div([
     dcc.Dropdown(
                 id='select-tool',
                 options=[
+                    {'label': 'choose label', 'value': 'index'},
                     {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
                     {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
                 ],
-                value='T-sne'
+                value='index'
             ),
-    html.H4("Select variable x"),
-    dcc.Dropdown(id='select-variable-x'),
-    html.H4("Select variable y"),
-    dcc.Dropdown(
-        id='select-variable-y',
-        multi=True),
-    html.Div(id='output-select-data'),
-    dcc.Graph(id='Mygraph'),
-    html.Div(id='output-data-upload')
+    # When T-sne choosen this one will be visible
+    html.Div(
+        [html.H4("Select variable x"),
+        dcc.Dropdown(id='select-variable-x'),
+        html.H4("Select variable y"),
+        dcc.Dropdown(
+            id='select-variable-y',
+            multi=True),
+        html.Div(id='output-select-data'),
+        dcc.Graph(id='Mygraph'),
+        html.Div(id='output-data-upload')],
+        id='t-sne', style= {'display': 'block'}),
 ])
 
+
+
+@app.callback(
+    Output(component_id='t-sne', component_property='style'),
+    [Input(component_id='select-tool', component_property='value')])
+
+def show_hide_element(visibility_state):
+    """
+    Looks at wich tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
+    TODO: Add more return states for more tools.
+    Joost knows this^
+    :param visibility_state:
+    :return: visibility style
+    """
+    if visibility_state == 'T-sne':
+        return {'display': 'block'}
+    if visibility_state == 'other_ml_tool':
+        return {'display': 'none'}
+    if visibility_state == 'index':
+        return {'display': 'none'}
 
 
 @app.callback(Output('select-variable-x', 'options'),
@@ -71,6 +96,13 @@ app.layout = html.Div([
                 Input('upload-data', 'filename'),
             ])
 def set_options_variable_x(contents, filename):
+    """
+    loads in possible parameters for the x-axis from the data.
+    TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Possible options for dropdown x-axis.
+    """
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -85,6 +117,11 @@ def set_options_variable_x(contents, filename):
                 Input('select-variable-x', 'options')
             ])
 def set_variable_x(options_x ):
+    """
+    Gets the ouput of the dropdown of the 'select-variable-x'.
+    :param options_x: All possible x-axis options
+    :return: The choosen x-axis
+    """
     return options_x[0]['value']
 
 
@@ -93,7 +130,16 @@ def set_variable_x(options_x ):
                 Input('upload-data', 'contents'),
                 Input('upload-data', 'filename'),
             ])
+
 def set_options_variable_y(contents, filename):
+    """
+    loads in possible multiple parameters for the y-axis from the data.
+    TODO: Let it choose which type of plotting you want (scatter/ connected etc.)
+    TODO: Let it choose which type of plotting you want: separate graphs or in the same graph.
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Possible options for dropdown y-axis.
+    """
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -108,6 +154,11 @@ def set_options_variable_y(contents, filename):
                 Input('select-variable-y', 'options')
             ])
 def set_variable_x(options_y ):
+    """
+    Gets the ouput of the dropdown of the 'select-variable-y'.
+    :param options_y: All possible x-axis options
+    :return: The choosen y-axis
+    """
     return options_y[0]['value']
 
 
@@ -119,6 +170,17 @@ Input('select-variable-x', 'value'),
 Input('select-variable-y', 'value'),
 ])
 def update_graph(contents, filename, xvalue, yvalue):
+    """
+    Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
+    TODO: Make different graphic plots possible.
+    TODO: Make multiple y-axis in the same graph possible.
+    TODO: Make separate graphic plots possible
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :param xvalue: Value of the x-axis
+    :param yvalue: List of values of the y-axis
+    :return:  graph
+    """
     x = []
     y = []
 
@@ -132,6 +194,7 @@ def update_graph(contents, filename, xvalue, yvalue):
     for ycol in yvalue:
         print(ycol)
         y = df[ycol]
+
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -151,6 +214,12 @@ def update_graph(contents, filename, xvalue, yvalue):
                 Input('upload-data', 'filename')
             ])
 def update_table(contents, filename):
+    """
+    Makes a table from the uploaded data.
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Table
+    """
     table = html.Div()
 
     if contents:
@@ -179,6 +248,13 @@ def update_table(contents, filename):
     return table
 
 def parse_data(contents, filename):
+    """
+    Parses the data in a pandas dataframe.
+    TODO: Make the dataframe global accessible.
+    :param contents: contents of the data
+    :param filename: filename of the data
+    :return: Dataframe
+    """
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
