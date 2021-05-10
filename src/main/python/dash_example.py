@@ -63,16 +63,21 @@ app.layout = html.Div([
         id='select-variable-y',
         placeholder = 'Select ...'),
     html.Div(id='output-select-data'),
-    dcc.Graph(id='Mygraph'),
-    html.Div(id='output-data-upload')],
+    dcc.Graph(id='Mygraph')],
     id='t-sne', style= {'display': 'block'}),
+    dcc.Checklist(id='select-table',
+        options=[
+            {'label': 'Scatter plot', 'value': 'scatter'},
+            {'label': 'View raw data', 'value': 'raw-data'},
+        ]),
+        html.Div(id='output-data-upload', style={'display': 'none'})
 ])
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
     [Input(component_id='select-tool', component_property='value')])
 
-def show_hide_element(visibility_state):
+def show_hide_t_sne(visibility_state):
     """
     Looks at wich tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
     TODO: Add more return states for more tools.
@@ -85,6 +90,22 @@ def show_hide_element(visibility_state):
     if visibility_state == 'other_ml_tool':
         return {'display': 'none'}
     if visibility_state == 'index':
+        return {'display': 'none'}
+
+@app.callback(
+    Output(component_id='output-data-upload', component_property='style'),
+    [Input(component_id='select-table', component_property='value')])
+
+def show_hide_table_scatter(visibility_state):
+    """
+    Hides or shows the data in a table at the bottom
+    :param visibility_state: Selected or unselected
+    :return: style format visible or not
+    """
+    print(visibility_state)
+    if visibility_state == 'raw-data':
+        return {'display': 'block'}
+    if visibility_state == []:
         return {'display': 'none'}
 
 @app.callback([Output('select-variable-x', 'options'),
@@ -131,6 +152,7 @@ def set_variables(options_x, options_y):
 Input('upload-data', 'contents'),
 Input('upload-data', 'filename'),
 Input('select-variable-x', 'value'),
+Input('select-variable-y', 'value'),
 Input('select-variable-y', 'value'),
 ])
 def update_graph(contents, filename, xvalue, yvalue):
@@ -210,7 +232,8 @@ def update_table(contents, filename):
 
             html.Pre(contents[0:200] + '...', style={
                 'whiteSpace': 'pre-wrap',
-                'wordBreak': 'break-all'
+                'wordBreak': 'break-all',
+                'display': 'none'
             })
         ])
 
