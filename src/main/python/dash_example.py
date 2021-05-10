@@ -69,6 +69,12 @@ app.layout = html.Div([
         placeholder = 'Select ...',
         # multi=True
     ),
+    # html.H4("Select Hover Data"),
+    # dcc.Dropdown(
+    #     id='select-characteristics',
+    #     placeholder = 'Select ...',
+    #     # multi=True
+    # ),
 
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
@@ -165,7 +171,6 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
     x = []
     y = []
 
-
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -179,19 +184,6 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
         fig = px.scatter(
             df, x=x, y=y, color = charvalue, hover_data=df
         )
-            # go.Figure(
-            # data=[
-            #     go.Scatter(
-            #         x=x,
-            #         y=y,
-            #         mode='markers',
-            #         # marker_color='rgba(255, 182, 193, .9)',
-            #         text=df[charvalue])
-            #     ],
-            # layout=go.Layout(
-            #     plot_bgcolor=colors["graphBackground"],
-            #     paper_bgcolor=colors["graphBackground"]
-            # ))
         return fig
     else:
         return {}
