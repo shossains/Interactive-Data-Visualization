@@ -61,15 +61,15 @@ app.layout = html.Div([
     html.H4("Select variable y"),
     dcc.Dropdown(
         id='select-variable-y',
-        placeholder = 'Select ...'),
-    html.H4("Select Characteristics"),
+        placeholder='Select ...'),
+    html.H4("Select characteristic to display on hover"),
     dcc.Dropdown(
         id='select-characteristics',
-        placeholder = 'Select ...'),
+        placeholder='Select ...'),
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')],
-    id='t-sne', style= {'display': 'block'}),
+    id='t-sne', style={'display': 'block'}),
 ])
 
 @app.callback(
@@ -135,10 +135,10 @@ def set_variables(options_x, options_y, options_char):
     return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-Input('upload-data', 'contents'),
-Input('upload-data', 'filename'),
-Input('select-variable-x', 'value'),
-Input('select-variable-y', 'value'),
+    Input('upload-data', 'contents'),
+    Input('upload-data', 'filename'),
+    Input('select-variable-x', 'value'),
+    Input('select-variable-y', 'value'),
     Input('select-characteristics', 'value')
 ])
 def update_graph(contents, filename, xvalue, yvalue, charvalue):
@@ -178,7 +178,6 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
                     x=x,
                     y=y,
                     mode='markers',
-                    # marker_color=df[charvalue],
                     text=df[charvalue])
                 ],
             layout=go.Layout(
