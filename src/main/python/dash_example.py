@@ -177,9 +177,7 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
                 go.Scatter(
                     x=x,
                     y=y,
-                    mode='markers',
-                    # marker_color=df[charvalue],
-                    text=df[charvalue])
+                    mode='markers')
                 ],
             layout=go.Layout(
                 plot_bgcolor=colors["graphBackground"],
