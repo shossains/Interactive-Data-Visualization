@@ -1,6 +1,7 @@
 import base64
 import io
 import plotly.graph_objs as go
+import plotly.express as px
 import time
 
 import dash
@@ -65,7 +66,10 @@ app.layout = html.Div([
     html.H4("Select Characteristics"),
     dcc.Dropdown(
         id='select-characteristics',
-        placeholder = 'Select ...'),
+        placeholder = 'Select ...',
+        # multi=True
+    ),
+
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')],
@@ -135,10 +139,10 @@ def set_variables(options_x, options_y, options_char):
     return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-Input('upload-data', 'contents'),
-Input('upload-data', 'filename'),
-Input('select-variable-x', 'value'),
-Input('select-variable-y', 'value'),
+    Input('upload-data', 'contents'),
+    Input('upload-data', 'filename'),
+    Input('select-variable-x', 'value'),
+    Input('select-variable-y', 'value'),
     Input('select-characteristics', 'value')
 ])
 def update_graph(contents, filename, xvalue, yvalue, charvalue):
@@ -172,19 +176,22 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
         x = df['{}'.format(xvalue)]
         y = df['{}'.format(yvalue)]
 
-        fig = go.Figure(
-            data=[
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode='markers',
-                    # marker_color=df[charvalue],
-                    text=df[charvalue])
-                ],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-                paper_bgcolor=colors["graphBackground"]
-            ))
+        fig = px.scatter(
+            df, x=x, y=y, color = charvalue, hover_data=df
+        )
+            # go.Figure(
+            # data=[
+            #     go.Scatter(
+            #         x=x,
+            #         y=y,
+            #         mode='markers',
+            #         # marker_color='rgba(255, 182, 193, .9)',
+            #         text=df[charvalue])
+            #     ],
+            # layout=go.Layout(
+            #     plot_bgcolor=colors["graphBackground"],
+            #     paper_bgcolor=colors["graphBackground"]
+            # ))
         return fig
     else:
         return {}
