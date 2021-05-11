@@ -195,7 +195,7 @@ def update_graph(xvalue, yvalue, charvalue):
         y = dataframe['{}'.format(yvalue)]
     
         fig = px.scatter(
-            df, x=x, y=y, color=charvalue, hover_data=df
+            dataframe, x=x, y=y, color=charvalue, hover_data=dataframe
         )
 
         return fig
