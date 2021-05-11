@@ -82,7 +82,6 @@ def update_dataframe(contents, filename):
         filename = filename[0]
         global df
         df = parse_data(contents, filename)
-        df = df.reset_index()
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -111,24 +110,12 @@ def show_hide_element(visibility_state):
 def set_options_variable(dummy):
     """
     loads in possible parameters for the x and y-axis from the data.
-    TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
-    :param contents: contents of the data
-    :param filename: filename of the data
+    :param dummy: dummy html property
     :return: Possible options for dropdown x-axis.
     """
-    # df = pd.DataFrame({})
-    # if (contents is not None):
-    #     if contents:
-    #         contents = contents[0]
-    #         filename = filename[0]
-    #         global df
-    #         df = df.reset_index()
-    # return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
-
-    if dummy:
-        global df
-        # df = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+    global df
+    dataframe = df.reset_index()
+    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
@@ -144,6 +131,8 @@ def set_variables(options_x, options_y):
     :param options_y: All possible x-axis options
     :return: The choosen x-axis and y-axis
     """
+    if (options_y is None or options_x is None):
+        return None, None
     if len(options_y) <= 0 or (len(options_x) <= 0):
         return None, None
     return options_x[0]['value'], options_y[0]['value']
@@ -178,11 +167,13 @@ def update_graph(xvalue, yvalue):
     #     contents = contents[0]
     #     filename = filename[0]
     global df
+
     if (df is not None):
+        dataframe = df.reset_index()
 
         # df = df.reset_index()
-        x = df['{}'.format(xvalue)]
-        y = df['{}'.format(yvalue)]
+        x = dataframe['{}'.format(xvalue)]
+        y = dataframe['{}'.format(yvalue)]
 
         fig = go.Figure(
             data=[
@@ -200,10 +191,12 @@ def update_graph(xvalue, yvalue):
         return {}
 
 @app.callback(Output('output-data-upload', 'children'),
-            [
-               Input('dummy', 'children')
-            ])
-def update_table(dummy):
+              [
+                  Input('upload-data', 'contents'),
+                  Input('upload-data', 'filename'),
+                  Input('dummy', 'children')
+              ])
+def update_table(contents, filename, dummy):
     """
     Makes a table from the uploaded data.
     :param contents: contents of the data
@@ -211,11 +204,9 @@ def update_table(dummy):
     :return: Table
     """
     table = html.Div()
-
-    # if contents:
-    #     contents = contents[0]
-    #     filename = filename[0]
-    if dummy:
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
         global df
         table = html.Div([
             html.H5(filename),
@@ -251,22 +242,22 @@ def parse_data(contents, filename):
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV or TXT file
-            global df
-            df = pd.read_csv(
+            # global df
+            dataframe = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
+            dataframe = pd.read_excel(io.BytesIO(decoded))
         elif 'txt' or 'tsv' in filename:
             # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-            df = pd.read_csv(
+            dataframe = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')), delimiter = r'\s+')
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
-    return df
+    return dataframe
 
 if __name__ == '__main__':
     app.run_server(debug=True)
