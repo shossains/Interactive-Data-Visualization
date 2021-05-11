@@ -77,14 +77,12 @@ app.layout = html.Div([
                     Input('upload-data', 'filename')
                 ])
 def update_dataframe(contents, filename):
-    print("called")
     if contents:
         contents = contents[0]
         filename = filename[0]
         global df
         df = parse_data(contents, filename)
         df = df.reset_index()
-        print(len(df))
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -111,7 +109,6 @@ def show_hide_element(visibility_state):
                 Input('dummy', 'children')
             ])
 def set_options_variable(dummy):
-    print("THIS IS cALLed")
     """
     loads in possible parameters for the x and y-axis from the data.
     TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
