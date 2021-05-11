@@ -135,7 +135,7 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-        return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
+    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
         {'label': i, 'value': i} for i in df.columns]
 
 
