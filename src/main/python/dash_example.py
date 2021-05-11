@@ -12,6 +12,7 @@ import pandas as pd
 
 df = pd.DataFrame({})
 all_dims = df.columns
+print(all_dims)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -103,8 +104,10 @@ def update_dataframe(contents, filename):
         global df
         df = parse_data(contents, filename)
         global all_dims
-        all_dims = df.columns
+        print('arrived')
 
+        all_dims = df.columns
+        print(all_dims)
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -128,7 +131,7 @@ def show_hide_element(visibility_state):
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
                Output('select-characteristics', 'options'),
-               # Output('select-dimensions', 'options')
+               Output('select-dimensions', 'options')
                ],
               [
                   Input('dummy', 'children')
@@ -142,7 +145,7 @@ def set_options_variable(dummy):
     global df
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns],
+        {'label': i, 'value': i} for i in df.columns], [{"label": x, "value": x} for x in all_dims]
         # [{'label': i, 'value': i} for i in df.columns]
 
 
