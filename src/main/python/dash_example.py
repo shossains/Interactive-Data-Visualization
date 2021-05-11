@@ -16,7 +16,6 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
-
 colors = {
     "graphBackground": "#F5F5F5",
     "background": "#ffffff",
@@ -45,43 +44,43 @@ app.layout = html.Div([
     ),
     html.H4("Select machine learning tool"),
     dcc.Dropdown(
-                id='select-tool',
-                options=[
-                    {'label': 'Choose ML method', 'value': 'index'},
-                    {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-                    {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-                ],
-                value='index'
-            ),
-    # When T-sne choosen this one will be visible
-    html.Div([
-    html.H4("Select variable x"),
-    dcc.Dropdown(
-        id='select-variable-x',
-        placeholder = 'Select ...'),
-    html.H4("Select variable y"),
-    dcc.Dropdown(
-        id='select-variable-y',
-        placeholder = 'Select ...'),
-    html.H4("Select Characteristics"),
-    dcc.Dropdown(
-        id='select-characteristics',
-        placeholder = 'Select ...',
-        # multi=True
+        id='select-tool',
+        options=[
+            {'label': 'Choose ML method', 'value': 'index'},
+            {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+            {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+        ],
+        value='index'
     ),
-    html.Div(id='output-select-data'),
-    dcc.Graph(id='Mygraph'),
-    html.Div(id='output-data-upload')],
-    id='t-sne', style= {'display': 'block'}),
+    # When T-sne chosen this one will be visible
+    html.Div([
+        html.H4("Select variable x"),
+        dcc.Dropdown(
+            id='select-variable-x',
+            placeholder='Select ...'),
+        html.H4("Select variable y"),
+        dcc.Dropdown(
+            id='select-variable-y',
+            placeholder='Select ...'),
+        html.H4("Select Characteristics"),
+        dcc.Dropdown(
+            id='select-characteristics',
+            placeholder='Select ...',
+            # multi=True
+        ),
+        html.Div(id='output-select-data'),
+        dcc.Graph(id='Mygraph'),
+        html.Div(id='output-data-upload')],
+        id='t-sne', style={'display': 'block'}),
 ])
+
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
     [Input(component_id='select-tool', component_property='value')])
-
 def show_hide_element(visibility_state):
     """
-    Looks at wich tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
+    Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
     TODO: Add more return states for more tools.
     Joost knows this^
     :param visibility_state:
@@ -94,13 +93,14 @@ def show_hide_element(visibility_state):
     if visibility_state == 'index':
         return {'display': 'none'}
 
+
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
                Output('select-characteristics', 'options')],
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename'),
-            ])
+              [
+                  Input('upload-data', 'contents'),
+                  Input('upload-data', 'filename'),
+              ])
 def set_options_variable(contents, filename):
     """
     loads in possible parameters for the x and y-axis from the data.
@@ -110,22 +110,24 @@ def set_options_variable(contents, filename):
     :return: Possible options for dropdown x-axis, y-axis and characteristic.
     """
     df = pd.DataFrame({})
-    if (contents is not None):
+    if contents is not None:
         if contents:
             contents = contents[0]
             filename = filename[0]
             df = parse_data(contents, filename)
             df = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
+        {'label': i, 'value': i} for i in df.columns]
+
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
                Output('select-characteristics', 'value')],
-            [
-                Input('select-variable-x', 'options'),
-                Input('select-variable-y', 'options'),
-                Input('select-characteristics', 'options')
-            ])
+              [
+                  Input('select-variable-x', 'options'),
+                  Input('select-variable-y', 'options'),
+                  Input('select-characteristics', 'options')
+              ])
 def set_variables(options_x, options_y, options_char):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
@@ -137,6 +139,7 @@ def set_variables(options_x, options_y, options_char):
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
         return None, None, None
     return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
+
 
 @app.callback(Output('Mygraph', 'figure'), [
     Input('upload-data', 'contents'),
@@ -158,9 +161,9 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
     :param charvalue: value of characteristic
     :return:  graph
     """
-    if (xvalue is None or yvalue is None):
+    if xvalue is None or yvalue is None:
         return {}
-    if (xvalue == "index" or yvalue == "index" or charvalue == "index"):
+    if xvalue == "index" or yvalue == "index" or charvalue == "index":
         return {}
 
     x = []
@@ -170,14 +173,14 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
         contents = contents[0]
         filename = filename[0]
     df = parse_data(contents, filename)
-    if (df is not None):
+    if df is not None:
 
         df = df.reset_index()
         x = df['{}'.format(xvalue)]
         y = df['{}'.format(yvalue)]
 
         fig = px.scatter(
-            df, x=x, y=y, color = charvalue, hover_data=df
+            df, x=x, y=y, color=charvalue, hover_data=df
         )
         return fig
     else:
@@ -185,10 +188,10 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
 
 
 @app.callback(Output('output-data-upload', 'children'),
-            [
-                Input('upload-data', 'contents'),
-                Input('upload-data', 'filename')
-            ])
+              [
+                  Input('upload-data', 'contents'),
+                  Input('upload-data', 'filename')
+              ])
 def update_table(contents, filename):
     """
     Makes a table from the uploaded data.
@@ -202,7 +205,6 @@ def update_table(contents, filename):
         contents = contents[0]
         filename = filename[0]
         df = parse_data(contents, filename)
-
 
         table = html.Div([
             html.H5(filename),
@@ -221,6 +223,7 @@ def update_table(contents, filename):
 
     return table
 
+
 def parse_data(contents, filename):
     """
     Parses the data in a pandas dataframe.
@@ -229,7 +232,7 @@ def parse_data(contents, filename):
     :param filename: filename of the data
     :return: Dataframe
     """
-    if (contents is None):
+    if contents is None:
         return
 
     content_type, content_string = contents.split(',')
@@ -246,13 +249,14 @@ def parse_data(contents, filename):
         elif 'txt' or 'tsv' in filename:
             # Assume that the user upl, delimiter = r'\s+'oaded an excel file
             df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter = r'\s+')
+                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
     return df
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
