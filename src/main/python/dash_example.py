@@ -70,17 +70,23 @@ app.layout = html.Div([
             placeholder='Select ...',
             # multi=True
         ),
-        dcc.Checklist(id='select-plot-options',
-                      options=[
-                          {'label': 'Scatter', 'value': 'scatter'},
-                          {'label': 'Density', 'value': 'density'},
-                      ],
-                      ),
+        html.H4("Select plot method"),
+        dcc.Dropdown(id='select-plot-options',
+                     options=[
+                         {'label': 'Area', 'value': 'area'},
+                         {'label': 'Bar', 'value': 'bar'},
+                         {'label': 'Box', 'value': 'box'},
+                         {'label': 'Density', 'value': 'density'},
+                         {'label': 'Histogram', 'value': 'histogram'},
+                         {'label': 'Line', 'value': 'line'},
+                         {'label': 'Scatter', 'value': 'scatter'},
+                     ], value='scatter'
+                     ),
         html.Div(id='output-select-data'),
         dcc.Graph(id='Mygraph')],
         id='t-sne', style={'display': 'block'}),
-    dcc.Checklist(id='show-table',options=[
-            {'label': 'Show table', 'value': 'show-table'}]),
+    dcc.Checklist(id='show-table', options=[
+        {'label': 'Show table', 'value': 'show-table'}]),
 
     html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
@@ -139,8 +145,9 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns], [
-        {'label': i, 'value': i} for i in dataframe.columns]
+    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
+                                                                   dataframe.columns], [
+               {'label': i, 'value': i} for i in dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
@@ -196,17 +203,30 @@ def update_graph(xvalue, yvalue, charvalue, plotvalue):
         x = dataframe['{}'.format(xvalue)]
         y = dataframe['{}'.format(yvalue)]
 
-        fig = px.scatter(
-            dataframe, x=x, y=y, color=charvalue, hover_data=df
-        )
+        fig = go.Figure()
 
         if ('scatter' in plotvalue):
             fig = px.scatter(
-                    dataframe, x=x, y=y, color=charvalue, hover_data=df
-                )
+                dataframe, x=x, y=y, color=charvalue, hover_data=df
+            )
 
         if ('density' in plotvalue):
             fig = px.density_contour(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('line' in plotvalue):
+            fig = px.line(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('histogram' in plotvalue):
+            fig = px.histogram(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('box' in plotvalue):
+            fig = px.box(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('bar' in plotvalue):
+            fig = px.bar(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('area' in plotvalue):
+            fig = px.area(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
         return fig
     else:
@@ -228,6 +248,7 @@ def show_hide_table(visibility_state):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
 
 @app.callback(Output('output-data-upload', 'children'),
               [
