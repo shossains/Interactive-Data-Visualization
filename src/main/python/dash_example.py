@@ -1,6 +1,7 @@
 import base64
 import io
 import plotly.graph_objs as go
+import plotly.express as px
 import time
 
 import dash
@@ -16,7 +17,6 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-
 
 colors = {
     "graphBackground": "#F5F5F5",
@@ -46,29 +46,35 @@ app.layout = html.Div([
     ),
     html.H4("Select machine learning tool"),
     dcc.Dropdown(
-                id='select-tool',
-                options=[
-                    {'label': 'Choose ML method', 'value': 'index'},
-                    {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-                    {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-                ],
-                value='index'
-            ),
-    # When T-sne choosen this one will be visible
+        id='select-tool',
+        options=[
+            {'label': 'Choose ML method', 'value': 'index'},
+            {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+            {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+        ],
+        value='index'
+    ),
+    # When T-sne chosen this one will be visible
     html.Div([
-    html.H4("Select variable x"),
-    dcc.Dropdown(
-        id='select-variable-x',
-        placeholder = 'Select ...'),
-    html.H4("Select variable y"),
-    dcc.Dropdown(
-        id='select-variable-y',
-        placeholder = 'Select ...'),
-    html.Div(id='output-select-data'),
-    dcc.Graph(id='Mygraph'),
-    html.Div(id='output-data-upload')],
-    id='t-sne', style= {'display': 'block'}),
-    html.P(id='dummy')
+        html.H4("Select variable x"),
+        dcc.Dropdown(
+            id='select-variable-x',
+            placeholder='Select ...'),
+        html.H4("Select variable y"),
+        dcc.Dropdown(
+            id='select-variable-y',
+            placeholder='Select ...'),
+        html.H4("Select Characteristics"),
+        dcc.Dropdown(
+            id='select-characteristics',
+            placeholder='Select ...',
+            # multi=True
+        ),
+        html.Div(id='output-select-data'),
+        dcc.Graph(id='Mygraph'),
+        html.Div(id='output-data-upload')],
+        id='t-sne', style={'display': 'block'}),
+        html.P(id='dummy')
 ])
 
 @app.callback(Output('dummy', 'children'),
@@ -92,10 +98,9 @@ def update_dataframe(contents, filename):
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
     [Input(component_id='select-tool', component_property='value')])
-
 def show_hide_element(visibility_state):
     """
-    Looks at wich tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
+    Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
     TODO: Add more return states for more tools.
     Joost knows this^
     :param visibility_state:
@@ -108,8 +113,10 @@ def show_hide_element(visibility_state):
     if visibility_state == 'index':
         return {'display': 'none'}
 
+
 @app.callback([Output('select-variable-x', 'options'),
-               Output('select-variable-y', 'options')],
+               Output('select-variable-y', 'options'),
+               Output('select-characteristics', 'options')],
             [
                 Input('dummy', 'children')
             ])
@@ -121,33 +128,39 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns]
+        return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
+        {'label': i, 'value': i} for i in df.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
-               Output('select-variable-y', 'value')],
-            [
-                Input('select-variable-x', 'options'),
-                Input('select-variable-y', 'options')
-            ])
-def set_variables(options_x, options_y):
+               Output('select-variable-y', 'value'),
+               Output('select-characteristics', 'value')],
+              [
+                  Input('select-variable-x', 'options'),
+                  Input('select-variable-y', 'options'),
+                  Input('select-characteristics', 'options')
+              ])
+def set_variables(options_x, options_y, options_char):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
     :param options_y: All possible x-axis options
-    :return: The choosen x-axis and y-axis
+    :param options_char: All possible characteristic options
+    :return: The choosen x-axis and y-axis and characteristic
     """
-    if (options_y is None or options_x is None):
-        return None, None
-    if len(options_y) <= 0 or (len(options_x) <= 0):
-        return None, None
-    return options_x[0]['value'], options_y[0]['value']
+    if (options_y is None or options_x is None or options_char is None):
+        return None, None, None
+    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
+        return None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
+
 
 @app.callback(Output('Mygraph', 'figure'), [
-Input('select-variable-x', 'value'),
-Input('select-variable-y', 'value'),
+    Input('select-variable-x', 'value'),
+    Input('select-variable-y', 'value'),
+    Input('select-characteristics', 'value')
 ])
-def update_graph(xvalue, yvalue):
+def update_graph(xvalue, yvalue, charvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
     TODO: Make different graphic plots possible.
@@ -155,11 +168,12 @@ def update_graph(xvalue, yvalue):
     TODO: Make separate graphic plots possible
     :param xvalue: Value of the x-axis
     :param yvalue: value of the y-axis
-    :return: graph
+    :param charvalue: value of characteristic
+    :return graph
     """
-    if (xvalue is None or yvalue is None):
+    if xvalue is None or yvalue is None:
         return {}
-    if (xvalue == "index" or yvalue == "index"):
+    if xvalue == "index" or yvalue == "index" or charvalue == "index":
         return {}
 
     global df
@@ -168,18 +182,10 @@ def update_graph(xvalue, yvalue):
         dataframe = df.reset_index()
         x = dataframe['{}'.format(xvalue)]
         y = dataframe['{}'.format(yvalue)]
-
-        fig = go.Figure(
-            data=[
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode='lines+markers')
-                ],
-            layout=go.Layout(
-                plot_bgcolor=colors["graphBackground"],
-                paper_bgcolor=colors["graphBackground"]
-            ))
+    
+        fig = px.scatter(
+            df, x=x, y=y, color=charvalue, hover_data=df
+        )
         return fig
     else:
         return {}
@@ -220,6 +226,7 @@ def update_table(contents, filename, dummy):
 
     return table
 
+
 def parse_data(contents, filename):
     """
     Parses the data in a pandas dataframe.
@@ -227,7 +234,7 @@ def parse_data(contents, filename):
     :param filename: filename of the data
     :return: Dataframe
     """
-    if (contents is None):
+    if contents is None:
         return
 
     content_type, content_string = contents.split(',')
@@ -252,6 +259,7 @@ def parse_data(contents, filename):
             'There was an error processing this file.'
         ])
     return dataframe
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
