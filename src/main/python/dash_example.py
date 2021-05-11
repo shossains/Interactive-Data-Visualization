@@ -1,5 +1,7 @@
 import base64
 import io
+import json
+
 import plotly.graph_objs as go
 import plotly.express as px
 import time
@@ -24,6 +26,7 @@ colors = {
     "text": "#000000"
 }
 
+# General layout of the GUI
 app.layout = html.Div([
     dcc.Upload(
         id='upload-data',
@@ -82,14 +85,14 @@ app.layout = html.Div([
                          {'label': 'Scatter', 'value': 'scatter'},
                      ], value='scatter'
                      ),
-        html.Div(id='output-select-data'),
         dcc.Graph(id='Mygraph')],
         id='t-sne', style={'display': 'block'}),
     dcc.Checklist(id='show-table', options=[
         {'label': 'Show table', 'value': 'show-table'}]),
-
+    html.Div(id='output-select-data'),
     html.Div(id='output-data-upload', style={'display': 'none'}),
-    html.P(id='dummy')
+    html.P(id='dummy'),
+
 ])
 
 
@@ -323,6 +326,36 @@ def parse_data(contents, filename):
             'There was an error processing this file.'
         ])
     return dataframe
+
+# Print selected data onto a JSON dump
+@app.callback(
+    Output('output-select-data', 'children'),
+    Input('Mygraph', 'selectedData'))
+def display_selected_data(selectedData):
+    print(type(selectedData))
+    if type(selectedData) is dict:
+        print(dict(selectedData).get('points'))
+        if type(selectedData) == dict:
+            sdict = dict(selectedData)
+            dfe = pd.DataFrame.from_dict(sdict['points'])
+            print(dfe)
+            dfc = dfe['customdata']
+            dfd = dfe['x']
+            dff = dfe['y']
+            res = pd.concat([dfd, dff, dfc], axis=1)
+            print(res)
+            # pd.DataFrame.append(dfe.pop('customdata'), dfc)
+            table = html.Div([
+                html.H5("Currently selected data points" ),
+                dash_table.DataTable(
+                    data=dfc.to_dict('rows'),
+                    # data=sdict.get('points').get('customdata'),
+                    columns=[{'name': i, 'id': i} for i in df.columns]
+                )
+            ], id='selected-uploaded')
+        return table
+    else:
+        return html.Div([json.dumps(selectedData, indent=2)])
 
 
 if __name__ == '__main__':
