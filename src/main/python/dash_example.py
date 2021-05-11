@@ -63,17 +63,15 @@ app.layout = html.Div([
     html.H4("Select variable y"),
     dcc.Dropdown(
         id='select-variable-y',
-        placeholder = 'Select ...'),
+        placeholder='Select ...'),
+    html.H4("Select characteristic to display on hover"),
+    dcc.Dropdown(
+        id='select-characteristics',
+        placeholder='Select ...'),
     html.Div(id='output-select-data'),
-    dcc.Graph(id='Mygraph')],
-    id='t-sne', style= {'display': 'block'}),
-    dcc.Checklist(id='select-table',
-        options=[
-            {'label': 'Scatter plot', 'value': 'scatter'},
-            {'label': 'View raw data', 'value': 'raw-data'},
-        ]),
-    html.Div(id='output-data-upload', style={'display': 'none'}),
-    html.P(id='dummy')
+    dcc.Graph(id='Mygraph'),
+    html.Div(id='output-data-upload')],
+    id='t-sne', style={'display': 'block'}),
 ])
 
 @app.callback(Output('dummy', 'children'),
@@ -173,10 +171,8 @@ def set_variables(options_x, options_y):
     return options_x[0]['value'], options_y[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-# Input('upload-data', 'contents'),
-# Input('upload-data', 'filename'),
+
 Input('select-variable-x', 'value'),
-Input('select-variable-y', 'value'),
 Input('select-variable-y', 'value'),
 ])
 def update_graph(xvalue, yvalue):
@@ -214,7 +210,6 @@ def update_graph(xvalue, yvalue):
                 go.Scatter(
                     x=x,
                     y=y,
-
                     mode='markers')
                 ],
             layout=go.Layout(
