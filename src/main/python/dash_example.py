@@ -69,13 +69,6 @@ app.layout = html.Div([
         placeholder = 'Select ...',
         # multi=True
     ),
-    # html.H4("Select Hover Data"),
-    # dcc.Dropdown(
-    #     id='select-characteristics',
-    #     placeholder = 'Select ...',
-    #     # multi=True
-    # ),
-
     html.Div(id='output-select-data'),
     dcc.Graph(id='Mygraph'),
     html.Div(id='output-data-upload')],
@@ -114,7 +107,7 @@ def set_options_variable(contents, filename):
     TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
     :param contents: contents of the data
     :param filename: filename of the data
-    :return: Possible options for dropdown x-axis.
+    :return: Possible options for dropdown x-axis, y-axis and characteristic.
     """
     df = pd.DataFrame({})
     if (contents is not None):
@@ -138,7 +131,8 @@ def set_variables(options_x, options_y, options_char):
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
     :param options_y: All possible x-axis options
-    :return: The choosen x-axis and y-axis
+    :param options_char: All possible characteristic options
+    :return: The choosen x-axis and y-axis and characteristic
     """
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
         return None, None, None
@@ -161,6 +155,7 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
     :param filename: filename of the data
     :param xvalue: Value of the x-axis
     :param yvalue: value of the y-axis
+    :param charvalue: value of characteristic
     :return:  graph
     """
     if (xvalue is None or yvalue is None):
