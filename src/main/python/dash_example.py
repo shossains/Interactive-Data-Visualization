@@ -10,6 +10,8 @@ import dash_html_components as html
 import dash_table
 import pandas as pd
 
+df = pd.DataFrame({})
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -79,8 +81,26 @@ app.layout = html.Div([
         ], id='output-select-data'),
         html.Div(id='output-data-upload')],
         id='t-sne', style={'display': 'block'}),
+        html.P(id='dummy')
 ])
 
+@app.callback(Output('dummy', 'children'),
+                [
+                    Input('upload-data', 'contents'),
+                    Input('upload-data', 'filename')
+                ])
+def update_dataframe(contents, filename):
+    """
+    Updates the dataframe when a file is loaded in.
+    :param contents: the contents of the file
+    :param filename: the name of the file
+    :return: dummy html.P, which is used to activate chained callbacks.
+    """
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        global df
+        df = parse_data(contents, filename)
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -103,29 +123,20 @@ def show_hide_element(visibility_state):
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
-               Output('select-characteristics', 'options'),
-               Output('select-dimensions', 'options')],
-              [
-                  Input('upload-data', 'contents'),
-                  Input('upload-data', 'filename'),
-              ])
-def set_options_variable(contents, filename):
+               Output('select-characteristics', 'options')],
+            [
+                Input('dummy', 'children')
+            ])
+def set_options_variable(dummy):
     """
     loads in possible parameters for the x and y-axis from the data.
-    TODO: Load the data in ones as a global variable. At the moment df is loaded in per function (inefficient).
-    :param contents: contents of the data
-    :param filename: filename of the data
-    :return: Possible options for dropdown x-axis, y-axis and characteristic.
+    :param dummy: dummy html property
+    :return: Possible options for dropdown x-axis.
     """
-    df = pd.DataFrame({})
-    if contents is not None:
-        if contents:
-            contents = contents[0]
-            filename = filename[0]
-            df = parse_data(contents, filename)
-            df = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
+    global df
+    dataframe = df.reset_index()
+        return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
+        {'label': i, 'value': i} for i in df.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
@@ -146,49 +157,41 @@ def set_variables(options_x, options_y, options_char, dims):
     :param options_char: All possible characteristic options
     :return: The choosen x-axis and y-axis and characteristic
     """
+    if (options_y is None or options_x is None or options_char is None):
+        return None, None, None
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
         return None, None, None, None
     return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], dims[0]['value']
 
 
 @app.callback(Output('Mygraph', 'figure'), [
-    Input('upload-data', 'contents'),
-    Input('upload-data', 'filename'),
     Input('select-variable-x', 'value'),
     Input('select-variable-y', 'value'),
     Input('select-characteristics', 'value'),
 ])
-def update_graph(contents, filename, xvalue, yvalue, charvalue):
+def update_graph(xvalue, yvalue, charvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
     TODO: Make different graphic plots possible.
     TODO: Make multiple y-axis in the same graph possible.
     TODO: Make separate graphic plots possible
-    :param contents: contents of the data
-    :param filename: filename of the data
     :param xvalue: Value of the x-axis
     :param yvalue: value of the y-axis
     :param charvalue: value of characteristic
-    :return:  graph
+    :return graph
     """
     if xvalue is None or yvalue is None:
         return {}
     if xvalue == "index" or yvalue == "index" or charvalue == "index":
         return {}
 
-    x = []
-    y = []
+    global df
 
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    if df is not None:
-
-        df = df.reset_index()
-        x = df['{}'.format(xvalue)]
-        y = df['{}'.format(yvalue)]
-
+    if (df is not None):
+        dataframe = df.reset_index()
+        x = dataframe['{}'.format(xvalue)]
+        y = dataframe['{}'.format(yvalue)]
+    
         fig = px.scatter(
             df, x=x, y=y, color=charvalue, hover_data=df
         )
@@ -223,22 +226,22 @@ def update_subgraph(contents, filename, dims):
 @app.callback(Output('output-data-upload', 'children'),
               [
                   Input('upload-data', 'contents'),
-                  Input('upload-data', 'filename')
+                  Input('upload-data', 'filename'),
+                  Input('dummy', 'children')
               ])
-def update_table(contents, filename):
+def update_table(contents, filename, dummy):
     """
     Makes a table from the uploaded data.
     :param contents: contents of the data
     :param filename: filename of the data
+    :param dummy: dummy html.P. Used to activate chained callbacks.
     :return: Table
     """
     table = html.Div()
-
     if contents:
         contents = contents[0]
         filename = filename[0]
-        df = parse_data(contents, filename)
-
+        global df
         table = html.Div([
             html.H5(filename),
             dash_table.DataTable(
@@ -260,7 +263,6 @@ def update_table(contents, filename):
 def parse_data(contents, filename):
     """
     Parses the data in a pandas dataframe.
-    TODO: Make the dataframe global accessible.
     :param contents: contents of the data
     :param filename: filename of the data
     :return: Dataframe
@@ -274,21 +276,22 @@ def parse_data(contents, filename):
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV or TXT file
-            df = pd.read_csv(
+            # global df
+            dataframe = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
+            dataframe = pd.read_excel(io.BytesIO(decoded))
         elif 'txt' or 'tsv' in filename:
             # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
+            dataframe = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')), delimiter = r'\s+')
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
-    return df
+    return dataframe
 
 
 if __name__ == '__main__':
