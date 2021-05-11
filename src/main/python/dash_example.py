@@ -11,6 +11,7 @@ import dash_table
 import pandas as pd
 
 df = pd.DataFrame({})
+all_dims = df.columns
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -73,22 +74,22 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='select-dimensions',
             placeholder='Select ...',
-            multi=True
+            options=[{"label": x, "value": x} for x in all_dims],
+            # multi=True
         ),
         dcc.Graph(id='Mygraph'),
-        html.Div([
-            dcc.Graph(id='Subgraph')
-        ], id='output-select-data'),
+        dcc.Graph(id='Subgraph'),
         html.Div(id='output-data-upload')],
         id='t-sne', style={'display': 'block'}),
-        html.P(id='dummy')
+    html.P(id='dummy')
 ])
 
+
 @app.callback(Output('dummy', 'children'),
-                [
-                    Input('upload-data', 'contents'),
-                    Input('upload-data', 'filename')
-                ])
+              [
+                  Input('upload-data', 'contents'),
+                  Input('upload-data', 'filename')
+              ])
 def update_dataframe(contents, filename):
     """
     Updates the dataframe when a file is loaded in.
@@ -101,6 +102,9 @@ def update_dataframe(contents, filename):
         filename = filename[0]
         global df
         df = parse_data(contents, filename)
+        global all_dims
+        all_dims = df.columns
+
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -124,10 +128,11 @@ def show_hide_element(visibility_state):
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
                Output('select-characteristics', 'options'),
-               Output('select-dimensions', 'options')],
-            [
-                Input('dummy', 'children')
-            ])
+               # Output('select-dimensions', 'options')
+               ],
+              [
+                  Input('dummy', 'children')
+              ])
 def set_options_variable(dummy):
     """
     loads in possible parameters for the x and y-axis from the data.
@@ -137,21 +142,22 @@ def set_options_variable(dummy):
     global df
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns]
+        {'label': i, 'value': i} for i in df.columns],
+        # [{'label': i, 'value': i} for i in df.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
                Output('select-characteristics', 'value'),
-               Output('select-dimensions', 'value')],
+               # Output('select-dimensions', 'value')
+               ],
               [
                   Input('select-variable-x', 'options'),
                   Input('select-variable-y', 'options'),
                   Input('select-characteristics', 'options'),
-                  Input('select-dimensions', 'options')
+                  # Input('select-dimensions', 'options')
               ])
-def set_variables(options_x, options_y, options_char, dims):
+def set_variables(options_x, options_y, options_char):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
@@ -160,10 +166,10 @@ def set_variables(options_x, options_y, options_char, dims):
     :return: The choosen x-axis and y-axis and characteristic
     """
     if (options_y is None or options_x is None or options_char is None):
-        return None, None, None, None
+        return None, None, None,
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
-        return None, None, None, None
-    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], dims[0]['value']
+        return None, None, None,
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'],
 
 
 @app.callback(Output('Mygraph', 'figure'), [
@@ -193,7 +199,7 @@ def update_graph(xvalue, yvalue, charvalue):
         dataframe = df.reset_index()
         x = dataframe['{}'.format(xvalue)]
         y = dataframe['{}'.format(yvalue)]
-    
+
         fig = px.scatter(
             dataframe, x=x, y=y, color=charvalue, hover_data=dataframe
         )
@@ -202,24 +208,24 @@ def update_graph(xvalue, yvalue, charvalue):
     else:
         return {}
 
-# @app.callback(Output('Subgraph', 'figure'),
-#               [
-#                Input('select-dimensions', 'value')]
-#               )
-# def update_subgraph(dims):
-#     global df
-#
-#     if df is not None:
-#
-#         dataframe = df.reset_index()
-#
-#         fig = px.scatter_matrix(
-#             dataframe, dimensions=dims
-#         )
-#
-#         return fig
-#     else:
-#         return {}
+
+@app.callback(Output('Subgraph', 'figure'),
+              [Input('select-dimensions', 'value')])
+def update_subgraph(dims):
+    global df
+
+    if df is not None:
+
+        dataframe = df.reset_index()
+
+        fig = px.scatter_matrix(
+            dataframe, dimensions=dims
+        )
+
+        return fig
+    else:
+        return {}
+
 
 @app.callback(Output('output-data-upload', 'children'),
               [
@@ -283,7 +289,7 @@ def parse_data(contents, filename):
         elif 'txt' or 'tsv' in filename:
             # Assume that the user upl, delimiter = r'\s+'oaded an excel file
             dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter = r'\s+')
+                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
     except Exception as e:
         print(e)
         return html.Div([
