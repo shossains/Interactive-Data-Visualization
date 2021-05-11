@@ -77,6 +77,12 @@ app.layout = html.Div([
                     Input('upload-data', 'filename')
                 ])
 def update_dataframe(contents, filename):
+    """
+    Updates the dataframe when a file is loaded in.
+    :param contents: the contents of the file
+    :param filename: the name of the file
+    :return: dummy html.P, which is used to activate chained callbacks.
+    """
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -138,8 +144,6 @@ def set_variables(options_x, options_y):
     return options_x[0]['value'], options_y[0]['value']
 
 @app.callback(Output('Mygraph', 'figure'), [
-# Input('upload-data', 'contents'),
-# Input('upload-data', 'filename'),
 Input('select-variable-x', 'value'),
 Input('select-variable-y', 'value'),
 ])
@@ -149,29 +153,19 @@ def update_graph(xvalue, yvalue):
     TODO: Make different graphic plots possible.
     TODO: Make multiple y-axis in the same graph possible.
     TODO: Make separate graphic plots possible
-    :param contents: contents of the data
-    :param filename: filename of the data
     :param xvalue: Value of the x-axis
     :param yvalue: value of the y-axis
-    :return:  graph
+    :return: graph
     """
     if (xvalue is None or yvalue is None):
         return {}
     if (xvalue == "index" or yvalue == "index"):
         return {}
 
-    x = []
-    y = []
-
-    # if contents:
-    #     contents = contents[0]
-    #     filename = filename[0]
     global df
 
     if (df is not None):
         dataframe = df.reset_index()
-
-        # df = df.reset_index()
         x = dataframe['{}'.format(xvalue)]
         y = dataframe['{}'.format(yvalue)]
 
@@ -201,6 +195,7 @@ def update_table(contents, filename, dummy):
     Makes a table from the uploaded data.
     :param contents: contents of the data
     :param filename: filename of the data
+    :param dummy: dummy html.P. Used to activate chained callbacks.
     :return: Table
     """
     table = html.Div()
@@ -228,7 +223,6 @@ def update_table(contents, filename, dummy):
 def parse_data(contents, filename):
     """
     Parses the data in a pandas dataframe.
-    TODO: Make the dataframe global accessible.
     :param contents: contents of the data
     :param filename: filename of the data
     :return: Dataframe
