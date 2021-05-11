@@ -2,7 +2,6 @@ import base64
 import io
 import plotly.graph_objs as go
 import plotly.express as px
-import time
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -68,8 +67,16 @@ app.layout = html.Div([
             placeholder='Select ...',
             # multi=True
         ),
-        html.Div(id='output-select-data'),
+        html.H4("Select Dimensions"),
+        dcc.Dropdown(
+            id='select-dimensions',
+            placeholder='Select ...',
+            multi=True
+        ),
         dcc.Graph(id='Mygraph'),
+        html.Div([
+            dcc.Graph(id='Subgraph')
+        ], id='output-select-data'),
         html.Div(id='output-data-upload')],
         id='t-sne', style={'display': 'block'}),
 ])
@@ -96,7 +103,8 @@ def show_hide_element(visibility_state):
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
-               Output('select-characteristics', 'options')],
+               Output('select-characteristics', 'options'),
+               Output('select-dimensions', 'options')],
               [
                   Input('upload-data', 'contents'),
                   Input('upload-data', 'filename'),
@@ -117,18 +125,20 @@ def set_options_variable(contents, filename):
             df = parse_data(contents, filename)
             df = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns]
+        {'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
-               Output('select-characteristics', 'value')],
+               Output('select-characteristics', 'value'),
+               Output('select-dimensions', 'value')],
               [
                   Input('select-variable-x', 'options'),
                   Input('select-variable-y', 'options'),
-                  Input('select-characteristics', 'options')
+                  Input('select-characteristics', 'options'),
+                  Input('select-dimensions', 'options')
               ])
-def set_variables(options_x, options_y, options_char):
+def set_variables(options_x, options_y, options_char, dims):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
@@ -137,8 +147,8 @@ def set_variables(options_x, options_y, options_char):
     :return: The choosen x-axis and y-axis and characteristic
     """
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
-        return None, None, None
-    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
+        return None, None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], dims[0]['value']
 
 
 @app.callback(Output('Mygraph', 'figure'), [
@@ -146,7 +156,7 @@ def set_variables(options_x, options_y, options_char):
     Input('upload-data', 'filename'),
     Input('select-variable-x', 'value'),
     Input('select-variable-y', 'value'),
-    Input('select-characteristics', 'value')
+    Input('select-characteristics', 'value'),
 ])
 def update_graph(contents, filename, xvalue, yvalue, charvalue):
     """
@@ -182,6 +192,7 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
         fig = px.scatter(
             df, x=x, y=y, color=charvalue, hover_data=df
         )
+
         return fig
     else:
         return {}
