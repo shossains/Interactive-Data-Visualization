@@ -197,6 +197,28 @@ def update_graph(contents, filename, xvalue, yvalue, charvalue):
     else:
         return {}
 
+@app.callback(Output('Subgraph', 'figure'),
+              [Input('upload-data', 'contents'),
+               Input('upload-data', 'filename'),
+               Input('select-dimensions', 'value')]
+              )
+
+def update_subgraph(contents, filename, dims):
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+    df = parse_data(contents, filename)
+    if df is not None:
+
+        df = df.reset_index()
+
+        fig = px.scatter_matrix(
+            df, dimensions=dims
+        )
+
+        return fig
+    else:
+        return {}
 
 @app.callback(Output('output-data-upload', 'children'),
               [
