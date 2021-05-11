@@ -123,7 +123,8 @@ def show_hide_element(visibility_state):
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
-               Output('select-characteristics', 'options')],
+               Output('select-characteristics', 'options'),
+               Output('select-dimensions', 'options')],
             [
                 Input('dummy', 'children')
             ])
@@ -136,6 +137,7 @@ def set_options_variable(dummy):
     global df
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
+        {'label': i, 'value': i} for i in df.columns], [
         {'label': i, 'value': i} for i in df.columns]
 
 
@@ -158,7 +160,7 @@ def set_variables(options_x, options_y, options_char, dims):
     :return: The choosen x-axis and y-axis and characteristic
     """
     if (options_y is None or options_x is None or options_char is None):
-        return None, None, None
+        return None, None, None, None
     if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
         return None, None, None, None
     return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], dims[0]['value']
@@ -200,28 +202,24 @@ def update_graph(xvalue, yvalue, charvalue):
     else:
         return {}
 
-@app.callback(Output('Subgraph', 'figure'),
-              [Input('upload-data', 'contents'),
-               Input('upload-data', 'filename'),
-               Input('select-dimensions', 'value')]
-              )
-
-def update_subgraph(contents, filename, dims):
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-    df = parse_data(contents, filename)
-    if df is not None:
-
-        df = df.reset_index()
-
-        fig = px.scatter_matrix(
-            df, dimensions=dims
-        )
-
-        return fig
-    else:
-        return {}
+# @app.callback(Output('Subgraph', 'figure'),
+#               [
+#                Input('select-dimensions', 'value')]
+#               )
+# def update_subgraph(dims):
+#     global df
+#
+#     if df is not None:
+#
+#         dataframe = df.reset_index()
+#
+#         fig = px.scatter_matrix(
+#             dataframe, dimensions=dims
+#         )
+#
+#         return fig
+#     else:
+#         return {}
 
 @app.callback(Output('output-data-upload', 'children'),
               [
