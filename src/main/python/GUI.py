@@ -10,6 +10,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import pandas as pd
+import dash_oop_components
+
+from src.main.python.Dataframe import Dataframe
 
 df = pd.DataFrame({})
 
@@ -25,6 +28,7 @@ colors = {
 }
 
 app.layout = html.Div([
+    #Upload bar
     dcc.Upload(
         id='upload-data',
         children=html.Div([
@@ -44,50 +48,12 @@ app.layout = html.Div([
         # Allow multiple files to be uploaded
         multiple=True
     ),
-    html.H4("Select machine learning tool"),
-    dcc.Dropdown(
-        id='select-tool',
-        options=[
-            {'label': 'Choose ML method', 'value': 'index'},
-            {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-            {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-        ],
-        value='index'
-    ),
-    # When T-sne chosen this one will be visible
-    html.Div([
-        html.H4("Select variable x"),
-        dcc.Dropdown(
-            id='select-variable-x',
-            placeholder='Select ...'),
-        html.H4("Select variable y"),
-        dcc.Dropdown(
-            id='select-variable-y',
-            placeholder='Select ...'),
-        html.H4("Select Characteristics"),
-        dcc.Dropdown(
-            id='select-characteristics',
-            placeholder='Select ...',
-            # multi=True
-        ),
-        html.H4("Select plot method"),
-        dcc.Dropdown(id='select-plot-options',
-                     options=[
-                         {'label': 'Area', 'value': 'area'},
-                         {'label': 'Bar', 'value': 'bar'},
-                         {'label': 'Box', 'value': 'box'},
-                         {'label': 'Density', 'value': 'density'},
-                         {'label': 'Histogram', 'value': 'histogram'},
-                         {'label': 'Line', 'value': 'line'},
-                         {'label': 'Scatter', 'value': 'scatter'},
-                     ], value='scatter'
-                     ),
-        html.Div(id='output-select-data'),
-        dcc.Graph(id='Mygraph')],
-        id='t-sne', style={'display': 'block'}),
-    dcc.Checklist(id='show-table', options=[
-        {'label': 'Show table', 'value': 'show-table'}]),
 
+    #Machine learning tool selection
+    html.H4("Select machine learning tool"),
+
+
+    #Data table
     html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
 ])
@@ -108,8 +74,11 @@ def update_dataframe(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
+        if contents is None:
+            return
+
         global df
-        df = parse_data(contents, filename)
+        df = Dataframe(contents, filename).data
 
 
 @app.callback(
@@ -118,8 +87,6 @@ def update_dataframe(contents, filename):
 def show_hide_element(visibility_state):
     """
     Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
-    TODO: Add more return states for more tools.
-    Joost knows this^
     :param visibility_state:
     :return: visibility style
     """
@@ -182,7 +149,6 @@ def set_variables(options_x, options_y, options_char):
 def update_graph(xvalue, yvalue, charvalue, plotvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
-    TODO: Make different graphic plots possible.
     TODO: Make multiple y-axis in the same graph possible.
     TODO: Make separate graphic plots possible
     :param xvalue: Value of the x-axis
@@ -288,41 +254,6 @@ def update_table(contents, filename, dummy, showtable):
         return table
     else:
         return html.Div()
-
-
-def parse_data(contents, filename):
-    """
-    Parses the data in a pandas dataframe.
-    :param contents: contents of the data
-    :param filename: filename of the data
-    :return: Dataframe
-    """
-    if contents is None:
-        return
-
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV or TXT file
-            # global df
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            dataframe = pd.read_excel(io.BytesIO(decoded))
-        elif 'txt' or 'tsv' in filename:
-            # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
-
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
-    return dataframe
 
 
 if __name__ == '__main__':
