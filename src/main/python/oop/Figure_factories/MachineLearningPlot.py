@@ -7,7 +7,8 @@ class MachineLearningPlot(DashFigureFactory):
     def __init__(self):
         super().__init__()
 
-    def plot_scatter(self, df, xvalue, yvalue, charvalue, plotvalue):
+    @staticmethod
+    def plot_methods(df, xvalue, yvalue, charvalue, plotvalue):
 
         if xvalue is None or yvalue is None or charvalue is None:
             return {}

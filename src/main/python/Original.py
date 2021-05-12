@@ -1,18 +1,14 @@
-import base64
-import io
 import plotly.graph_objs as go
 import plotly.express as px
-import time
 
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import pandas as pd
-import dash_oop_components
 
-from src.main.python.Dataframe import Dataframe
+from src.main.python.oop.Dataframe import Dataframe
 
 df = pd.DataFrame({})
 

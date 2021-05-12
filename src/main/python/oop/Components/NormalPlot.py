@@ -8,7 +8,7 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 from src.main.python.oop.Figure_factories import MachineLearningPlot
 
 
-class ExampleML1(DashComponent):
+class NormalPlot(DashComponent):
     def __init__(self, plot_factory, df, title="Example ML"):
         super().__init__(title=title)
         self.plot_factory = MachineLearningPlot.MachineLearningPlot()
@@ -21,7 +21,7 @@ class ExampleML1(DashComponent):
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-variable-x-ml1',
                     placeholder='Select ...'),
-                html.H4("Select variable y-ml1"),
+                html.H4("Select variable y"),
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-variable-y-ml1',
                     placeholder='Select ...'),
@@ -59,7 +59,7 @@ class ExampleML1(DashComponent):
             Input('select-plot-options-ml1', 'value'),
         ])
         def update_plot(xvalue, yvalue, charvalue, plotvalue):
-            return self.plot_factory.plot_scatter(self.df, xvalue, yvalue, charvalue, plotvalue)
+            return self.plot_factory.plot_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
 
         @app.callback([Output('select-variable-x-ml1', 'options'),
                        Output('select-variable-y-ml1', 'options'),
@@ -77,3 +77,6 @@ class ExampleML1(DashComponent):
             return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
                                                                            dataframe.columns], [
                        {'label': i, 'value': i} for i in dataframe.columns]
+
+    def give_data(self, data):
+        self.df = data

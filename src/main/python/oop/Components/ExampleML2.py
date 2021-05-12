@@ -8,6 +8,7 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 from src.main.python.oop.Figure_factories import MachineLearningPlot
 
 
+
 class ExampleML2(DashComponent):
     def __init__(self, plot_factory, df, title="Example ML"):
         super().__init__(title=title)
@@ -60,7 +61,7 @@ class ExampleML2(DashComponent):
             Input('select-plot-options-ml2', 'value'),
         ])
         def update_plot(xvalue, yvalue, charvalue, plotvalue):
-            return self.plot_factory.plot_scatter(self.df, xvalue, yvalue, charvalue, plotvalue)
+            return self.plot_factory.plot_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
 
         @app.callback([Output('select-variable-x-ml2', 'options'),
                        Output('select-variable-y-ml2', 'options'),
@@ -78,3 +79,6 @@ class ExampleML2(DashComponent):
             return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
                                                                            dataframe.columns], [
                        {'label': i, 'value': i} for i in dataframe.columns]
+
+    def give_data(self, data):
+            self.df = data
