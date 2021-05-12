@@ -11,8 +11,6 @@ import dash_table
 import pandas as pd
 
 df = pd.DataFrame({})
-all_dims = df.columns
-print(all_dims)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -75,8 +73,7 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='select-dimensions',
             placeholder='Select ...',
-            options=[{"label": x, "value": x} for x in all_dims],
-            # multi=True
+            multi=True
         ),
         dcc.Graph(id='Mygraph'),
         dcc.Graph(id='Subgraph'),
@@ -145,8 +142,7 @@ def set_options_variable(dummy):
     global df
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns], [{"label": x, "value": x} for x in all_dims]
-        # [{'label': i, 'value': i} for i in df.columns]
+        {'label': i, 'value': i} for i in df.columns], [{"label": i, "value": i} for i in df.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
@@ -213,8 +209,9 @@ def update_graph(xvalue, yvalue, charvalue):
 
 
 @app.callback(Output('Subgraph', 'figure'),
-              [Input('select-dimensions', 'value')])
-def update_subgraph(dims):
+              [Input('select-dimensions', 'value'),
+               Input('select-characteristics', 'value')])
+def update_subgraph(dims, charvalue):
     global df
 
     if df is not None:
@@ -222,7 +219,7 @@ def update_subgraph(dims):
         dataframe = df.reset_index()
 
         fig = px.scatter_matrix(
-            dataframe, dimensions=dims
+            dataframe, dimensions=dims, color=charvalue
         )
 
         return fig
