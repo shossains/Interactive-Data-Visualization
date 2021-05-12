@@ -81,15 +81,15 @@ app.layout = html.Div([
                          {'label': 'Scatter', 'value': 'scatter'},
                      ], value='scatter'
                      ),
-        html.Div(id='output-select-data'),
-        dcc.Graph(id='Mygraph')],
-        html.H4("Select Dimensions"),
+        html.H4("Select Dimensions Subgraph"),
         dcc.Dropdown(
             id='select-dimensions',
             placeholder='Select ...',
             multi=True
         ),
-        dcc.Graph(id='Subgraph'),
+        html.Div(id='output-select-data'),
+        dcc.Graph(id='Mygraph'),
+        dcc.Graph(id='Subgraph')],
         id='t-sne', style={'display': 'block'}),
     dcc.Checklist(id='show-table', options=[
         {'label': 'Show table', 'value': 'show-table'}]),
@@ -117,10 +117,8 @@ def update_dataframe(contents, filename):
         global df
         df = parse_data(contents, filename)
         global all_dims
-        print('arrived')
 
         all_dims = df.columns
-        print(all_dims)
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -157,8 +155,8 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-    return [{'label': i, 'value': i} for i in df.columns], [{'label': i, 'value': i} for i in df.columns], [
-        {'label': i, 'value': i} for i in df.columns], [{"label": i, "value": i} for i in df.columns]
+    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns], [
+        {'label': i, 'value': i} for i in dataframe.columns], [{"label": i, "value": i} for i in dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
