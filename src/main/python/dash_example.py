@@ -2,7 +2,6 @@ import base64
 import io
 import plotly.graph_objs as go
 import plotly.express as px
-import time
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -82,8 +81,15 @@ app.layout = html.Div([
                          {'label': 'Scatter', 'value': 'scatter'},
                      ], value='scatter'
                      ),
+        html.H4("Select Dimensions Subgraph"),
+        dcc.Dropdown(
+            id='select-dimensions',
+            placeholder='Select ...',
+            multi=True
+        ),
         html.Div(id='output-select-data'),
-        dcc.Graph(id='Mygraph')],
+        dcc.Graph(id='Mygraph'),
+        dcc.Graph(id='Subgraph')],
         id='t-sne', style={'display': 'block'}),
     dcc.Checklist(id='show-table', options=[
         {'label': 'Show table', 'value': 'show-table'}]),
@@ -110,7 +116,9 @@ def update_dataframe(contents, filename):
         filename = filename[0]
         global df
         df = parse_data(contents, filename)
+        global all_dims
 
+        all_dims = df.columns
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -133,7 +141,9 @@ def show_hide_element(visibility_state):
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
-               Output('select-characteristics', 'options')],
+               Output('select-characteristics', 'options'),
+               Output('select-dimensions', 'options')
+               ],
               [
                   Input('dummy', 'children')
               ])
@@ -145,20 +155,22 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                   dataframe.columns], [
-               {'label': i, 'value': i} for i in dataframe.columns]
+    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns], [
+        {'label': i, 'value': i} for i in dataframe.columns], [{"label": i, "value": i} for i in dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
-               Output('select-characteristics', 'value')],
+               Output('select-characteristics', 'value'),
+               Output('select-dimensions', 'value')
+               ],
               [
                   Input('select-variable-x', 'options'),
                   Input('select-variable-y', 'options'),
-                  Input('select-characteristics', 'options')
+                  Input('select-characteristics', 'options'),
+                  Input('select-dimensions', 'options')
               ])
-def set_variables(options_x, options_y, options_char):
+def set_variables(options_x, options_y, options_char, dims):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
@@ -166,11 +178,11 @@ def set_variables(options_x, options_y, options_char):
     :param options_char: All possible characteristic options
     :return: The choosen x-axis and y-axis and characteristic
     """
-    if (options_y is None or options_x is None or options_char is None):
-        return None, None, None
-    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
-        return None, None, None
-    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
+    if (options_y is None or options_x is None or options_char is None or dims is None):
+        return None, None, None, None
+    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
+        return None, None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
 
 @app.callback(Output('Mygraph', 'figure'), [
@@ -231,6 +243,36 @@ def update_graph(xvalue, yvalue, charvalue, plotvalue):
         return fig
     else:
         return {}
+
+@app.callback(Output('Subgraph', 'figure'),
+              [Input('select-dimensions', 'value'),
+               Input('select-characteristics', 'value')])
+def update_subgraph(dims, charvalue):
+    """
+    displays subgraphs when comparing labels to each other
+    :param dims: Multiple dimensions that are chosen
+    :param charvalue: value of the head characteristic
+    :return: graph
+    """
+    if dims is None:
+        return {}
+    if dims == "index":
+        return {}
+
+    global df
+
+    if df is not None:
+
+        dataframe = df.reset_index()
+
+        fig = px.scatter_matrix(
+            dataframe, dimensions=dims, color=charvalue
+        )
+
+        return fig
+    else:
+        return {}
+
 
 
 @app.callback(
