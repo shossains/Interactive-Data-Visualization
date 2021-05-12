@@ -244,11 +244,16 @@ def update_graph(xvalue, yvalue, charvalue, plotvalue):
     else:
         return {}
 
-
 @app.callback(Output('Subgraph', 'figure'),
               [Input('select-dimensions', 'value'),
                Input('select-characteristics', 'value')])
 def update_subgraph(dims, charvalue):
+    """
+    displays subgraphs when comparing labels to each other
+    :param dims: Multiple dimensions that are chosen
+    :param charvalue: value of the head characteristic
+    :return: graph
+    """
     if dims is None:
         return {}
     if dims == "index":
