@@ -89,7 +89,7 @@ app.layout = html.Div([
         id='t-sne', style={'display': 'block'}),
     dcc.Checklist(id='show-table', options=[
         {'label': 'Show table', 'value': 'show-table'}]),
-    html.Div(id='output-select-data'),
+    html.Pre(id='output-select-data'),
     html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy'),
 
@@ -327,35 +327,33 @@ def parse_data(contents, filename):
         ])
     return dataframe
 
-# Print selected data onto a JSON dump
+# Print selected data onto a DashTable
 @app.callback(
     Output('output-select-data', 'children'),
     Input('Mygraph', 'selectedData'))
 def display_selected_data(selectedData):
-    print(type(selectedData))
-    if type(selectedData) is dict:
-        print(dict(selectedData).get('points'))
-        if type(selectedData) == dict:
-            sdict = dict(selectedData)
-            dfe = pd.DataFrame.from_dict(sdict['points'])
-            print(dfe)
-            dfc = dfe['customdata']
-            dfd = dfe['x']
-            dff = dfe['y']
-            res = pd.concat([dfd, dff, dfc], axis=1)
-            print(res)
-            # pd.DataFrame.append(dfe.pop('customdata'), dfc)
-            table = html.Div([
-                html.H5("Currently selected data points" ),
-                dash_table.DataTable(
-                    data=dfc.to_dict('rows'),
-                    # data=sdict.get('points').get('customdata'),
-                    columns=[{'name': i, 'id': i} for i in df.columns]
-                )
-            ], id='selected-uploaded')
-        return table
-    else:
-        return html.Div([json.dumps(selectedData, indent=2)])
+    return json.dumps(selectedData, indent=2)
+    # print(type(selectedData))
+    # if type(selectedData) is dict:
+    #     if len(dict(selectedData).get('points')) != 0:
+    #         sdict = dict(selectedData)
+    #         dfe = pd.DataFrame.from_dict(sdict['points'])
+    #         CustomDataDataFrame = dfe['customdata']
+    #         CustomDataDataFrameFormatted = pd.DataFrame.from_records(CustomDataDataFrame)
+    #         XDataFrame = dfe['x']
+    #         YDataFrame = dfe['y']
+    #         FinalDataFrame = pd.concat([XDataFrame, YDataFrame, CustomDataDataFrameFormatted], axis=1)
+    #         print(FinalDataFrame)
+    #         table = html.Div([
+    #             html.H5("Currently selected data points" + " (" + str(FinalDataFrame.shape[0]) + ")"),
+    #             dash_table.DataTable(
+    #                 data=FinalDataFrame.to_dict('rows'),
+    #                 columns=[{'name': i, 'id': i} for i in FinalDataFrame.columns]
+    #             )
+    #         ], id='selected-uploaded')
+    #     return table
+    # else:
+    #     return html.Div([])
 
 
 if __name__ == '__main__':
