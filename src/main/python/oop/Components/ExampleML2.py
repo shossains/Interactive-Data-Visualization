@@ -5,14 +5,14 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
-from src.main.python.oop.Figure_factories import MachineLearningPlot
+from src.main.python.oop.Figure_factories import FigureFactories
 
 
 
 class ExampleML2(DashComponent):
     def __init__(self, plot_factory, df, title="Example ML"):
         super().__init__(title=title)
-        self.plot_factory = MachineLearningPlot.MachineLearningPlot()
+        self.plot_factory = FigureFactories.FigureFactories()
         self.df = df
 
     def layout(self, params=None):
@@ -48,8 +48,6 @@ class ExampleML2(DashComponent):
                 html.Div(id='output-select-data-ml2'),
                 dcc.Graph(id='Mygraph-ml2')],
                 id='t-sne', style={'display': 'block'}),
-            dcc.Checklist(id='show-table-ml2', options=[
-                {'label': 'Show table', 'value': 'show-table'}]),
         ], fluid=True)
         return page
 
