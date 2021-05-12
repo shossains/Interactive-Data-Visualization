@@ -69,16 +69,32 @@ app.layout = html.Div([
             placeholder='Select ...',
             # multi=True
         ),
+        html.H4("Select plot method"),
+        dcc.Dropdown(id='select-plot-options',
+                     options=[
+                         {'label': 'Area', 'value': 'area'},
+                         {'label': 'Bar', 'value': 'bar'},
+                         {'label': 'Box', 'value': 'box'},
+                         {'label': 'Density', 'value': 'density'},
+                         {'label': 'Histogram', 'value': 'histogram'},
+                         {'label': 'Line', 'value': 'line'},
+                         {'label': 'Scatter', 'value': 'scatter'},
+                     ], value='scatter'
+                     ),
+        html.Div(id='output-select-data'),
+        dcc.Graph(id='Mygraph')],
         html.H4("Select Dimensions"),
         dcc.Dropdown(
             id='select-dimensions',
             placeholder='Select ...',
             multi=True
         ),
-        dcc.Graph(id='Mygraph'),
         dcc.Graph(id='Subgraph'),
-        html.Div(id='output-data-upload')],
         id='t-sne', style={'display': 'block'}),
+    dcc.Checklist(id='show-table', options=[
+        {'label': 'Show table', 'value': 'show-table'}]),
+
+    html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
 ])
 
@@ -175,8 +191,9 @@ def set_variables(options_x, options_y, options_char, dims):
     Input('select-variable-x', 'value'),
     Input('select-variable-y', 'value'),
     Input('select-characteristics', 'value'),
+    Input('select-plot-options', 'value'),
 ])
-def update_graph(xvalue, yvalue, charvalue):
+def update_graph(xvalue, yvalue, charvalue, plotvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
     TODO: Make different graphic plots possible.
@@ -185,9 +202,10 @@ def update_graph(xvalue, yvalue, charvalue):
     :param xvalue: Value of the x-axis
     :param yvalue: value of the y-axis
     :param charvalue: value of characteristic
-    :return graph
+    :param plotvalue: Value of the plot selection e.g. scatter
+    :return:  graph
     """
-    if xvalue is None or yvalue is None:
+    if xvalue is None or yvalue is None or charvalue is None:
         return {}
     if xvalue == "index" or yvalue == "index" or charvalue == "index":
         return {}
@@ -199,9 +217,30 @@ def update_graph(xvalue, yvalue, charvalue):
         x = dataframe['{}'.format(xvalue)]
         y = dataframe['{}'.format(yvalue)]
 
-        fig = px.scatter(
-            dataframe, x=x, y=y, color=charvalue, hover_data=dataframe
-        )
+        fig = go.Figure()
+
+        if ('scatter' in plotvalue):
+            fig = px.scatter(
+                dataframe, x=x, y=y, color=charvalue, hover_data=df
+            )
+
+        if ('density' in plotvalue):
+            fig = px.density_contour(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('line' in plotvalue):
+            fig = px.line(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('histogram' in plotvalue):
+            fig = px.histogram(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('box' in plotvalue):
+            fig = px.box(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('bar' in plotvalue):
+            fig = px.bar(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+
+        if ('area' in plotvalue):
+            fig = px.area(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
         return fig
     else:
@@ -232,13 +271,32 @@ def update_subgraph(dims, charvalue):
         return {}
 
 
+
+@app.callback(
+    Output(component_id='output-data-upload', component_property='style'),
+    [Input(component_id='show-table', component_property='value')])
+def show_hide_table(visibility_state):
+    """
+    Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
+    TODO: Add more return states for more tools.
+    Joost knows this^
+    :param visibility_state:
+    :return: visibility style
+    """
+    if visibility_state == ['show-table']:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
+
 @app.callback(Output('output-data-upload', 'children'),
               [
                   Input('upload-data', 'contents'),
                   Input('upload-data', 'filename'),
-                  Input('dummy', 'children')
+                  Input('dummy', 'children'),
+                  Input('show-table', 'value')
               ])
-def update_table(contents, filename, dummy):
+def update_table(contents, filename, dummy, showtable):
     """
     Makes a table from the uploaded data.
     :param contents: contents of the data
@@ -246,27 +304,29 @@ def update_table(contents, filename, dummy):
     :param dummy: dummy html.P. Used to activate chained callbacks.
     :return: Table
     """
-    table = html.Div()
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        global df
-        table = html.Div([
-            html.H5(filename),
-            dash_table.DataTable(
-                data=df.to_dict('rows'),
-                columns=[{'name': i, 'id': i} for i in df.columns]
-            ),
-            html.Hr(),
-            html.Div('Raw Content'),
+    if showtable is not None:
+        table = html.Div()
+        if contents:
+            contents = contents[0]
+            filename = filename[0]
+            global df
+            table = html.Div([
+                html.H5(filename),
+                dash_table.DataTable(
+                    data=df.to_dict('rows'),
+                    columns=[{'name': i, 'id': i} for i in df.columns]
+                ),
+                html.Hr(),
+                html.Div('Raw Content'),
 
-            html.Pre(contents[0:200] + '...', style={
-                'whiteSpace': 'pre-wrap',
-                'wordBreak': 'break-all'
-            })
-        ])
-
-    return table
+                html.Pre(contents[0:200] + '...', style={
+                    'whiteSpace': 'pre-wrap',
+                    'wordBreak': 'break-all'
+                })
+            ], id='table-uploaded')
+        return table
+    else:
+        return html.Div()
 
 
 def parse_data(contents, filename):
@@ -295,6 +355,7 @@ def parse_data(contents, filename):
             # Assume that the user upl, delimiter = r'\s+'oaded an excel file
             dataframe = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
+
     except Exception as e:
         print(e)
         return html.Div([
