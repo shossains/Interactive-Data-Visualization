@@ -3,6 +3,7 @@
 *Datum: 11 mei 2021 - 09:30*
 
 <h4>Algmene Mededelingen</h4>
+
 - Heeft geen toegang tot brigthspace
 - Heeft nog niet gekeken naar het Project plan
 - Heeft het de hele week druk
