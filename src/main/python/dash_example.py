@@ -148,15 +148,15 @@ def set_options_variable(dummy):
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
                Output('select-characteristics', 'value'),
-               # Output('select-dimensions', 'value')
+               Output('select-dimensions', 'value')
                ],
               [
                   Input('select-variable-x', 'options'),
                   Input('select-variable-y', 'options'),
                   Input('select-characteristics', 'options'),
-                  # Input('select-dimensions', 'options')
+                  Input('select-dimensions', 'options')
               ])
-def set_variables(options_x, options_y, options_char):
+def set_variables(options_x, options_y, options_char, dims):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
@@ -164,11 +164,11 @@ def set_variables(options_x, options_y, options_char):
     :param options_char: All possible characteristic options
     :return: The choosen x-axis and y-axis and characteristic
     """
-    if (options_y is None or options_x is None or options_char is None):
-        return None, None, None,
-    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
-        return None, None, None,
-    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'],
+    if (options_y is None or options_x is None or options_char is None or dims is None):
+        return None, None, None, None
+    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
+        return None, None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
 
 @app.callback(Output('Mygraph', 'figure'), [
@@ -212,6 +212,11 @@ def update_graph(xvalue, yvalue, charvalue):
               [Input('select-dimensions', 'value'),
                Input('select-characteristics', 'value')])
 def update_subgraph(dims, charvalue):
+    if dims is None:
+        return {}
+    if dims == "index":
+        return {}
+
     global df
 
     if df is not None:
