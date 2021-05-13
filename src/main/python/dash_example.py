@@ -119,26 +119,24 @@ app.layout = html.Div([
             children=[html.Div(
                 dcc.Graph(
                     id='Mygraph',
-                    className="five columns"
+                    className="six columns"
                 ),
             )],
             type="circle"
         ),
-        html.Div(html.H1(" "),
-            className="one column"),
         dcc.Loading(
             id="loading-icon2",
             children=[html.Div(
                 dcc.Graph(
                     id='Subgraph',
-                    className="five columns"
+                    className="six columns"
                 ),
             )],
             type="circle"
         )],
         id='t-sne',
         style={'display': 'block'},
-        className="twelve columns"
+        className="row"
     ),
 
     html.Div([
@@ -153,7 +151,7 @@ app.layout = html.Div([
             id="loading-icon3",
             children=[html.Div(
                 id='output-data-upload',
-                className="eleven columns"
+                className="twelve columns"
             )],
             type="dot",
         ),
