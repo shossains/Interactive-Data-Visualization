@@ -125,11 +125,16 @@ app.layout = html.Div([
             type="circle"
         ),
 
-        dcc.Graph(
-            id='Subgraph',
-            className="five columns"
+        dcc.Loading(
+            id="loading-icon2",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Subgraph',
+                    className="five columns"
+                ),
+            )],
+            type="circle"
         )],
-
         id='t-sne',
         style={'display': 'block'},
         className="twelve columns"
