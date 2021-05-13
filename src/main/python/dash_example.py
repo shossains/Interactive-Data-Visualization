@@ -114,14 +114,22 @@ app.layout = html.Div([
     ], className="twelve columns"),
     html.Div([
         html.Div(id='output-select-data'),
-        dcc.Graph(
-            id='Mygraph',
-            className="five columns"
+        dcc.Loading(
+            id="loading-icon",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Mygraph',
+                    className="five columns"
+                )
+            )],
+            type="circle"
         ),
+
         dcc.Graph(
             id='Subgraph',
             className="five columns"
         )],
+
         id='t-sne',
         style={'display': 'block'},
         className="twelve columns"
