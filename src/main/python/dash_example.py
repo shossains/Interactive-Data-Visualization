@@ -145,13 +145,18 @@ app.layout = html.Div([
         dcc.Checklist(
             id='show-table',
             options=[{'label': 'Show table', 'value': 'show-table'}],
+            style={'height':'20px'},
             # labelStyle={'display': 'inline-block'}
             className="twelve columns"
         ),
-        html.Div(
-            id='output-data-upload',
-            className="eleven columns"
-        )
+        dcc.Loading(
+            id="loading-icon3",
+            children=[html.Div(
+                id='output-data-upload',
+                className="eleven columns"
+            )],
+            type="dot",
+        ),
     ], className="twelve columns"),
 
     # html.Div(id='output-data-upload', style={'display': 'none'}),
