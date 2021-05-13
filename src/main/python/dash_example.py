@@ -30,22 +30,24 @@ app.layout = html.Div([
             'Drag and Drop or ',
             html.A('Select Files')
         ]),
-        className="button",
-        # style={
-        #     'width': '100%',
-        #     'height': '60px',
-        #     'lineHeight': '60px',
-        #     'borderWidth': '1px',
-        #     'borderStyle': 'dashed',
-        #     'borderRadius': '5px',
-        #     'textAlign': 'center',
-        #     'margin': '10px'
-        # },
+        className="three columns",
+        style={
+            # 'width': '20%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            # 'margin': '10px',
+            'background-color': '#878787',
+            'color': 'white'
+        },
         # Allow multiple files to be uploaded
         multiple=True
     ),
     html.Div([
-        html.H4("Select machine learning tool"),
+        html.H5("Select machine learning tool"),
         dcc.Dropdown(
             id='select-tool',
             options=[
@@ -56,10 +58,10 @@ app.layout = html.Div([
             value='index',
             className="four columns"
         ),
-    ], className="row"),
+    ], className="twelve columns"),
     # When T-sne chosen this one will be visible
     html.Div([
-        html.H4("Main Graph"),
+        html.H5("Main Graph"),
         html.Div([
             html.H6("Select variable x"),
             dcc.Dropdown(
@@ -80,7 +82,7 @@ app.layout = html.Div([
                 id='select-characteristics',
                 placeholder='Select ...')
             # multi=True
-        ], className="three columns"),
+        ], className="two columns"),
 
         html.Div([
             html.H6("Select plot method"),
@@ -96,18 +98,18 @@ app.layout = html.Div([
                          ],
                          value='scatter')
         ], className="two columns"),
-    ], className="row"),
+    ], className="twelve columns"),
     html.Div([
-        html.H4("Subgraph"),
+        html.H5("Subgraph"),
         html.Div([
-            html.H6("Select Subgraph Features"),
+            html.H6("Select subgraph features"),
             dcc.Dropdown(
                 id='select-dimensions',
                 placeholder='Select ...',
                 multi=True
             )
         ], className="three columns")
-    ], className="row"),
+    ], className="twelve columns"),
     html.Div([
         html.Div(id='output-select-data'),
         dcc.Graph(
@@ -120,12 +122,13 @@ app.layout = html.Div([
         )],
         id='t-sne',
         style={'display': 'block'},
-        className="row"
+        className="twelve columns"
     ),
     dcc.Checklist(
         id='show-table',
         options=[{'label': 'Show table', 'value': 'show-table'}],
         # labelStyle={'display': 'inline-block'}
+        className="twelve columns"
     ),
 
     html.Div(id='output-data-upload', style={'display': 'none'}),
