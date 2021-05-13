@@ -30,69 +30,103 @@ app.layout = html.Div([
             'Drag and Drop or ',
             html.A('Select Files')
         ]),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
+        className="button",
+        # style={
+        #     'width': '100%',
+        #     'height': '60px',
+        #     'lineHeight': '60px',
+        #     'borderWidth': '1px',
+        #     'borderStyle': 'dashed',
+        #     'borderRadius': '5px',
+        #     'textAlign': 'center',
+        #     'margin': '10px'
+        # },
         # Allow multiple files to be uploaded
         multiple=True
     ),
-    html.H4("Select machine learning tool"),
-    dcc.Dropdown(
-        id='select-tool',
-        options=[
-            {'label': 'Choose ML method', 'value': 'index'},
-            {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-            {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-        ],
-        value='index'
-    ),
+    html.Div([
+        html.H4("Select machine learning tool"),
+        dcc.Dropdown(
+            id='select-tool',
+            options=[
+                {'label': 'Choose ML method', 'value': 'index'},
+                {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+                {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+            ],
+            value='index',
+            className="four columns"
+        ),
+    ], className="row"),
     # When T-sne chosen this one will be visible
     html.Div([
-        html.H4("Select variable x"),
-        dcc.Dropdown(
-            id='select-variable-x',
-            placeholder='Select ...'),
-        html.H4("Select variable y"),
-        dcc.Dropdown(
-            id='select-variable-y',
-            placeholder='Select ...'),
-        html.H4("Select Characteristics"),
-        dcc.Dropdown(
-            id='select-characteristics',
-            placeholder='Select ...',
+        html.H4("Main Graph"),
+        html.Div([
+            html.H6("Select variable x"),
+            dcc.Dropdown(
+                id='select-variable-x',
+                placeholder='Select ...')
+        ], className="three columns"),
+
+        html.Div([
+            html.H6("Select variable y"),
+            dcc.Dropdown(
+                id='select-variable-y',
+                placeholder='Select ...')
+        ], className="three columns"),
+
+        html.Div([
+            html.H6("Select Characteristics"),
+            dcc.Dropdown(
+                id='select-characteristics',
+                placeholder='Select ...')
             # multi=True
-        ),
-        html.H4("Select plot method"),
-        dcc.Dropdown(id='select-plot-options',
-                     options=[
-                         {'label': 'Area', 'value': 'area'},
-                         {'label': 'Bar', 'value': 'bar'},
-                         {'label': 'Box', 'value': 'box'},
-                         {'label': 'Density', 'value': 'density'},
-                         {'label': 'Histogram', 'value': 'histogram'},
-                         {'label': 'Line', 'value': 'line'},
-                         {'label': 'Scatter', 'value': 'scatter'},
-                     ], value='scatter'
-                     ),
-        html.H4("Select Dimensions Subgraph"),
-        dcc.Dropdown(
-            id='select-dimensions',
-            placeholder='Select ...',
-            multi=True
-        ),
+        ], className="three columns"),
+
+        html.Div([
+            html.H6("Select plot method"),
+            dcc.Dropdown(id='select-plot-options',
+                         options=[
+                             {'label': 'Area', 'value': 'area'},
+                             {'label': 'Bar', 'value': 'bar'},
+                             {'label': 'Box', 'value': 'box'},
+                             {'label': 'Density', 'value': 'density'},
+                             {'label': 'Histogram', 'value': 'histogram'},
+                             {'label': 'Line', 'value': 'line'},
+                             {'label': 'Scatter', 'value': 'scatter'},
+                         ],
+                         value='scatter')
+        ], className="three columns"),
+    ], className="row"),
+    html.Div([
+        html.H4("Subgraph"),
+        html.Div([
+            html.H6("Select Dimensions Subgraph"),
+            dcc.Dropdown(
+                id='select-dimensions',
+                placeholder='Select ...',
+                multi=True
+            )
+        ], className="three columns")
+    ], className="row"),
+    html.Div([
         html.Div(id='output-select-data'),
-        dcc.Graph(id='Mygraph'),
-        dcc.Graph(id='Subgraph')],
-        id='t-sne', style={'display': 'block'}),
-    dcc.Checklist(id='show-table', options=[
-        {'label': 'Show table', 'value': 'show-table'}]),
+        dcc.Graph(
+            id='Mygraph',
+            className="five columns"
+        ),
+        dcc.Graph(
+            id='Subgraph',
+            className="five columns"
+        )],
+        id='t-sne',
+        style={'display': 'block'},
+        className="row"
+    ),
+    dcc.Checklist(
+        id='show-table',
+        options=[{'label': 'Show table', 'value': 'show-table'}],
+        # labelStyle={'display': 'inline-block'}
+    ),
 
     html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
