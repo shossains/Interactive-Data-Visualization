@@ -75,7 +75,7 @@ app.layout = html.Div([
         ], className="three columns"),
 
         html.Div([
-            html.H6("Select Characteristics"),
+            html.H6("Color based on"),
             dcc.Dropdown(
                 id='select-characteristics',
                 placeholder='Select ...')
@@ -95,12 +95,12 @@ app.layout = html.Div([
                              {'label': 'Scatter', 'value': 'scatter'},
                          ],
                          value='scatter')
-        ], className="three columns"),
+        ], className="two columns"),
     ], className="row"),
     html.Div([
         html.H4("Subgraph"),
         html.Div([
-            html.H6("Select Dimensions Subgraph"),
+            html.H6("Select Subgraph Features"),
             dcc.Dropdown(
                 id='select-dimensions',
                 placeholder='Select ...',
