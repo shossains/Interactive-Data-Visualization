@@ -24,28 +24,30 @@ colors = {
 }
 
 app.layout = html.Div([
-    dcc.Upload(
-        id='upload-data',
-        children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
-        ]),
-        className="three columns",
-        style={
-            # 'width': '20%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            # 'margin': '10px',
-            'background-color': '#878787',
-            'color': 'white'
-        },
-        # Allow multiple files to be uploaded
-        multiple=True
-    ),
+    html.Div([
+        dcc.Upload(
+            id='upload-data',
+            children=html.Div([
+                'Drag and Drop or ',
+                html.A('Select Files')
+            ]),
+            className="three columns",
+            style={
+                # 'width': '20%',
+                'height': '60px',
+                'lineHeight': '60px',
+                'borderWidth': '1px',
+                'borderStyle': 'dashed',
+                'borderRadius': '10px',
+                'textAlign': 'center',
+                # 'margin': '10px',
+                'background-color': '#878787',
+                'color': 'white'
+            },
+            # Allow multiple files to be uploaded
+            multiple=True
+        ),
+    ], className="twelve columns"),
     html.Div([
         html.H5("Select machine learning tool"),
         dcc.Dropdown(
