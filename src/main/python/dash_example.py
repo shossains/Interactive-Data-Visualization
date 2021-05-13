@@ -111,7 +111,7 @@ app.layout = html.Div([
                 multi=True
             )
         ], className="three columns")
-    ], className="twelve columns"),
+    ], className="row"),
     html.Div([
         html.Div(id='output-select-data'),
         dcc.Loading(
@@ -120,11 +120,12 @@ app.layout = html.Div([
                 dcc.Graph(
                     id='Mygraph',
                     className="five columns"
-                )
+                ),
             )],
             type="circle"
         ),
-
+        html.Div(html.H1(" "),
+            className="one column"),
         dcc.Loading(
             id="loading-icon2",
             children=[html.Div(
@@ -139,14 +140,21 @@ app.layout = html.Div([
         style={'display': 'block'},
         className="twelve columns"
     ),
-    dcc.Checklist(
-        id='show-table',
-        options=[{'label': 'Show table', 'value': 'show-table'}],
-        # labelStyle={'display': 'inline-block'}
-        className="twelve columns"
-    ),
 
-    html.Div(id='output-data-upload', style={'display': 'none'}),
+    html.Div([
+        dcc.Checklist(
+            id='show-table',
+            options=[{'label': 'Show table', 'value': 'show-table'}],
+            # labelStyle={'display': 'inline-block'}
+            className="twelve columns"
+        ),
+        html.Div(
+            id='output-data-upload',
+            className="eleven columns"
+        )
+    ], className="twelve columns"),
+
+    # html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
 ])
 
