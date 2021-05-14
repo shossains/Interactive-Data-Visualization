@@ -16,46 +16,57 @@ class NormalPlot(DashComponent):
 
     def layout(self, params=None):
         page = dbc.Container([
-            html.Div([
-                html.H5("Main Graph"),
-                html.Div([
-                    html.H6("Select variable x"),
-                    self.querystring(params)(dcc.Dropdown)(
-                        id='select-variable-x-normal-plot',
-                        placeholder='Select ...')
-                ], className="three columns"),
+            dbc.Row(html.H5("Main Graph")),
+            dbc.Row([
 
-                html.Div([
-                    html.H6("Select variable y"),
-                    self.querystring(params)(dcc.Dropdown)(
-                        id='select-variable-y-normal-plot',
-                        placeholder='Select ...')
-                ], className="three columns"),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Select variable x"),
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='select-variable-x-normal-plot',
+                            placeholder='Select ...')
+                    ])
+                ),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Select variable y"),
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='select-variable-y-normal-plot',
+                            placeholder='Select ...')
+                    ])
+                ),
 
-                html.Div([
-                    html.H6("Color based on"),
-                    self.querystring(params)(dcc.Dropdown)(
-                        id='select-characteristics-normal-plot',
-                        placeholder='Select ...')
-                    # multi=True
-                ], className="two columns"),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Color based on"),
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='select-characteristics-normal-plot',
+                            placeholder='Select ...')
+                        # multi=True
+                    ])
+                ),
 
-                html.Div([
-                    html.H6("Select plot method"),
-                    self.querystring(params)(dcc.Dropdown)(id='select-plot-options-normal-plot',
-                                                           options=[
-                                                               {'label': 'Area', 'value': 'area'},
-                                                               {'label': 'Bar', 'value': 'bar'},
-                                                               {'label': 'Box', 'value': 'box'},
-                                                               {'label': 'Density', 'value': 'density'},
-                                                               {'label': 'Histogram', 'value': 'histogram'},
-                                                               {'label': 'Line', 'value': 'line'},
-                                                               {'label': 'Scatter', 'value': 'scatter'},
-                                                           ],
-                                                           value='scatter')
-                ], className="two columns"),
-            ], className="twelve columns"),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Select plot method"),
+                        self.querystring(params)(dcc.Dropdown)(id='select-plot-options-normal-plot',
+                                                               options=[
+                                                                   {'label': 'Area', 'value': 'area'},
+                                                                   {'label': 'Bar', 'value': 'bar'},
+                                                                   {'label': 'Box', 'value': 'box'},
+                                                                   {'label': 'Density', 'value': 'density'},
+                                                                   {'label': 'Histogram', 'value': 'histogram'},
+                                                                   {'label': 'Line', 'value': 'line'},
+                                                                   {'label': 'Scatter', 'value': 'scatter'},
+                                                               ],
+                                                               value='scatter')
+                    ])
 
+                )
+
+
+
+            ]),
             html.Div([
                 html.H5("Subgraph"),
                 html.Div([
@@ -71,12 +82,12 @@ class NormalPlot(DashComponent):
                 html.Div(id='output-select-data-normal-plot'),
                 dcc.Loading(
                     id="loading-icon-normal-plot",
-                    children=[html.Div(
+                    children=[html.Div([
                         dcc.Graph(
                             id='Mygraph-normal-plot',
                             className="six columns"
                         ),
-                    )],
+                    ], className="six columns")],
                     type="circle"
                 ),
                 dcc.Loading(
@@ -92,7 +103,7 @@ class NormalPlot(DashComponent):
                 id='normal-plot',
                 style={'display': 'block'},
                 className="row"
-            )])
+            )], className="twelve columns")
         return page
 
     def component_callbacks(self, app):
