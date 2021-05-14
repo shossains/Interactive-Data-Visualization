@@ -25,13 +25,10 @@ class Table(DashComponent):
             html.Div(id='output-data-upload'),
             dcc.Loading(
                 id="loading-icon3",
-                children=[html.Div(
-                    id='output-data-upload',
-                    className="twelve columns"
-                )],
+                children=[html.Div(id='output-data-upload')],
                 type="dot",
             )
-            ])
+        ])
 
     def component_callbacks(self, app):
         @app.callback(
