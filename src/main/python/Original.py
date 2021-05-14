@@ -1,14 +1,14 @@
-import base64
-import io
 import plotly.graph_objs as go
 import plotly.express as px
 
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import pandas as pd
+
+from src.main.python.oop.Dataframe import Dataframe
 
 df = pd.DataFrame({})
 
@@ -143,7 +143,7 @@ app.layout = html.Div([
         dcc.Checklist(
             id='show-table',
             options=[{'label': 'Show table', 'value': 'show-table'}],
-            style={'height':'20px'},
+            style={'height': '20px'},
             # labelStyle={'display': 'inline-block'}
             className="twelve columns"
         ),
@@ -177,11 +177,14 @@ def update_dataframe(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
-        global df
-        df = parse_data(contents, filename)
-        global all_dims
+        if contents is None:
+            return
 
+        global df
+        df = Dataframe(contents, filename).data
+        global all_dims
         all_dims = df.columns
+
 
 @app.callback(
     Output(component_id='t-sne', component_property='style'),
@@ -189,8 +192,6 @@ def update_dataframe(contents, filename):
 def show_hide_element(visibility_state):
     """
     Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
-    TODO: Add more return states for more tools.
-    Joost knows this^
     :param visibility_state:
     :return: visibility style
     """
@@ -218,8 +219,10 @@ def set_options_variable(dummy):
     """
     global df
     dataframe = df.reset_index()
-    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in dataframe.columns], [
-        {'label': i, 'value': i} for i in dataframe.columns], [{"label": i, "value": i} for i in dataframe.columns]
+    return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
+                                                                   dataframe.columns], [
+               {'label': i, 'value': i} for i in dataframe.columns], [{"label": i, "value": i} for i in
+                                                                      dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
@@ -257,7 +260,6 @@ def set_variables(options_x, options_y, options_char, dims):
 def update_graph(xvalue, yvalue, charvalue, plotvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
-    TODO: Make different graphic plots possible.
     TODO: Make multiple y-axis in the same graph possible.
     TODO: Make separate graphic plots possible
     :param xvalue: Value of the x-axis
@@ -307,6 +309,7 @@ def update_graph(xvalue, yvalue, charvalue, plotvalue):
     else:
         return {}
 
+
 @app.callback(Output('Subgraph', 'figure'),
               [Input('select-dimensions', 'value'),
                Input('select-characteristics', 'value')])
@@ -335,7 +338,6 @@ def update_subgraph(dims, charvalue):
         return fig
     else:
         return {}
-
 
 
 @app.callback(
@@ -393,41 +395,6 @@ def update_table(contents, filename, dummy, showtable):
         return table
     else:
         return html.Div()
-
-
-def parse_data(contents, filename):
-    """
-    Parses the data in a pandas dataframe.
-    :param contents: contents of the data
-    :param filename: filename of the data
-    :return: Dataframe
-    """
-    if contents is None:
-        return
-
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV or TXT file
-            # global df
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            dataframe = pd.read_excel(io.BytesIO(decoded))
-        elif 'txt' or 'tsv' in filename:
-            # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
-
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
-    return dataframe
 
 
 if __name__ == '__main__':
