@@ -92,7 +92,7 @@ class NormalPlot(DashComponent):
                 id='normal-plot',
                 style={'display': 'block'},
                 className="row"
-            )])
+            )], fluid=True)
         return page
 
     def component_callbacks(self, app):
@@ -103,13 +103,18 @@ class NormalPlot(DashComponent):
             Input('select-plot-options-normal-plot', 'value'),
         ])
         def update_graph(xvalue, yvalue, options_char, plotvalue):
+            if xvalue is None or yvalue is None or options_char is None:
+                return {}
+            if xvalue == "index" or yvalue == "index" or options_char == "index":
+                return {}
+
             return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-dimensions-normal-plot', 'value'),
         ])
-        def update_graph(options_char, dims):
+        def update_subgraph(options_char, dims):
             return self.plot_factory.subgraph_methods(self.df, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
