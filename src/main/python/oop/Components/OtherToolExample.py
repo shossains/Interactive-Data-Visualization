@@ -20,7 +20,7 @@ class ExampleML2(DashComponent):
             html.Div([
                 html.H3("This is another tool "),
                 ],
-                id='exampleML2', style={'display': 'block'}),
+                id='OtherToolExample', style={'display': 'block'}),
         ], fluid=True)
         return page
 
@@ -51,5 +51,5 @@ class ExampleML2(DashComponent):
     #                                                                        dataframe.columns], [
     #                    {'label': i, 'value': i} for i in dataframe.columns]
 
-    def give_data(self, data):
+    def set_data(self, data):
             self.df = data

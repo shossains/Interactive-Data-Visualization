@@ -1,9 +1,10 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import NormalPlot, ExampleML2, Instructions
+from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.Table import Table
+from src.main.python.oop.Components.ToolSelector import ToolSelector
 from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
 import dash_core_components as dcc
@@ -18,9 +19,7 @@ class Dashboard(DashComponent):
     def __init__(self, plot_factory):
         super().__init__(title="Interactive data visualiser")
         df = pd.DataFrame({})
-
-        self.NormalPlot = NormalPlot.NormalPlot(plot_factory, df, "Normal plot")
-        self.ExampleML2 = ExampleML2.ExampleML2(plot_factory, df, "Example Ml 2")
+        self.ToolSelector = ToolSelector(plot_factory,df, "Tool selector")
         self.Table = Table(plot_factory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plot_factory, df, "Instruction page")
 
@@ -53,27 +52,8 @@ class Dashboard(DashComponent):
                 ),
             ], className="two columns"),
 
-            # Selector for tool
-            # html.Div([
-            #     html.H5("Select machine learning tool"),
-            #     self.querystring(params)(
-            #         dcc.Dropdown)(
-            #         id='select-tool',
-            #         options=[
-            #             {'label': 'Choose ML method', 'value': 'index'},
-            #             {'label': 'Normal plot', 'value': 'normal-plot'},
-            #             {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
-            #         ],
-            #         value='index',
-            #         className="four columns"
-            #     ),
-            # ], className="twelve columns"),
-
-            # Used tool
-            # html.Div(id='selection', className="twelve columns"),
-
             self.querystring(params)(DashComponentTabs)(id="tabs",
-                                                        tabs=[self.Instructions, self.NormalPlot, self.ExampleML2],
+                                                        tabs=[self.Instructions, self.ToolSelector],
                                                         params=params, component=self,),
 
 
@@ -105,21 +85,10 @@ class Dashboard(DashComponent):
                 df = Dataframe(contents, filename).data
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
-                self.NormalPlot.set_data(df)
-                self.ExampleML2.give_data(df)
-                self.Table.give_data(df, contents, filename)
+                self.ToolSelector.set_data(df)
+                self.Table.set_data(df, contents, filename)
                 print("data uploaded")
                 return {}
-
-        # @app.callback(Output('selection', 'children'),
-        #               Input('select-tool', 'value'))
-        # def choose_component(selection):
-        #     if selection == 'normal-plot':
-        #         return self.NormalPlot.layout()
-        #     if selection == 'other-ml-tool':
-        #         return self.ExampleML2.layout()
-        #     else:
-        #         return html.Div()
 
 
 if __name__ == '__main__':
