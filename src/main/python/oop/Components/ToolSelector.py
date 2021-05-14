@@ -21,6 +21,7 @@ class ToolSelector(DashComponent):
 
     def layout(self, params=None):
         page = dbc.Container([
+            dbc.Row(html.Br()),  # Only for styling, spacing out
             # Selector for tool
             html.Div([
                 html.H5("Select machine learning tool"),
@@ -33,9 +34,8 @@ class ToolSelector(DashComponent):
                         {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
                     ],
                     value='index',
-                    className="four columns"
                 ),
-            ], className="twelve columns"),
+            ]),
             html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),
             html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool')
         ], fluid=True)

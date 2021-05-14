@@ -25,6 +25,9 @@ class Dashboard(DashComponent):
 
     def layout(self, params=None):
         return dbc.Container([
+
+            dbc.Row(html.Br()), # Only for styling, spacing out
+
             dbc.Row(dbc.Col(html.H1("Interactive data visualizer"), width="auto"), justify="center"),
 
             # Row for uploading the data
@@ -55,10 +58,12 @@ class Dashboard(DashComponent):
                 ), justify="center"
             ),
 
+            dbc.Row(html.Br()), # Only for styling, spacing out
+
             self.querystring(params)(DashComponentTabs)(id="tabs",
                                                         tabs=[self.Instructions, self.ToolSelector],
                                                         params=params, component=self,),
-
+            dbc.Row(html.Br()), # Only for styling, spacing out
 
             # Shows table or not
             self.Table.layout(params),
