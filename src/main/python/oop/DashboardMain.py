@@ -25,32 +25,35 @@ class Dashboard(DashComponent):
 
     def layout(self, params=None):
         return dbc.Container([
-            html.H1("Interactive data visualiser", className="two columns"),
-            # Data uploader
-            html.Div([
-                dcc.Upload(
-                    id='upload-data',
-                    children=html.Div([
-                        'Drag and Drop or ',
-                        html.A('Select Files')
-                    ]),
-                    className="three columns",
-                    style={
-                        # 'width': '20%',
-                        'height': '60px',
-                        'lineHeight': '60px',
-                        'borderWidth': '1px',
-                        'borderStyle': 'dashed',
-                        'borderRadius': '10px',
-                        'textAlign': 'center',
-                        # 'margin': '10px',
-                        'background-color': '#878787',
-                        'color': 'white'
-                    },
-                    # Allow multiple files to be uploaded
-                    multiple=True
-                ),
-            ], className="two columns"),
+            dbc.Row(dbc.Col(html.H1("Interactive data visualizer"), width="auto"), justify="center"),
+
+            # Row for uploading the data
+            dbc.Row(
+                dbc.Col(
+                    html.Div(
+                        dcc.Upload(
+                            id='upload-data',
+                            children=html.Div([
+                                'Drag and Drop or ',
+                                html.A('Select Files')
+                            ]),
+                            style={
+                                # 'width': '20%',
+                                'height': '60px',
+                                'lineHeight': '60px',
+                                'borderWidth': '1px',
+                                'borderStyle': 'dashed',
+                                'borderRadius': '10px',
+                                'textAlign': 'center',
+                                'background-color': '#5ebfff',
+                                'color': 'white'
+                            },
+                            # Allow multiple files to be uploaded
+                            multiple=True
+                        ),
+                   ), width=2
+                ), justify="center"
+            ),
 
             self.querystring(params)(DashComponentTabs)(id="tabs",
                                                         tabs=[self.Instructions, self.ToolSelector],
