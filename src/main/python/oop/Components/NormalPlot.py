@@ -16,9 +16,10 @@ class NormalPlot(DashComponent):
 
     def layout(self, params=None):
         page = dbc.Container([
+            # Only for styling, spaces out selectors
+            dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([
-
                 dbc.Col(
                     html.Div([
                         html.H6("Select variable x"),
@@ -35,7 +36,6 @@ class NormalPlot(DashComponent):
                             placeholder='Select ...')
                     ])
                 ),
-
                 dbc.Col(
                     html.Div([
                         html.H6("Color based on"),
@@ -45,7 +45,6 @@ class NormalPlot(DashComponent):
                         # multi=True
                     ])
                 ),
-
                 dbc.Col(
                     html.Div([
                         html.H6("Select plot method"),
@@ -61,23 +60,24 @@ class NormalPlot(DashComponent):
                                                                ],
                                                                value='scatter')
                     ])
-
                 )
-
-
-
             ]),
-            html.Div([
-                html.H5("Subgraph"),
-                html.Div([
-                    html.H6("Select subgraph features"),
-                    self.querystring(params)(dcc.Dropdown)(
-                        id='select-dimensions-normal-plot',
-                        placeholder='Select ...',
-                        multi=True
-                    )
-                ], className="three columns")
-            ], className="row"),
+            # Only for styling, spaces out selectors
+            dbc.Row(html.Br()),
+            dbc.Row(html.H5("Subgraph")),
+            dbc.Row(
+                dbc.Col(
+                    html.Div([
+                        html.H6("Select subgraph features"),
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='select-dimensions-normal-plot',
+                            placeholder='Select ...',
+                            multi=True
+                        )
+                    ])
+                ),
+            ),
+
             html.Div([
                 html.Div(id='output-select-data-normal-plot'),
                 dcc.Loading(
