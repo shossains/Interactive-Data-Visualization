@@ -111,29 +111,53 @@ app.layout = html.Div([
                 multi=True
             )
         ], className="three columns")
-    ], className="twelve columns"),
+    ], className="row"),
     html.Div([
         html.Div(id='output-select-data'),
-        dcc.Graph(
-            id='Mygraph',
-            className="five columns"
+        dcc.Loading(
+            id="loading-icon",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Mygraph',
+                    className="six columns"
+                ),
+            )],
+            type="circle"
         ),
-        dcc.Graph(
-            id='Subgraph',
-            className="five columns"
+        dcc.Loading(
+            id="loading-icon2",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Subgraph',
+                    className="six columns"
+                ),
+            )],
+            type="circle"
         )],
         id='t-sne',
         style={'display': 'block'},
-        className="twelve columns"
-    ),
-    dcc.Checklist(
-        id='show-table',
-        options=[{'label': 'Show table', 'value': 'show-table'}],
-        # labelStyle={'display': 'inline-block'}
-        className="twelve columns"
+        className="row"
     ),
 
-    html.Div(id='output-data-upload', style={'display': 'none'}),
+    html.Div([
+        dcc.Checklist(
+            id='show-table',
+            options=[{'label': 'Show table', 'value': 'show-table'}],
+            style={'height':'20px'},
+            # labelStyle={'display': 'inline-block'}
+            className="twelve columns"
+        ),
+        dcc.Loading(
+            id="loading-icon3",
+            children=[html.Div(
+                id='output-data-upload',
+                className="twelve columns"
+            )],
+            type="dot",
+        ),
+    ], className="twelve columns"),
+
+    # html.Div(id='output-data-upload', style={'display': 'none'}),
     html.P(id='dummy')
 ])
 
