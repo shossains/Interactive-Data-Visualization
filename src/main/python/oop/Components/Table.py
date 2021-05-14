@@ -51,7 +51,7 @@ class Table(DashComponent):
         def update_table(showtable):
             return self.plot_factory.show_table(self.df, self.contents, self.filename, showtable)
 
-    def give_data(self, data, contents, filename):
+    def set_data(self, data, contents, filename):
         self.df = data
         self.contents = contents
         self.filename = filename
