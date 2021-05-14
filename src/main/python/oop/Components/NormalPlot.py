@@ -77,33 +77,33 @@ class NormalPlot(DashComponent):
                     ])
                 ),
             ),
+            dbc.Row([
+                dbc.Col(
+                    dcc.Loading(
+                        id="loading-icon-normal-plot",
+                        children=[html.Div(
+                            dcc.Graph(
+                                id='Mygraph-normal-plot'
+                            ),
+                        )],
+                        type="circle"
+                    ),
 
-            html.Div([
-                html.Div(id='output-select-data-normal-plot'),
-                dcc.Loading(
-                    id="loading-icon-normal-plot",
-                    children=[html.Div(
-                        dcc.Graph(
-                            id='Mygraph-normal-plot',
-                            className="six columns"
-                        ),
-                    )],
-                    type="circle"
                 ),
-                dcc.Loading(
-                    id="loading-icon2-normal-plot",
-                    children=[html.Div(
-                        dcc.Graph(
-                            id='Subgraph-normal-plot',
-                            className="six columns"
-                        ),
-                    )],
-                    type="circle"
-                )],
-                id='normal-plot',
-                style={'display': 'block'},
-                className="row"
-            )], fluid=True)
+
+                dbc.Col(
+                    dcc.Loading(
+                        id="loading-icon2-normal-plot",
+                        children=[html.Div(
+                            dcc.Graph(
+                                id='Subgraph-normal-plot'
+                            ),
+                        )],
+                        type="circle"
+                    )
+                )
+            ]),
+        ], fluid=True)
         return page
 
     def component_callbacks(self, app):
