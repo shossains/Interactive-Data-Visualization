@@ -22,7 +22,15 @@ class Table(DashComponent):
     def layout(self, params=None):
         return html.Div([
             dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
-            html.Div(id='output-data-upload')
+            html.Div(id='output-data-upload'),
+            dcc.Loading(
+                id="loading-icon3",
+                children=[html.Div(
+                    id='output-data-upload',
+                    className="twelve columns"
+                )],
+                type="dot",
+            )
             ])
 
     def component_callbacks(self, app):

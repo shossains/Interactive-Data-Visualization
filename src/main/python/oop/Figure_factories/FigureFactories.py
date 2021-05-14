@@ -10,7 +10,7 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
-    def plot_methods(df, xvalue, yvalue, charvalue, plotvalue):
+    def graph_methods(df, xvalue, yvalue, charvalue, plotvalue):
 
         if xvalue is None or yvalue is None or charvalue is None:
             return {}
@@ -85,3 +85,28 @@ class FigureFactories(DashFigureFactory):
             return table
         else:
             return html.Div()
+
+    def subgraph_methods(self, df, options_char, dims):
+        """
+            displays subgraphs when comparing labels to each other
+            :param df:
+            :param options_char:
+            :param dims: Multiple dimensions that are chosen
+            :return: graph
+            """
+        if dims is None:
+            return {}
+        if dims == "index":
+            return {}
+
+        if df is not None:
+
+            dataframe = df.reset_index()
+
+            fig = px.scatter_matrix(
+                dataframe, dimensions=dims, color=options_char
+            )
+
+            return fig
+        else:
+            return {}

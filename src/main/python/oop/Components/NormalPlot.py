@@ -17,51 +17,105 @@ class NormalPlot(DashComponent):
     def layout(self, params=None):
         page = dbc.Container([
             html.Div([
-                html.H4("Select variable x"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-variable-x-ml1',
-                    placeholder='Select ...'),
-                html.H4("Select variable y"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-variable-y-ml1',
-                    placeholder='Select ...'),
-                html.H4("Select Characteristics"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-characteristics-ml1',
-                    placeholder='Select ...',
+                html.H5("Main Graph"),
+                html.Div([
+                    html.H6("Select variable x"),
+                    self.querystring(params)(dcc.Dropdown)(
+                        id='select-variable-x-normal-plot',
+                        placeholder='Select ...')
+                ], className="three columns"),
+
+                html.Div([
+                    html.H6("Select variable y"),
+                    self.querystring(params)(dcc.Dropdown)(
+                        id='select-variable-y-normal-plot',
+                        placeholder='Select ...')
+                ], className="three columns"),
+
+                html.Div([
+                    html.H6("Color based on"),
+                    self.querystring(params)(dcc.Dropdown)(
+                        id='select-characteristics-normal-plot',
+                        placeholder='Select ...')
                     # multi=True
+                ], className="two columns"),
+
+                html.Div([
+                    html.H6("Select plot method"),
+                    self.querystring(params)(dcc.Dropdown)(id='select-plot-options-normal-plot',
+                                                           options=[
+                                                               {'label': 'Area', 'value': 'area'},
+                                                               {'label': 'Bar', 'value': 'bar'},
+                                                               {'label': 'Box', 'value': 'box'},
+                                                               {'label': 'Density', 'value': 'density'},
+                                                               {'label': 'Histogram', 'value': 'histogram'},
+                                                               {'label': 'Line', 'value': 'line'},
+                                                               {'label': 'Scatter', 'value': 'scatter'},
+                                                           ],
+                                                           value='scatter')
+                ], className="two columns"),
+            ], className="twelve columns"),
+
+            html.Div([
+                html.H5("Subgraph"),
+                html.Div([
+                    html.H6("Select subgraph features"),
+                    self.querystring(params)(dcc.Dropdown)(
+                        id='select-dimensions-normal-plot',
+                        placeholder='Select ...',
+                        multi=True
+                    )
+                ], className="three columns")
+            ], className="row"),
+            html.Div([
+                html.Div(id='output-select-data-normal-plot'),
+                dcc.Loading(
+                    id="loading-icon-normal-plot",
+                    children=[html.Div(
+                        dcc.Graph(
+                            id='Mygraph-normal-plot',
+                            className="six columns"
+                        ),
+                    )],
+                    type="circle"
                 ),
-                html.H4("Select plot method"),
-                self.querystring(params)(dcc.Dropdown)(id='select-plot-options-ml1',
-                                                       options=[
-                                                           {'label': 'Area', 'value': 'area'},
-                                                           {'label': 'Bar', 'value': 'bar'},
-                                                           {'label': 'Box', 'value': 'box'},
-                                                           {'label': 'Density', 'value': 'density'},
-                                                           {'label': 'Histogram', 'value': 'histogram'},
-                                                           {'label': 'Line', 'value': 'line'},
-                                                           {'label': 'Scatter', 'value': 'scatter'},
-                                                       ], value='scatter'
-                                                       ),
-                html.Div(id='output-select-data'),
-                dcc.Graph(id='Mygraph-ml1')],
-                id='t-sne', style={'display': 'block'}),
-        ], fluid=True)
+                dcc.Loading(
+                    id="loading-icon2-normal-plot",
+                    children=[html.Div(
+                        dcc.Graph(
+                            id='Subgraph-normal-plot',
+                            className="six columns"
+                        ),
+                    )],
+                    type="circle"
+                )],
+                id='normal-plot',
+                style={'display': 'block'},
+                className="row"
+            )])
         return page
 
     def component_callbacks(self, app):
-        @app.callback(Output('Mygraph-ml1', 'figure'), [
-            Input('select-variable-x-ml1', 'value'),
-            Input('select-variable-y-ml1', 'value'),
-            Input('select-characteristics-ml1', 'value'),
-            Input('select-plot-options-ml1', 'value'),
+        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
+            Input('select-variable-x-normal-plot', 'value'),
+            Input('select-variable-y-normal-plot', 'value'),
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-plot-options-normal-plot', 'value'),
         ])
-        def update_plot(xvalue, yvalue, charvalue, plotvalue):
-            return self.plot_factory.plot_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
+        def update_graph(xvalue, yvalue, options_char, plotvalue):
+            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue)
 
-        @app.callback([Output('select-variable-x-ml1', 'options'),
-                       Output('select-variable-y-ml1', 'options'),
-                       Output('select-characteristics-ml1', 'options')],
+        @app.callback(Output('Subgraph-normal-plot', 'figure'), [
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-dimensions-normal-plot', 'value'),
+        ])
+        def update_graph(options_char, dims):
+            return self.plot_factory.subgraph_methods(self.df, options_char, dims)
+
+        @app.callback([Output('select-variable-x-normal-plot', 'options'),
+                       Output('select-variable-y-normal-plot', 'options'),
+                       Output('select-characteristics-normal-plot', 'options'),
+                       Output('select-dimensions-normal-plot', 'options')],
                       [
                           Input('dummy', 'children')
                       ])
@@ -74,7 +128,8 @@ class NormalPlot(DashComponent):
             dataframe = self.df.reset_index()
             return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
                                                                            dataframe.columns], [
-                       {'label': i, 'value': i} for i in dataframe.columns]
+                       {'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
+                                                                              dataframe.columns]
 
-    def give_data(self, data):
+    def set_data(self, data):
         self.df = data

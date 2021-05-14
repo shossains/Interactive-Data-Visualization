@@ -19,44 +19,61 @@ class Dashboard(DashComponent):
         super().__init__(title="Interactive data visualiser")
         df = pd.DataFrame({})
 
-        self.example_ml1 = NormalPlot.NormalPlot(plot_factory, df, "Normal plot")
-        self.example_ml2 = ExampleML2.ExampleML2(plot_factory, df, "Example Ml 2")
-        self.Table = Table(plot_factory,df, "Show Table")
-
-        # self.UploadData = UploadData.UploadData()
+        self.NormalPlot = NormalPlot.NormalPlot(plot_factory, df, "Normal plot")
+        self.ExampleML2 = ExampleML2.ExampleML2(plot_factory, df, "Example Ml 2")
+        self.Table = Table(plot_factory, df, "Show Table")
 
     def layout(self, params=None):
         return dbc.Container([
             html.H1("Interactive data visualiser"),
-
             # Data uploader
-            self.querystring(params)(dcc.Upload)(
-                id='upload-data',
-                children=html.Div([
-                    'Drag and Drop or ',
-                    html.A('Select Files')
-                ]),
-                style={
-                    'width': '100%',
-                    'height': '60px',
-                    'lineHeight': '60px',
-                    'borderWidth': '1px',
-                    'borderStyle': 'dashed',
-                    'borderRadius': '5px',
-                    'textAlign': 'center',
-                    'margin': '10px'
-                },
-                # Allow multiple files to be uploaded
-                multiple=True
-            ),
-            self.querystring(params)(html.P)(id='dummy'),
+            html.Div([
+                self.querystring(params)(dcc.Upload)(
+                    id='upload-data',
+                    children=html.Div([
+                        'Drag and Drop or ',
+                        html.A('Select Files')
+                    ]),
+                    className="three columns",
+                    style={
+                        # 'width': '20%',
+                        'height': '60px',
+                        'lineHeight': '60px',
+                        'borderWidth': '1px',
+                        'borderStyle': 'dashed',
+                        'borderRadius': '10px',
+                        'textAlign': 'center',
+                        # 'margin': '10px',
+                        'background-color': '#878787',
+                        'color': 'white'
+                    },
+                    # Allow multiple files to be uploaded
+                    multiple=True
+                ),
+            ], className="twelve columns"),
 
-            # Rest of the program visible in Components
-            self.querystring(params)(DashComponentTabs)(id="tabs",
-                                                        tabs=[self.example_ml1, self.example_ml2],
-                                                        params=params, component=self, single_tab_querystrings=True),
+            # Selector for tool
+            html.Div([
+                html.H5("Select machine learning tool"),
+                self.querystring(params)(
+                    dcc.Dropdown)(
+                    id='select-tool',
+                    options=[
+                        {'label': 'Choose ML method', 'value': 'index'},
+                        {'label': 'Normal plot', 'value': 'normal-plot'},
+                        {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
+                    ],
+                    value='index',
+                    className="four columns"
+                ),
+            ], className="twelve columns"),
+
+            # Used tool
+            html.Div(id='selection', className="twelve columns"),
+
             # Shows table or not
-            self.Table.layout(params)
+            self.Table.layout(params),
+            html.P(id='dummy')
         ], fluid=True)
 
     def component_callbacks(self, app):
@@ -82,11 +99,21 @@ class Dashboard(DashComponent):
                 df = Dataframe(contents, filename).data
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
-                self.example_ml1.give_data(df)
-                self.example_ml2.give_data(df)
+                self.NormalPlot.set_data(df)
+                self.ExampleML2.give_data(df)
                 self.Table.give_data(df, contents, filename)
                 print("data uploaded")
                 return {}
+
+        @app.callback(Output('selection', 'children'),
+                      Input('select-tool', 'value'))
+        def choose_component(selection):
+            if selection == 'normal-plot':
+                return self.NormalPlot.layout()
+            if selection == 'other-ml-tool':
+                return self.ExampleML2.layout()
+            else:
+                return html.Div()
 
 
 if __name__ == '__main__':

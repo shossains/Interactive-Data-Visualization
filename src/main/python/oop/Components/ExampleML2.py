@@ -47,7 +47,7 @@ class ExampleML2(DashComponent):
                                                        ),
                 html.Div(id='output-select-data-ml2'),
                 dcc.Graph(id='Mygraph-ml2')],
-                id='t-sne', style={'display': 'block'}),
+                id='exampleML2', style={'display': 'block'}),
         ], fluid=True)
         return page
 
@@ -59,7 +59,7 @@ class ExampleML2(DashComponent):
             Input('select-plot-options-ml2', 'value'),
         ])
         def update_plot(xvalue, yvalue, charvalue, plotvalue):
-            return self.plot_factory.plot_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
+            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
 
         @app.callback([Output('select-variable-x-ml2', 'options'),
                        Output('select-variable-y-ml2', 'options'),
