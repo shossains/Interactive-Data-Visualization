@@ -1,6 +1,6 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import NormalPlot, ExampleML2
+from src.main.python.oop.Components import NormalPlot, ExampleML2, Instructions
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.Table import Table
@@ -22,13 +22,14 @@ class Dashboard(DashComponent):
         self.NormalPlot = NormalPlot.NormalPlot(plot_factory, df, "Normal plot")
         self.ExampleML2 = ExampleML2.ExampleML2(plot_factory, df, "Example Ml 2")
         self.Table = Table(plot_factory, df, "Show Table")
+        self.Instructions = Instructions.Instructions(plot_factory, df, "Instruction page")
 
     def layout(self, params=None):
         return dbc.Container([
-            html.H1("Interactive data visualiser"),
+            html.H1("Interactive data visualiser", className="two columns"),
             # Data uploader
             html.Div([
-                self.querystring(params)(dcc.Upload)(
+                dcc.Upload(
                     id='upload-data',
                     children=html.Div([
                         'Drag and Drop or ',
@@ -50,26 +51,31 @@ class Dashboard(DashComponent):
                     # Allow multiple files to be uploaded
                     multiple=True
                 ),
-            ], className="twelve columns"),
+            ], className="two columns"),
 
             # Selector for tool
-            html.Div([
-                html.H5("Select machine learning tool"),
-                self.querystring(params)(
-                    dcc.Dropdown)(
-                    id='select-tool',
-                    options=[
-                        {'label': 'Choose ML method', 'value': 'index'},
-                        {'label': 'Normal plot', 'value': 'normal-plot'},
-                        {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
-                    ],
-                    value='index',
-                    className="four columns"
-                ),
-            ], className="twelve columns"),
+            # html.Div([
+            #     html.H5("Select machine learning tool"),
+            #     self.querystring(params)(
+            #         dcc.Dropdown)(
+            #         id='select-tool',
+            #         options=[
+            #             {'label': 'Choose ML method', 'value': 'index'},
+            #             {'label': 'Normal plot', 'value': 'normal-plot'},
+            #             {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
+            #         ],
+            #         value='index',
+            #         className="four columns"
+            #     ),
+            # ], className="twelve columns"),
 
             # Used tool
-            html.Div(id='selection', className="twelve columns"),
+            # html.Div(id='selection', className="twelve columns"),
+
+            self.querystring(params)(DashComponentTabs)(id="tabs",
+                                                        tabs=[self.Instructions, self.NormalPlot, self.ExampleML2],
+                                                        params=params, component=self,),
+
 
             # Shows table or not
             self.Table.layout(params),
@@ -105,15 +111,15 @@ class Dashboard(DashComponent):
                 print("data uploaded")
                 return {}
 
-        @app.callback(Output('selection', 'children'),
-                      Input('select-tool', 'value'))
-        def choose_component(selection):
-            if selection == 'normal-plot':
-                return self.NormalPlot.layout()
-            if selection == 'other-ml-tool':
-                return self.ExampleML2.layout()
-            else:
-                return html.Div()
+        # @app.callback(Output('selection', 'children'),
+        #               Input('select-tool', 'value'))
+        # def choose_component(selection):
+        #     if selection == 'normal-plot':
+        #         return self.NormalPlot.layout()
+        #     if selection == 'other-ml-tool':
+        #         return self.ExampleML2.layout()
+        #     else:
+        #         return html.Div()
 
 
 if __name__ == '__main__':

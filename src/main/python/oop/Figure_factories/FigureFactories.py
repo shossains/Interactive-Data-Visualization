@@ -11,12 +11,6 @@ class FigureFactories(DashFigureFactory):
 
     @staticmethod
     def graph_methods(df, xvalue, yvalue, charvalue, plotvalue):
-
-        if xvalue is None or yvalue is None or charvalue is None:
-            return {}
-        if xvalue == "index" or yvalue == "index" or charvalue == "index":
-            return {}
-
         if df is not None:
             dataframe = df.reset_index()
             x = dataframe['{}'.format(xvalue)]
@@ -52,41 +46,7 @@ class FigureFactories(DashFigureFactory):
             return {}
 
     @staticmethod
-    def show_table(df, contents, filename, showtable):
-        """
-            Makes a table from the uploaded data.
-            :param df: dataframe
-            :param contents: contents of the data
-            :param filename: filename of the data
-            :param dummy: dummy html.P. Used to activate chained callbacks.
-            :param showtable: Boolean
-            :return: Table
-            """
-        if showtable is not None:
-            table = html.Div()
-            if contents:
-                contents = contents[0]
-
-
-                table = html.Div([
-                    html.H5(filename),
-                    dash_table.DataTable(
-                        data=df.to_dict('rows'),
-                        columns=[{'name': i, 'id': i} for i in df.columns]
-                    ),
-                    html.Hr(),
-                    html.Div('Raw Content'),
-
-                    html.Pre(contents[0:200] + '...', style={
-                        'whiteSpace': 'pre-wrap',
-                        'wordBreak': 'break-all'
-                    })
-                ], id='table-uploaded')
-            return table
-        else:
-            return html.Div()
-
-    def subgraph_methods(self, df, options_char, dims):
+    def subgraph_methods(df, options_char, dims):
         """
             displays subgraphs when comparing labels to each other
             :param df:
@@ -110,3 +70,37 @@ class FigureFactories(DashFigureFactory):
             return fig
         else:
             return {}
+
+    @staticmethod
+    def show_table(df, contents, filename, showtable):
+        """
+            Makes a table from the uploaded data.
+            :param df: dataframe
+            :param contents: contents of the data
+            :param filename: filename of the data
+            :param dummy: dummy html.P. Used to activate chained callbacks.
+            :param showtable: Boolean
+            :return: Table
+            """
+        if showtable is not None:
+            table = html.Div()
+            if contents:
+                contents = contents[0]
+
+                table = html.Div([
+                    html.H5(filename),
+                    dash_table.DataTable(
+                        data=df.to_dict('rows'),
+                        columns=[{'name': i, 'id': i} for i in df.columns]
+                    ),
+                    html.Hr(),
+                    html.Div('Raw Content'),
+
+                    html.Pre(contents[0:200] + '...', style={
+                        'whiteSpace': 'pre-wrap',
+                        'wordBreak': 'break-all'
+                    })
+                ], id='table-uploaded')
+            return table
+        else:
+            return html.Div()

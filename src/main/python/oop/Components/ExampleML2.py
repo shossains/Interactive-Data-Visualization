@@ -19,64 +19,37 @@ class ExampleML2(DashComponent):
         page = dbc.Container([
             html.Div([
                 html.H3("This is another tool "),
-                html.H4("Select variable x"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-variable-x-ml2',
-                    placeholder='Select ...'),
-                html.H4("Select variable y"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-variable-y-ml2',
-                    placeholder='Select ...'),
-                html.H4("Select Characteristics"),
-                self.querystring(params)(dcc.Dropdown)(
-                    id='select-characteristics-ml2',
-                    placeholder='Select ...',
-                    # multi=True
-                ),
-                html.H4("Select plot method"),
-                self.querystring(params)(dcc.Dropdown)(id='select-plot-options-ml2',
-                                                       options=[
-                                                           {'label': 'Area', 'value': 'area'},
-                                                           {'label': 'Bar', 'value': 'bar'},
-                                                           {'label': 'Box', 'value': 'box'},
-                                                           {'label': 'Density', 'value': 'density'},
-                                                           {'label': 'Histogram', 'value': 'histogram'},
-                                                           {'label': 'Line', 'value': 'line'},
-                                                           {'label': 'Scatter', 'value': 'scatter'},
-                                                       ], value='scatter'
-                                                       ),
-                html.Div(id='output-select-data-ml2'),
-                dcc.Graph(id='Mygraph-ml2')],
+                ],
                 id='exampleML2', style={'display': 'block'}),
         ], fluid=True)
         return page
 
-    def component_callbacks(self, app):
-        @app.callback(Output('Mygraph-ml2', 'figure'), [
-            Input('select-variable-x-ml2', 'value'),
-            Input('select-variable-y-ml2', 'value'),
-            Input('select-characteristics-ml2', 'value'),
-            Input('select-plot-options-ml2', 'value'),
-        ])
-        def update_plot(xvalue, yvalue, charvalue, plotvalue):
-            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
-
-        @app.callback([Output('select-variable-x-ml2', 'options'),
-                       Output('select-variable-y-ml2', 'options'),
-                       Output('select-characteristics-ml2', 'options')],
-                      [
-                          Input('dummy', 'children')
-                      ])
-        def set_options_variable(dummy):
-            """
-            loads in possible parameters for the x and y-axis from the data.
-            :param dummy: dummy html property
-            :return: Possible options for dropdown x-axis.
-            """
-            dataframe = self.df.reset_index()
-            return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                           dataframe.columns], [
-                       {'label': i, 'value': i} for i in dataframe.columns]
+    # def component_callbacks(self, app):
+    #     @app.callback(Output('Mygraph-ml2', 'figure'), [
+    #         Input('select-variable-x-ml2', 'value'),
+    #         Input('select-variable-y-ml2', 'value'),
+    #         Input('select-characteristics-ml2', 'value'),
+    #         Input('select-plot-options-ml2', 'value'),
+    #     ])
+    #     def update_plot(xvalue, yvalue, charvalue, plotvalue):
+    #         return self.plot_factory.graph_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
+    #
+    #     @app.callback([Output('select-variable-x-ml2', 'options'),
+    #                    Output('select-variable-y-ml2', 'options'),
+    #                    Output('select-characteristics-ml2', 'options')],
+    #                   [
+    #                       Input('dummy', 'children')
+    #                   ])
+    #     def set_options_variable(dummy):
+    #         """
+    #         loads in possible parameters for the x and y-axis from the data.
+    #         :param dummy: dummy html property
+    #         :return: Possible options for dropdown x-axis.
+    #         """
+    #         dataframe = self.df.reset_index()
+    #         return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
+    #                                                                        dataframe.columns], [
+    #                    {'label': i, 'value': i} for i in dataframe.columns]
 
     def give_data(self, data):
             self.df = data
