@@ -1,10 +1,11 @@
 import base64
 import io
 import json
+import numpy as np
 
 import plotly.graph_objs as go
 import plotly.express as px
-import time
+import plotly.io as pio
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -16,8 +17,8 @@ import pandas as pd
 df = pd.DataFrame({})
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+app.title = 'IDV'
 server = app.server
 
 colors = {
@@ -147,6 +148,12 @@ def set_options_variable(dummy):
     :return: Possible options for dropdown x-axis.
     """
     global df
+    if 'row_index_label' in df.columns:
+        del df['row_index_label']
+
+    row_labels = np.arange(0, df.shape[0], 1)
+    df.insert(0, 'row_index_label', row_labels)
+    # print(df)
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
                                                                    dataframe.columns], [
@@ -277,8 +284,15 @@ def update_table(contents, filename, dummy, showtable):
             table = html.Div([
                 html.H5(filename),
                 dash_table.DataTable(
+                    id='main_table',
                     data=df.to_dict('rows'),
-                    columns=[{'name': i, 'id': i} for i in df.columns]
+                    columns=[{'name': i, 'id': i} for i in df.columns],
+                    filter_action='native',
+                    sort_action='native',
+                    sort_mode='multi',
+                    row_selectable='multi',
+                    hidden_columns=['row_index_labels'],
+                    selected_row_ids=[]
                 ),
                 html.Hr(),
                 html.Div('Raw Content'),
@@ -327,34 +341,17 @@ def parse_data(contents, filename):
         ])
     return dataframe
 
-# Print selected data onto a DashTable
+# Selecting points on graph should select respective rows in DashTable
 @app.callback(
-    Output('output-select-data', 'children'),
+    Output('main_table', 'selected_rows'),
     Input('Mygraph', 'selectedData'))
 def display_selected_data(selectedData):
-    return json.dumps(selectedData, indent=2)
-    # print(type(selectedData))
-    # if type(selectedData) is dict:
-    #     if len(dict(selectedData).get('points')) != 0:
-    #         sdict = dict(selectedData)
-    #         dfe = pd.DataFrame.from_dict(sdict['points'])
-    #         CustomDataDataFrame = dfe['customdata']
-    #         CustomDataDataFrameFormatted = pd.DataFrame.from_records(CustomDataDataFrame)
-    #         XDataFrame = dfe['x']
-    #         YDataFrame = dfe['y']
-    #         FinalDataFrame = pd.concat([XDataFrame, YDataFrame, CustomDataDataFrameFormatted], axis=1)
-    #         print(FinalDataFrame)
-    #         table = html.Div([
-    #             html.H5("Currently selected data points" + " (" + str(FinalDataFrame.shape[0]) + ")"),
-    #             dash_table.DataTable(
-    #                 data=FinalDataFrame.to_dict('rows'),
-    #                 columns=[{'name': i, 'id': i} for i in FinalDataFrame.columns]
-    #             )
-    #         ], id='selected-uploaded')
-    #     return table
-    # else:
-    #     return html.Div([])
-
+    points_selected = []
+    if selectedData is not None:
+        for point in selectedData['points']:
+            points_selected.append(point['customdata'][0])
+        print(points_selected)
+    return points_selected
 
 if __name__ == '__main__':
     app.run_server(debug=True)
