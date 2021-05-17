@@ -65,7 +65,7 @@ class NormalPlot(DashComponent):
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Subgraph")),
-            dbc.Row(
+            dbc.Row([
                 dbc.Col(
                     html.Div([
                         html.H6("Select subgraph features"),
@@ -76,7 +76,23 @@ class NormalPlot(DashComponent):
                         )
                     ])
                 ),
-            ),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Select subplot method"),
+                        self.querystring(params)(dcc.Dropdown)(id='select-plot-options-sub-plot',
+                                                               options=[
+                                                                   {'label': 'Area', 'value': 'area'},
+                                                                   {'label': 'Bar', 'value': 'bar'},
+                                                                   {'label': 'Box', 'value': 'box'},
+                                                                   {'label': 'Density', 'value': 'density'},
+                                                                   {'label': 'Histogram', 'value': 'histogram'},
+                                                                   {'label': 'Line', 'value': 'line'},
+                                                                   {'label': 'Scatter', 'value': 'scatter'},
+                                                               ],
+                                                               value='scatter')
+                    ])
+                )
+            ]),
             dbc.Row([
                 dbc.Col(
                     dcc.Loading(
@@ -124,9 +140,10 @@ class NormalPlot(DashComponent):
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-dimensions-normal-plot', 'value'),
+            Input('select-plot-options-sub-plot', 'value'),
         ])
-        def update_subgraph(options_char, dims):
-            return self.plot_factory.subgraph_methods(self.df, options_char, dims)
+        def update_subgraph(options_char, dims, plotvalue):
+            return self.plot_factory.subgraph_methods(self.df, options_char, dims, plotvalue)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),

@@ -46,7 +46,7 @@ class FigureFactories(DashFigureFactory):
             return {}
 
     @staticmethod
-    def subgraph_methods(df, options_char, dims):
+    def subgraph_methods(df, options_char, dims, plotvalue):
         """
             displays subgraphs when comparing labels to each other
             :param df:
@@ -63,9 +63,17 @@ class FigureFactories(DashFigureFactory):
 
             dataframe = df.reset_index()
 
-            fig = px.scatter_matrix(
-                dataframe, dimensions=dims, color=options_char
-            )
+            fig = go.Figure()
+
+            if 'scatter' in plotvalue:
+                fig = px.scatter_matrix(
+                    dataframe, dimensions=dims, color=options_char
+                )
+
+            # if 'density' in plotvalue:
+            #     fig = px.density_contour(
+            #         dataframe, dimensions=dims, color=options_char
+            #     )
 
             return fig
         else:
