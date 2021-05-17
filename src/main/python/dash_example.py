@@ -291,7 +291,7 @@ def update_table(contents, filename, dummy, showtable):
                     sort_action='native',
                     sort_mode='multi',
                     row_selectable='multi',
-                    hidden_columns=['row_index_labels'],
+                    hidden_columns=['row_index_label'],
                     selected_row_ids=[]
                 ),
                 html.Hr(),
