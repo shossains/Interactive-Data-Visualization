@@ -1,24 +1,20 @@
-import base64
-import io
-import json
-import numpy as np
-
 import plotly.graph_objs as go
 import plotly.express as px
-import plotly.io as pio
 
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 import pandas as pd
 
+from src.main.python.oop.Dataframe import Dataframe
+
 df = pd.DataFrame({})
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
-app.title = 'IDV'
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 colors = {
@@ -27,73 +23,142 @@ colors = {
     "text": "#000000"
 }
 
-# General layout of the GUI
 app.layout = html.Div([
-    dcc.Upload(
-        id='upload-data',
-        children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
-        ]),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
-        # Allow multiple files to be uploaded
-        multiple=True
-    ),
-    html.H4("Select machine learning tool"),
-    dcc.Dropdown(
-        id='select-tool',
-        options=[
-            {'label': 'Choose ML method', 'value': 'index'},
-            {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
-            {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
-        ],
-        value='index'
-    ),
+    html.Div([
+        dcc.Upload(
+            id='upload-data',
+            children=html.Div([
+                'Drag and Drop or ',
+                html.A('Select Files')
+            ]),
+            className="three columns",
+            style={
+                # 'width': '20%',
+                'height': '60px',
+                'lineHeight': '60px',
+                'borderWidth': '1px',
+                'borderStyle': 'dashed',
+                'borderRadius': '10px',
+                'textAlign': 'center',
+                # 'margin': '10px',
+                'background-color': '#878787',
+                'color': 'white'
+            },
+            # Allow multiple files to be uploaded
+            multiple=True
+        ),
+    ], className="twelve columns"),
+    html.Div([
+        html.H5("Select machine learning tool"),
+        dcc.Dropdown(
+            id='select-tool',
+            options=[
+                {'label': 'Choose ML method', 'value': 'index'},
+                {'label': 'T-sne (not implemented)', 'value': 'T-sne'},
+                {'label': 'other_ml_tool  (not implemented)', 'value': 'other_ml_tool'}
+            ],
+            value='index',
+            className="four columns"
+        ),
+    ], className="twelve columns"),
     # When T-sne chosen this one will be visible
     html.Div([
-        html.H4("Select variable x"),
-        dcc.Dropdown(
-            id='select-variable-x',
-            placeholder='Select ...'),
-        html.H4("Select variable y"),
-        dcc.Dropdown(
-            id='select-variable-y',
-            placeholder='Select ...'),
-        html.H4("Select Characteristics"),
-        dcc.Dropdown(
-            id='select-characteristics',
-            placeholder='Select ...',
-            # multi=True
-        ),
-        html.H4("Select plot method"),
-        dcc.Dropdown(id='select-plot-options',
-                     options=[
-                         {'label': 'Area', 'value': 'area'},
-                         {'label': 'Bar', 'value': 'bar'},
-                         {'label': 'Box', 'value': 'box'},
-                         {'label': 'Density', 'value': 'density'},
-                         {'label': 'Histogram', 'value': 'histogram'},
-                         {'label': 'Line', 'value': 'line'},
-                         {'label': 'Scatter', 'value': 'scatter'},
-                     ], value='scatter'
-                     ),
-        dcc.Graph(id='Mygraph')],
-        id='t-sne', style={'display': 'block'}),
-    dcc.Checklist(id='show-table', options=[
-        {'label': 'Show table', 'value': 'show-table'}]),
-    html.Pre(id='output-select-data'),
-    html.Div(id='output-data-upload', style={'display': 'none'}),
-    html.P(id='dummy'),
+        html.H5("Main Graph"),
+        html.Div([
+            html.H6("Select variable x"),
+            dcc.Dropdown(
+                id='select-variable-x',
+                placeholder='Select ...')
+        ], className="three columns"),
 
+        html.Div([
+            html.H6("Select variable y"),
+            dcc.Dropdown(
+                id='select-variable-y',
+                placeholder='Select ...')
+        ], className="three columns"),
+
+        html.Div([
+            html.H6("Color based on"),
+            dcc.Dropdown(
+                id='select-characteristics',
+                placeholder='Select ...')
+            # multi=True
+        ], className="two columns"),
+
+        html.Div([
+            html.H6("Select plot method"),
+            dcc.Dropdown(id='select-plot-options',
+                         options=[
+                             {'label': 'Area', 'value': 'area'},
+                             {'label': 'Bar', 'value': 'bar'},
+                             {'label': 'Box', 'value': 'box'},
+                             {'label': 'Density', 'value': 'density'},
+                             {'label': 'Histogram', 'value': 'histogram'},
+                             {'label': 'Line', 'value': 'line'},
+                             {'label': 'Scatter', 'value': 'scatter'},
+                         ],
+                         value='scatter')
+        ], className="two columns"),
+    ], className="twelve columns"),
+    html.Div([
+        html.H5("Subgraph"),
+        html.Div([
+            html.H6("Select subgraph features"),
+            dcc.Dropdown(
+                id='select-dimensions',
+                placeholder='Select ...',
+                multi=True
+            )
+        ], className="three columns")
+    ], className="row"),
+    html.Div([
+        html.Div(id='output-select-data'),
+        dcc.Loading(
+            id="loading-icon",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Mygraph',
+                    className="six columns"
+                ),
+            )],
+            type="circle"
+        ),
+        dcc.Loading(
+            id="loading-icon2",
+            children=[html.Div(
+                dcc.Graph(
+                    id='Subgraph',
+                    className="six columns"
+                ),
+            )],
+            type="circle"
+        )],
+        id='t-sne',
+        style={'display': 'block'},
+        className="row"
+    ),
+
+    html.Div([
+        dcc.Checklist(
+            id='show-table',
+            options=[{'label': 'Show table', 'value': 'show-table'}],
+            style={'height': '20px'},
+            # labelStyle={'display': 'inline-block'}
+            className="twelve columns"
+        ),
+        dcc.Loading(
+            id="loading-icon3",
+            children=[html.Div(
+                id='output-data-upload',
+                className="twelve columns"
+            )],
+            type="dot",
+        ),
+    ], className="twelve columns"),
+
+    # html.Div(id='output-data-upload', style={'display': 'none'}),
+    html.P(id='dummy')
 ])
 
 
@@ -112,8 +177,13 @@ def update_dataframe(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
+        if contents is None:
+            return
+
         global df
-        df = parse_data(contents, filename)
+        df = Dataframe(contents, filename).data
+        global all_dims
+        all_dims = df.columns
 
 
 @app.callback(
@@ -122,8 +192,6 @@ def update_dataframe(contents, filename):
 def show_hide_element(visibility_state):
     """
     Looks at which tool is selected in the dropdown select-tool and displays selection functions for that certain tool.
-    TODO: Add more return states for more tools.
-    Joost knows this^
     :param visibility_state:
     :return: visibility style
     """
@@ -137,7 +205,9 @@ def show_hide_element(visibility_state):
 
 @app.callback([Output('select-variable-x', 'options'),
                Output('select-variable-y', 'options'),
-               Output('select-characteristics', 'options')],
+               Output('select-characteristics', 'options'),
+               Output('select-dimensions', 'options')
+               ],
               [
                   Input('dummy', 'children')
               ])
@@ -148,27 +218,25 @@ def set_options_variable(dummy):
     :return: Possible options for dropdown x-axis.
     """
     global df
-    if 'row_index_label' in df.columns:
-        del df['row_index_label']
-
-    row_labels = np.arange(0, df.shape[0], 1)
-    df.insert(0, 'row_index_label', row_labels)
-    # print(df)
     dataframe = df.reset_index()
     return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
                                                                    dataframe.columns], [
-               {'label': i, 'value': i} for i in dataframe.columns]
+               {'label': i, 'value': i} for i in dataframe.columns], [{"label": i, "value": i} for i in
+                                                                      dataframe.columns]
 
 
 @app.callback([Output('select-variable-x', 'value'),
                Output('select-variable-y', 'value'),
-               Output('select-characteristics', 'value')],
+               Output('select-characteristics', 'value'),
+               Output('select-dimensions', 'value')
+               ],
               [
                   Input('select-variable-x', 'options'),
                   Input('select-variable-y', 'options'),
-                  Input('select-characteristics', 'options')
+                  Input('select-characteristics', 'options'),
+                  Input('select-dimensions', 'options')
               ])
-def set_variables(options_x, options_y, options_char):
+def set_variables(options_x, options_y, options_char, dims):
     """
     Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
     :param options_x: All possible x-axis options
@@ -176,11 +244,11 @@ def set_variables(options_x, options_y, options_char):
     :param options_char: All possible characteristic options
     :return: The choosen x-axis and y-axis and characteristic
     """
-    if (options_y is None or options_x is None or options_char is None):
-        return None, None, None
-    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
-        return None, None, None
-    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
+    if (options_y is None or options_x is None or options_char is None or dims is None):
+        return None, None, None, None
+    if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
+        return None, None, None, None
+    return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
 
 @app.callback(Output('Mygraph', 'figure'), [
@@ -192,7 +260,6 @@ def set_variables(options_x, options_y, options_char):
 def update_graph(xvalue, yvalue, charvalue, plotvalue):
     """
     Displays the graph. Only normal plotting at the moment (x-axis, y-axis).
-    TODO: Make different graphic plots possible.
     TODO: Make multiple y-axis in the same graph possible.
     TODO: Make separate graphic plots possible
     :param xvalue: Value of the x-axis
@@ -243,6 +310,36 @@ def update_graph(xvalue, yvalue, charvalue, plotvalue):
         return {}
 
 
+@app.callback(Output('Subgraph', 'figure'),
+              [Input('select-dimensions', 'value'),
+               Input('select-characteristics', 'value')])
+def update_subgraph(dims, charvalue):
+    """
+    displays subgraphs when comparing labels to each other
+    :param dims: Multiple dimensions that are chosen
+    :param charvalue: value of the head characteristic
+    :return: graph
+    """
+    if dims is None:
+        return {}
+    if dims == "index":
+        return {}
+
+    global df
+
+    if df is not None:
+
+        dataframe = df.reset_index()
+
+        fig = px.scatter_matrix(
+            dataframe, dimensions=dims, color=charvalue
+        )
+
+        return fig
+    else:
+        return {}
+
+
 @app.callback(
     Output(component_id='output-data-upload', component_property='style'),
     [Input(component_id='show-table', component_property='value')])
@@ -284,15 +381,8 @@ def update_table(contents, filename, dummy, showtable):
             table = html.Div([
                 html.H5(filename),
                 dash_table.DataTable(
-                    id='main_table',
                     data=df.to_dict('rows'),
-                    columns=[{'name': i, 'id': i} for i in df.columns],
-                    filter_action='native',
-                    sort_action='native',
-                    sort_mode='multi',
-                    row_selectable='multi',
-                    hidden_columns=['row_index_label'],
-                    selected_row_ids=[]
+                    columns=[{'name': i, 'id': i} for i in df.columns]
                 ),
                 html.Hr(),
                 html.Div('Raw Content'),
@@ -306,52 +396,6 @@ def update_table(contents, filename, dummy, showtable):
     else:
         return html.Div()
 
-
-def parse_data(contents, filename):
-    """
-    Parses the data in a pandas dataframe.
-    :param contents: contents of the data
-    :param filename: filename of the data
-    :return: Dataframe
-    """
-    if contents is None:
-        return
-
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            # Assume that the user uploaded a CSV or TXT file
-            # global df
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
-            dataframe = pd.read_excel(io.BytesIO(decoded))
-        elif 'txt' or 'tsv' in filename:
-            # Assume that the user upl, delimiter = r'\s+'oaded an excel file
-            dataframe = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
-
-    except Exception as e:
-        print(e)
-        return html.Div([
-            'There was an error processing this file.'
-        ])
-    return dataframe
-
-# Selecting points on graph should select respective rows in DashTable
-@app.callback(
-    Output('main_table', 'selected_rows'),
-    Input('Mygraph', 'selectedData'))
-def display_selected_data(selectedData):
-    points_selected = []
-    if selectedData is not None:
-        for point in selectedData['points']:
-            points_selected.append(point['customdata'][0])
-        print(points_selected)
-    return points_selected
 
 if __name__ == '__main__':
     app.run_server(debug=True)
