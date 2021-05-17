@@ -7,6 +7,10 @@ import pandas as pd
 class Dataframe:
 
     def __init__(self, contents, filename):
+        """
+        Initialise Dataframe object and reads in csv, xls or txt files.
+        @rtype: object
+        """
         self.contents = contents
         self.filename = filename
 
@@ -35,14 +39,30 @@ class Dataframe:
             print(e)
 
     def get_data(self):
+        """
+        Gives dataframe.
+        @rtype: object
+        """
         return self.data
 
     def get_dimensions(self):
+        """
+        Gives amount of dimensions
+        @rtype: object
+        """
         return self.all_dims
 
     def set_data(self, data):
+        """
+        Sets datafile
+        @type data: object
+        """
         self.data = data
 
     def set_columns(self, columns):
+        """
+        Sets columnd
+        @rtype: object
+        """
         self.data = columns
 

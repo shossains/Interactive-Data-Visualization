@@ -6,11 +6,24 @@ import dash_table
 
 
 class FigureFactories(DashFigureFactory):
+
     def __init__(self):
+        """
+        Initializes the figure factories. All different graphing methods are stored here for all classes.
+        """
         super().__init__()
 
     @staticmethod
     def graph_methods(df, xvalue, yvalue, charvalue, plotvalue):
+        """
+        Plots a normal graph with different options how to plot.
+        :param df:  Dataframe with all data
+        :param xvalue: Selected x-axis value in the data
+        :param yvalue: Selected y-axis value in the data
+        :param charvalue: Selected characteristic of the data
+        :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+        :return: Graph object with the displayed plot
+        """
         if df is not None:
             dataframe = df.reset_index()
             x = dataframe['{}'.format(xvalue)]
@@ -49,11 +62,11 @@ class FigureFactories(DashFigureFactory):
     def subgraph_methods(df, options_char, dims):
         """
             displays subgraphs when comparing labels to each other
-            :param df:
-            :param options_char:
+            :param df:  Dataframe with all data
+            :param options_char: Selected characteristic of the data
             :param dims: Multiple dimensions that are chosen
             :return: graph
-            """
+        """
         if dims is None:
             return {}
         if dims == "index":

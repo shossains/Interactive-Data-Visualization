@@ -11,6 +11,12 @@ from src.main.python.oop.Figure_factories import FigureFactories
 
 class ExampleML2(DashComponent):
     def __init__(self, plot_factory, df, title="Example ML"):
+        """
+        NO Pydocs not in use code TODO: make second class
+        :param plot_factory:
+        :param df:
+        :param title:
+        """
         super().__init__(title=title)
         self.plot_factory = FigureFactories.FigureFactories()
         self.df = df
@@ -32,7 +38,7 @@ class ExampleML2(DashComponent):
     #         Input('select-plot-options-ml2', 'value'),
     #     ])
     #     def update_plot(xvalue, yvalue, charvalue, plotvalue):
-    #         return self.plot_factory.graph_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
+    #         return self.plotfactory.graph_methods(self.df, xvalue, yvalue, charvalue, plotvalue)
     #
     #     @app.callback([Output('select-variable-x-ml2', 'options'),
     #                    Output('select-variable-y-ml2', 'options'),
