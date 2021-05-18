@@ -16,14 +16,23 @@ from src.main.python.oop.Dataframe import Dataframe
 
 
 class Dashboard(DashComponent):
-    def __init__(self, plot_factory):
+    def __init__(self, plotfactory):
+        """
+        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table and Instructions
+        @rtype: object
+        """
         super().__init__(title="Interactive data visualiser")
         df = pd.DataFrame({})
-        self.ToolSelector = ToolSelector(plot_factory,df, "Tool selector")
-        self.Table = Table(plot_factory, df, "Show Table")
-        self.Instructions = Instructions.Instructions(plot_factory, df, "Instruction page")
+        self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
+        self.Table = Table(plotfactory, df, "Show Table")
+        self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
 
     def layout(self, params=None):
+        """
+        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the layout. Parameters are also passed through
+        :param params: Parameters selected at the current level of the dashboard.
+        :return: Html layout of the program.
+        """
         return dbc.Container([
 
             dbc.Row(html.Br()), # Only for styling, spacing out
@@ -71,6 +80,11 @@ class Dashboard(DashComponent):
         ], fluid=True)
 
     def component_callbacks(self, app):
+        """
+        Automatically does the callbacks of the interactive parts of the dashboard main components.
+        :param app: Dash app that uses the code
+        :return: Output of the callback functions.
+        """
         @app.callback(Output('dummy', 'children'),
                       [
                           Input('upload-data', 'contents'),
@@ -100,6 +114,9 @@ class Dashboard(DashComponent):
 
 
 if __name__ == '__main__':
+    """"
+    Main function to be run
+    """
     plot_factory = FigureFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)

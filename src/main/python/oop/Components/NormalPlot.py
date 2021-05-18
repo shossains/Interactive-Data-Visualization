@@ -9,12 +9,24 @@ from src.main.python.oop.Figure_factories import FigureFactories
 
 
 class NormalPlot(DashComponent):
-    def __init__(self, plot_factory, df, title="Example ML"):
+
+    def __init__(self, plot_factory, df, title="Normal plot"):
+        """
+        Plot function of basic plot options with graph and subgraph
+        :param plot_factory: Factory with all plot functions
+        :param df: Dataframe with all data
+        :param title: Title of the page
+        """
         super().__init__(title=title)
         self.plot_factory = FigureFactories.FigureFactories()
         self.df = df
 
     def layout(self, params=None):
+        """
+               Shows the html layout of the Normal plot. Parameters are also passed through
+               :param params: Parameters selected at the current level of the dashboard.
+               :return: Html layout of the program.
+        """
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -107,6 +119,11 @@ class NormalPlot(DashComponent):
         return page
 
     def component_callbacks(self, app):
+        """
+               Automatically does the callbacks of the interactive parts of the dashboard main components.
+               :param app: Dash app that uses the code
+               :return: Output of the callback functions.
+        """
         @app.callback(Output('Mygraph-normal-plot', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
             Input('select-variable-y-normal-plot', 'value'),
@@ -114,6 +131,15 @@ class NormalPlot(DashComponent):
             Input('select-plot-options-normal-plot', 'value'),
         ])
         def update_graph(xvalue, yvalue, options_char, plotvalue):
+            """
+            Updates a normal graph with different options how to plot.
+
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param options_char: Selected characteristic of the data
+            :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+            :return: Graph object with the displayed plot
+            """
             if xvalue is None or yvalue is None or options_char is None:
                 return {}
             if xvalue == "index" or yvalue == "index" or options_char == "index":
@@ -126,6 +152,12 @@ class NormalPlot(DashComponent):
             Input('select-dimensions-normal-plot', 'value'),
         ])
         def update_subgraph(options_char, dims):
+            """
+            updates subgraphs when comparing labels to each other
+            :param options_char: Selected characteristic of the data
+            :param dims: Multiple dimensions that are chosen
+            :return: subgraph
+            """
             return self.plot_factory.subgraph_methods(self.df, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
@@ -137,7 +169,7 @@ class NormalPlot(DashComponent):
                       ])
         def set_options_variable(dummy):
             """
-            loads in possible parameters for the x and y-axis from the data.
+            loads in possible parameters for the x and y-axis in dropdown from the data.
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
