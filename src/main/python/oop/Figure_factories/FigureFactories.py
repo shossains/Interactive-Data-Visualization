@@ -3,6 +3,7 @@ import plotly.express as px
 import dash_html_components as html
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 import dash_table
+import pandas as pd
 
 
 class FigureFactories(DashFigureFactory):
@@ -32,15 +33,15 @@ class FigureFactories(DashFigureFactory):
 
             print(x)
             if timeseries_bool is not None:
-                if 'True' in timeseries_bool:
-                    x = pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S')
-                    print(x)
+                x = pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S')
+                print("Converted time series")
+                print(pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S'))
 
             fig = go.Figure()
 
             if 'scatter' in plotvalue:
                 fig = px.scatter(
-                    dataframe, x=x, y=y, color=charvalue, hover_data=df
+                    data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=df,
                 )
 
             if 'density' in plotvalue:
