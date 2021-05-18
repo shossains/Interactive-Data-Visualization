@@ -14,7 +14,7 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
-    def graph_methods(df, xvalue, yvalue, charvalue, plotvalue):
+    def graph_methods(df, xvalue, yvalue, charvalue, plotvalue, timeseries_bool):
         """
         Plots a normal graph with different options how to plot.
         :param df:  Dataframe with all data
@@ -24,10 +24,17 @@ class FigureFactories(DashFigureFactory):
         :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
         :return: Graph object with the displayed plot
         """
+
         if df is not None:
             dataframe = df.reset_index()
             x = dataframe['{}'.format(xvalue)]
             y = dataframe['{}'.format(yvalue)]
+
+            print(x)
+            if timeseries_bool is not None:
+                if 'True' in timeseries_bool:
+                    x = pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S')
+                    print(x)
 
             fig = go.Figure()
 

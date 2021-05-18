@@ -37,7 +37,12 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable x"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...'),
+                        self.querystring(params)(dcc.Checklist)(
+                            options=[{'label': 'Time-series data', 'value': 'True'}],
+                            id='time-series-checkbox'
+                        )
+
                     ])
                 ),
                 dbc.Col(
@@ -129,8 +134,9 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
+            Input('time-series-checkbox', 'value'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, timeseries_bool):
             """
             Updates a normal graph with different options how to plot.
 
@@ -145,7 +151,7 @@ class NormalPlot(DashComponent):
             if xvalue == "index" or yvalue == "index" or options_char == "index":
                 return {}
 
-            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue)
+            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue, timeseries_bool)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
