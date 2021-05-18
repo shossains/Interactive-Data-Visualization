@@ -7,7 +7,6 @@
 * We lopen redelijk vóór op schema
 * Vanaf hier is het nog onduidelijk wat de client exact in gedachte heeft
 	* Donderdag 20 mei is hier een meeting over met de client
-
 * Een paar issues zijn aangemaakt voor deze week
 * Donderdag 20 mei deadline voor personal reflection
 	* Hiervoor kan gebruik gemaakt worden van de BuddyCheck
