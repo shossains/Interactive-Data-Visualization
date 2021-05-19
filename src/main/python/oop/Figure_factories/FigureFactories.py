@@ -54,30 +54,18 @@ class FigureFactories(DashFigureFactory):
         return fig
 
     @staticmethod
-    def subgraph_methods(df, options_char, dims):
+    def subgraph_methods(dataframe, options_char, dims):
         """
             displays subgraphs when comparing labels to each other
-            :param df:  Dataframe with all data
+            :param dataframe:  Dataframe with all data
             :param options_char: Selected characteristic of the data
             :param dims: Multiple dimensions that are chosen
             :return: graph
         """
-        if dims is None:
-            return {}
-        if dims == "index":
-            return {}
-
-        if df is not None:
-
-            dataframe = df.reset_index()
-
-            fig = px.scatter_matrix(
-                dataframe, dimensions=dims, color=options_char
-            )
-
-            return fig
-        else:
-            return {}
+        if options_char == 'no-value' or options_char == 'select':
+            options_char = None
+            
+        return px.scatter_matrix(dataframe, dimensions=dims, color=options_char)
 
     @staticmethod
     def show_table(df, contents, filename, showtable):

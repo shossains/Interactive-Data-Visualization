@@ -161,7 +161,12 @@ class NormalPlot(DashComponent):
             :param dims: Multiple dimensions that are chosen
             :return: subgraph
             """
-            return self.plot_factory.subgraph_methods(self.df, options_char, dims)
+            if dims is None or dims == 'select' or self.df is None:
+                return {}
+
+            dataframe = self.df.reset_index()
+
+            return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
