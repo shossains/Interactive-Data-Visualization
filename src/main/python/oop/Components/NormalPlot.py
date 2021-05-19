@@ -18,7 +18,7 @@ class NormalPlot(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
-        self.plot_factory = FigureFactories.FigureFactories()
+        self.plot_factory = plot_factory
         self.df = df
 
     def layout(self, params=None):
@@ -186,7 +186,7 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorlabel = colorlabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorlabel + labels, labels
+                return labels, labels, colorlabel, labels
             else:
                 return labels, labels, labels, labels
 
