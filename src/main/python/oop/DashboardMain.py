@@ -112,7 +112,6 @@ class Dashboard(DashComponent):
                 print("data uploaded")
                 return {}
 
-
 if __name__ == '__main__':
     """"
     Main function to be run
@@ -120,5 +119,17 @@ if __name__ == '__main__':
     plot_factory = FigureFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
-
     DashApp.run(debug=True)
+else:
+    '''
+    This code exists to be able to run test_application.py
+    When running test_application, the __name__ is not equal to __main__
+    Dash testing api is looking for a Dash app instance in the DashboardMain.py, which is created here.
+    '''
+    plot_factory = FigureFactories.FigureFactories()
+    dashboard = Dashboard(plot_factory)
+    app = DashApp(dashboard, querystrings=True, bootstrap=FLATLY).app
+
+
+
+
