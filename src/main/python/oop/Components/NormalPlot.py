@@ -1,5 +1,7 @@
 __all__ = ['Dashboard']
 
+import numpy as np
+import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -112,8 +114,12 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
+            # Input('main_table', 'data')
         ])
         def update_graph(xvalue, yvalue, options_char, plotvalue):
+            # print(tableData[0])
+            # ndf = pd.DataFrame(tableData);
+            # print(ndf)
             if xvalue is None or yvalue is None or options_char is None:
                 return {}
             if xvalue == "index" or yvalue == "index" or options_char == "index":
@@ -141,11 +147,17 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
+            if 'row_index_label' in self.df.columns:
+                del self.df['row_index_label']
+
+            row_labels = np.arange(0, self.df.shape[0], 1)
+            self.df.insert(0, 'row_index_label', row_labels)
+
             dataframe = self.df.reset_index()
             return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                           dataframe.columns], [
+                                                                           dataframe.columns[1::]], [
                        {'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                              dataframe.columns]
+                                                                              dataframe.columns[1::]]
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
