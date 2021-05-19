@@ -15,10 +15,10 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
-    def graph_methods(df, xvalue, yvalue, charvalue, plotvalue, timeseries_bool):
+    def graph_methods(dataframe, xvalue, yvalue, charvalue, plotvalue):
         """
         Plots a normal graph with different options how to plot.
-        :param df:  Dataframe with all data
+        :param dataframe:  Dataframe with all data
         :param xvalue: Selected x-axis value in the data
         :param yvalue: Selected y-axis value in the data
         :param charvalue: Selected characteristic of the data
@@ -26,45 +26,32 @@ class FigureFactories(DashFigureFactory):
         :return: Graph object with the displayed plot
         """
 
-        if df is not None:
-            dataframe = df.reset_index()
-            x = dataframe['{}'.format(xvalue)]
-            y = dataframe['{}'.format(yvalue)]
+        fig = go.Figure()
+        if charvalue == 'no-color':
+            charvalue = None
 
-            print(x)
-            if timeseries_bool is not None:
-                x = pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S')
-                print("Converted time series")
-                print(pd.to_datetime(x, format='%d/%m/%Y %H:%M:%S'))
+        if 'scatter' in plotvalue:
+            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
 
-            fig = go.Figure()
+        if 'density' in plotvalue:
+            fig = px.density_contour(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'scatter' in plotvalue:
-                fig = px.scatter(
-                    data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=df,
-                )
+        if 'line' in plotvalue:
+            fig = px.line(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'density' in plotvalue:
-                fig = px.density_contour(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+        if 'histogram' in plotvalue:
+            fig = px.histogram(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'line' in plotvalue:
-                fig = px.line(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+        if 'box' in plotvalue:
+            fig = px.box(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'histogram' in plotvalue:
-                fig = px.histogram(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+        if 'bar' in plotvalue:
+            fig = px.bar(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'box' in plotvalue:
-                fig = px.box(dataframe, x=x, y=y, color=charvalue, hover_data=df)
+        if 'area' in plotvalue:
+            fig = px.area(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-            if 'bar' in plotvalue:
-                fig = px.bar(dataframe, x=x, y=y, color=charvalue, hover_data=df)
-
-            if 'area' in plotvalue:
-                fig = px.area(dataframe, x=x, y=y, color=charvalue, hover_data=df)
-
-            return fig
-        else:
-            return {}
+        return fig
 
     @staticmethod
     def subgraph_methods(df, options_char, dims):

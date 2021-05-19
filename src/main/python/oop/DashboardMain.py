@@ -22,7 +22,7 @@ class Dashboard(DashComponent):
         @rtype: object
         """
         super().__init__(title="Interactive data visualiser")
-        df = pd.DataFrame({})
+        df = None
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")

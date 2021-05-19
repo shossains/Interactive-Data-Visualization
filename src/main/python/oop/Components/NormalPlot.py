@@ -38,11 +38,6 @@ class NormalPlot(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
                             placeholder='Select ...'),
-                        self.querystring(params)(dcc.Checklist)(
-                            options=[{'label': 'Time-series data', 'value': 'True'}],
-                            id='time-series-checkbox'
-                        )
-
                     ])
                 ),
                 dbc.Col(
@@ -129,14 +124,14 @@ class NormalPlot(DashComponent):
                :param app: Dash app that uses the code
                :return: Output of the callback functions.
         """
+
         @app.callback(Output('Mygraph-normal-plot', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            Input('time-series-checkbox', 'value'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, timeseries_bool):
+        def update_graph(xvalue, yvalue, options_char, plotvalue):
             """
             Updates a normal graph with different options how to plot.
 
@@ -146,12 +141,14 @@ class NormalPlot(DashComponent):
             :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
             :return: Graph object with the displayed plot
             """
-            if xvalue is None or yvalue is None or options_char is None:
+            if xvalue is None or yvalue is None or options_char is None or self.df is None:
                 return {}
-            if xvalue == "index" or yvalue == "index" or options_char == "index":
+            if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue, timeseries_bool)
+            dataframe = self.df.reset_index()
+
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
@@ -179,11 +176,19 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
-            dataframe = self.df.reset_index()
-            return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                           dataframe.columns], [
-                       {'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                              dataframe.columns]
+            labels = [{'label': 'Select', 'value': 'select'}]
+
+            if self.df is not None:
+                dataframe = self.df
+                colorlabel = [{'label': 'Select', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
+
+                for i in dataframe.columns:
+                    labels = labels + [{'label': i, 'value': i}]
+                    colorlabel = colorlabel + [{'label': i, 'value': i}]
+
+                return labels, labels, colorlabel + labels, labels
+            else:
+                return labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
@@ -198,7 +203,7 @@ class NormalPlot(DashComponent):
                       ])
         def set_variables(options_x, options_y, options_char, dims):
             """
-            Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
