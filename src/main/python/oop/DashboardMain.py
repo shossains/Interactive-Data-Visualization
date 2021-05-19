@@ -113,6 +113,10 @@ class Dashboard(DashComponent):
                 return {}
 
 
+
+print("HIERHIERHIER")
+print(__name__)
+
 if __name__ == '__main__':
     """"
     Main function to be run
@@ -120,5 +124,16 @@ if __name__ == '__main__':
     plot_factory = FigureFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
-
     DashApp.run(debug=True)
+else:
+    '''
+    This code exists to be able to run test_application.py
+    '''
+    plot_factory = FigureFactories.FigureFactories()
+    dashboard = Dashboard(plot_factory)
+    #Dash testing api is looking for a Dash app instance in this main method, which is created here.
+    app = DashApp(dashboard, querystrings=True, bootstrap=FLATLY).app
+
+
+
+
