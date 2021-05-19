@@ -18,7 +18,7 @@ class NormalPlot(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
-        self.plot_factory = FigureFactories.FigureFactories()
+        self.plot_factory = plot_factory
         self.df = df
 
     def layout(self, params=None):
@@ -37,7 +37,7 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable x"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...'),
                     ])
                 ),
                 dbc.Col(
@@ -124,6 +124,7 @@ class NormalPlot(DashComponent):
                :param app: Dash app that uses the code
                :return: Output of the callback functions.
         """
+
         @app.callback(Output('Mygraph-normal-plot', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
             Input('select-variable-y-normal-plot', 'value'),
@@ -140,12 +141,14 @@ class NormalPlot(DashComponent):
             :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
             :return: Graph object with the displayed plot
             """
-            if xvalue is None or yvalue is None or options_char is None:
+            if xvalue is None or yvalue is None or options_char is None or self.df is None:
                 return {}
-            if xvalue == "index" or yvalue == "index" or options_char == "index":
+            if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, options_char, plotvalue)
+            dataframe = self.df.reset_index()
+
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
@@ -158,7 +161,12 @@ class NormalPlot(DashComponent):
             :param dims: Multiple dimensions that are chosen
             :return: subgraph
             """
-            return self.plot_factory.subgraph_methods(self.df, options_char, dims)
+            if dims is None or dims == 'select' or self.df is None:
+                return {}
+
+            dataframe = self.df.reset_index()
+
+            return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
@@ -173,11 +181,19 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
-            dataframe = self.df.reset_index()
-            return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                           dataframe.columns], [
-                       {'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                              dataframe.columns]
+            labels = [{'label': 'Select', 'value': 'select'}]
+
+            if self.df is not None:
+                dataframe = self.df
+                colorlabel = [{'label': 'Select', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
+
+                for i in dataframe.columns:
+                    labels = labels + [{'label': i, 'value': i}]
+                    colorlabel = colorlabel + [{'label': i, 'value': i}]
+
+                return labels, labels, colorlabel, labels
+            else:
+                return labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
@@ -192,7 +208,7 @@ class NormalPlot(DashComponent):
                       ])
         def set_variables(options_x, options_y, options_char, dims):
             """
-            Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
