@@ -1,5 +1,7 @@
 __all__ = ['Dashboard']
 
+import numpy as np
+import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -181,6 +183,12 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
+            if 'row_index_label' in self.df.columns:
+                del self.df['row_index_label']
+
+            row_labels = np.arange(0, self.df.shape[0], 1)
+            self.df.insert(0, 'row_index_label', row_labels)
+
             labels = [{'label': 'Select', 'value': 'select'}]
 
             if self.df is not None:
@@ -212,9 +220,9 @@ class NormalPlot(DashComponent):
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
-            :return: The choosen x-axis and y-axis and characteristic
+            :return: The chosen x-axis and y-axis and characteristic
             """
-            if (options_y is None or options_x is None or options_char is None or dims is None):
+            if options_y is None or options_x is None or options_char is None or dims is None:
                 return None, None, None, None
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
                 return None, None, None, None
