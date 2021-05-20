@@ -50,9 +50,6 @@ class FigureFactories(DashFigureFactory):
 
         elif 'area' in plotvalue:
             fig = px.area(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
-
-        else:
-            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
         
         return fig
 
