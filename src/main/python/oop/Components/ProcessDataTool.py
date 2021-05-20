@@ -1,4 +1,5 @@
 __all__ = ['Dashboard']
+
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -6,10 +7,10 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Figure_factories import FigureFactories
-from src.main.python.oop.Components.ProcessDataTool import ProcessDataTool
+from src.main.python.oop.Components.ClientCode.ClientCode import example_function1, example_function2
 
 
-class NormalPlot(DashComponent):
+class ProcessDataTool(DashComponent):
 
     def __init__(self, plot_factory, df, title="Normal plot"):
         """
@@ -20,7 +21,6 @@ class NormalPlot(DashComponent):
         """
         super().__init__(title=title)
         self.plot_factory = plot_factory
-        self.process_data_tool = ProcessDataTool(plot_factory, df, "Processed data")
         self.df = df
 
     def layout(self, params=None):
@@ -32,13 +32,30 @@ class NormalPlot(DashComponent):
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
-            dbc.Row(html.H5("Main Graph")),
+            dbc.Row(html.H5("Selected Graph")),
+            # client back end code part for selected data
+            dbc.Row([
+                html.Br(),
+                html.H6("Calculate selected data with back-end formula's")
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.Button("example function 1", id="example-function-1-button", n_clicks=0)
+                    ])
+                ]),
+                dbc.Col([
+                    html.Div([
+                        html.Button("example function 2", id="example-function-2-button", n_clicks=0)
+                    ])
+                ])
+            ]),
             dbc.Row([
                 dbc.Col(
                     html.Div([
                         html.H6("Select variable x"),
                         self.querystring(params)(dcc.Dropdown)(
-                            id='select-variable-x-normal-plot',
+                            id='select-variable-x-processed-plot',
                             placeholder='Select ...'),
                     ])
                 ),
@@ -46,7 +63,7 @@ class NormalPlot(DashComponent):
                     html.Div([
                         html.H6("Select variable y"),
                         self.querystring(params)(dcc.Dropdown)(
-                            id='select-variable-y-normal-plot',
+                            id='select-variable-y-processed-plot',
                             placeholder='Select ...')
                     ])
                 ),
@@ -54,7 +71,7 @@ class NormalPlot(DashComponent):
                     html.Div([
                         html.H6("Color based on"),
                         self.querystring(params)(dcc.Dropdown)(
-                            id='select-characteristics-normal-plot',
+                            id='select-characteristics-processed-plot',
                             placeholder='Select ...')
                         # multi=True
                     ])
@@ -62,7 +79,7 @@ class NormalPlot(DashComponent):
                 dbc.Col(
                     html.Div([
                         html.H6("Select plot method"),
-                        self.querystring(params)(dcc.Dropdown)(id='select-plot-options-normal-plot',
+                        self.querystring(params)(dcc.Dropdown)(id='select-plot-options-processed-plot',
                                                                options=[
                                                                    {'label': 'Area', 'value': 'area'},
                                                                    {'label': 'Bar', 'value': 'bar'},
@@ -78,47 +95,20 @@ class NormalPlot(DashComponent):
 
             ]),
             # Only for styling, spaces out selectors
-            dbc.Row(html.Br()),
-            dbc.Row(html.H5("Subgraph")),
-            dbc.Row(
-                dbc.Col(
-                    html.Div([
-                        html.H6("Select subgraph features"),
-                        self.querystring(params)(dcc.Dropdown)(
-                            id='select-dimensions-normal-plot',
-                            placeholder='Select ...',
-                            multi=True
-                        )
-                    ])
-                ),
-            ),
             dbc.Row([
                 dbc.Col(
                     dcc.Loading(
-                        id="loading-icon-normal-plot",
+                        id="loading-icon-processed-plot",
                         children=[html.Div(
                             dcc.Graph(
-                                id='Mygraph-normal-plot'
+                                id='processed-plot'
                             ),
                         )],
                         type="circle"
                     ),
 
-                ),
-
-                dbc.Col(
-                    dcc.Loading(
-                        id="loading-icon2-normal-plot",
-                        children=[html.Div(
-                            dcc.Graph(
-                                id='Subgraph-normal-plot'
-                            ),
-                        )],
-                        type="circle"
-                    )
                 )
-            ]),
-            dbc.Row([self.process_data_tool.layout(params)])
+            ])
         ], fluid=True)
         return page
 
@@ -129,54 +119,33 @@ class NormalPlot(DashComponent):
                :return: Output of the callback functions.
         """
 
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
+        @app.callback(Output('processed-plot', 'figure'), [
+            Input('select-variable-x-processed-plot', 'value'),
+            Input('select-variable-y-processed-plot', 'value'),
+            Input('select-characteristics-processed-plot', 'value'),
+            Input('select-plot-options-processed-plot', 'value'),
+            Input('example-function-1-button', 'n_clicks'),
+            Input('example-function-2-button', 'n_clicks'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue):
-            """
-            Updates a normal graph with different options how to plot.
-
-            :param xvalue: Selected x-axis value in the data
-            :param yvalue: Selected y-axis value in the data
-            :param options_char: Selected characteristic of the data
-            :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
-            :return: Graph object with the displayed plot
-            """
+        def processed_graph(xvalue, yvalue, options_char, plotvalue, button1, button2):
             if xvalue is None or yvalue is None or options_char is None or self.df is None:
                 return {}
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            dataframe = self.df.reset_index()
+            changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+            if 'example-function-1-button' in changed_id:
+                dataframe = example_function1(self.df)
+            elif 'example-function-2-button' in changed_id:
+                dataframe = example_function2(self.df)
+            else:
+                dataframe = self.df
 
             return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
 
-
-        @app.callback(Output('Subgraph-normal-plot', 'figure'), [
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-dimensions-normal-plot', 'value'),
-        ])
-        def update_subgraph(options_char, dims):
-            """
-            updates subgraphs when comparing labels to each other
-            :param options_char: Selected characteristic of the data
-            :param dims: Multiple dimensions that are chosen
-            :return: subgraph
-            """
-            if dims is None or dims == 'select' or self.df is None:
-                return {}
-
-            dataframe = self.df.reset_index()
-
-            return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
-
-        @app.callback([Output('select-variable-x-normal-plot', 'options'),
-                       Output('select-variable-y-normal-plot', 'options'),
-                       Output('select-characteristics-normal-plot', 'options'),
-                       Output('select-dimensions-normal-plot', 'options')],
+        @app.callback([Output('select-variable-x-processed-plot', 'options'),
+                       Output('select-variable-y-processed-plot', 'options'),
+                       Output('select-characteristics-processed-plot', 'options')],
                       [
                           Input('dummy', 'children')
                       ])
@@ -196,22 +165,20 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorlabel = colorlabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorlabel, labels
+                return labels, labels, colorlabel
             else:
-                return labels, labels, labels, labels
+                return labels, labels, labels
 
-        @app.callback([Output('select-variable-x-normal-plot', 'value'),
-                       Output('select-variable-y-normal-plot', 'value'),
-                       Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value')
+        @app.callback([Output('select-variable-x-processed-plot', 'value'),
+                       Output('select-variable-y-processed-plot', 'value'),
+                       Output('select-characteristics-processed-plot', 'value'),
                        ],
                       [
-                          Input('select-variable-x-normal-plot', 'options'),
-                          Input('select-variable-y-normal-plot', 'options'),
-                          Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options')
+                          Input('select-variable-x-processed-plot', 'options'),
+                          Input('select-variable-y-processed-plot', 'options'),
+                          Input('select-characteristics-processed-plot', 'options'),
                       ])
-        def set_variables(options_x, options_y, options_char, dims):
+        def set_variables(options_x, options_y, options_char):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -219,12 +186,11 @@ class NormalPlot(DashComponent):
             :param options_char: All possible characteristic options
             :return: The choosen x-axis and y-axis and characteristic
             """
-            if (options_y is None or options_x is None or options_char is None or dims is None):
-                return None, None, None, None
-            if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
+            if options_y is None or options_x is None or options_char is None:
+                return None, None, None
+            if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
+                return None, None, None
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
 
     def set_data(self, data):
         self.df = data
-        self.process_data_tool.set_data(data)
