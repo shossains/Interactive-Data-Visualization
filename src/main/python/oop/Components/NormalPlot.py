@@ -199,7 +199,7 @@ class NormalPlot(DashComponent):
                 self.df.insert(0, 'row_index_label', row_labels)
 
                 dataFrame = self.df
-                colorLabel = [{'label': 'Select', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
+                colorLabel = [{'label': '', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
 
                 for i in dataFrame.columns[1::]:
                     labels = labels + [{'label': i, 'value': i}]
