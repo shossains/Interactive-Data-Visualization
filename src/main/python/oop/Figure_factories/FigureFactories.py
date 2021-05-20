@@ -19,26 +19,24 @@ class FigureFactories(DashFigureFactory):
             fig = go.Figure()
 
             if 'scatter' in plotvalue:
-                fig = px.scatter(
-                    dataframe, x=x, y=y, color=charvalue, hover_data=df
-                )
+                fig = px.scatter(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'density' in plotvalue:
+            elif 'density' in plotvalue:
                 fig = px.density_contour(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'line' in plotvalue:
+            elif 'line' in plotvalue:
                 fig = px.line(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'histogram' in plotvalue:
+            elif 'histogram' in plotvalue:
                 fig = px.histogram(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'box' in plotvalue:
+            elif 'box' in plotvalue:
                 fig = px.box(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'bar' in plotvalue:
+            elif 'bar' in plotvalue:
                 fig = px.bar(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
-            if 'area' in plotvalue:
+            elif 'area' in plotvalue:
                 fig = px.area(dataframe, x=x, y=y, color=charvalue, hover_data=df)
 
             return fig
