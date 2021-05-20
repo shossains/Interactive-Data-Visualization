@@ -1,5 +1,7 @@
 __all__ = ['Dashboard']
 
+import numpy as np
+import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -114,6 +116,9 @@ class NormalPlot(DashComponent):
             Input('select-plot-options-normal-plot', 'value'),
         ])
         def update_graph(xvalue, yvalue, options_char, plotvalue):
+            # print(tableData[0])
+            # ndf = pd.DataFrame(tableData);
+            # print(ndf)
             if xvalue is None or yvalue is None or options_char is None:
                 return {}
             if xvalue == "index" or yvalue == "index" or options_char == "index":
@@ -141,11 +146,17 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
+            if 'row_index_label' in self.df.columns:
+                del self.df['row_index_label']
+
+            row_labels = np.arange(0, self.df.shape[0], 1)
+            self.df.insert(0, 'row_index_label', row_labels)
+
             dataframe = self.df.reset_index()
             return [{'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                           dataframe.columns], [
+                                                                           dataframe.columns[1::]], [
                        {'label': i, 'value': i} for i in dataframe.columns], [{'label': i, 'value': i} for i in
-                                                                              dataframe.columns]
+                                                                              dataframe.columns[1::]]
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
@@ -160,13 +171,13 @@ class NormalPlot(DashComponent):
                       ])
         def set_variables(options_x, options_y, options_char, dims):
             """
-            Gets the ouput of the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            Gets the output of the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
-            :return: The choosen x-axis and y-axis and characteristic
+            :return: The chosen x-axis and y-axis and characteristic
             """
-            if (options_y is None or options_x is None or options_char is None or dims is None):
+            if options_y is None or options_x is None or options_char is None or dims is None:
                 return None, None, None, None
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
                 return None, None, None, None
