@@ -21,6 +21,7 @@ class ToolSelector(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
+        self.dfList = []
         self.plot_factory = plot_factory
         self.df = df
         self.NormalPlot = NormalPlot(plot_factory, df, "Normal plot")
@@ -49,6 +50,21 @@ class ToolSelector(DashComponent):
                     value='index',
                 ),
             ]),
+            html.Div([
+                html.H5("Select which file to project"),
+                self.querystring(params)(dcc.Dropdown)(
+                    id='select-file',
+                    # style={'display':'none'},
+                    # options=[
+                    #     {'label': 'Choose file to plot', 'value': 'index'},
+                    #     {'label': 'Normal plot', 'value': 'normal-plot'},
+                    #     {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
+                    # ],
+                    placeholder='Select ...'
+                ),
+            ]),
+
+
             html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),
             html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool')
         ], fluid=True)
@@ -76,12 +92,116 @@ class ToolSelector(DashComponent):
             else:
                 return {'display': 'none'}, {'display': 'none'}
 
-    def set_data(self, data):
+#hier
+
+        @app.callback(Output('dataframe', 'data'),
+            Input('select-file', 'value'))
+        def update_graph(file):
+            """
+            Updates a normal graph with different options how to plot.
+
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param options_char: Selected characteristic of the data
+            :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+            :return: Graph object with the displayed plot
+            """
+            if file is None:
+                return {}
+            if file == "select":
+                return {}
+
+            dataframe = self.df.reset_index()
+
+            return self.plot_factory.graph_methods(self.dfList[0])
+
+
+        @app.callback(Output('select-file', 'options'),
+                          Input('dummy', 'children'))
+        def set_options_variable(dummy):
+            """
+            loads in possible parameters for the x and y-axis in dropdown from the data.
+            :param dummy: dummy html property
+            :return: Possible options for dropdown x-axis.
+            """
+            labels = [{'label': 'select', 'value': 'select'}]
+
+            if self.dfList is not None:
+                length = len(self.dfList)
+                for i in range(length):
+                    print(self.dfList[i][1])
+                    labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
+
+                return labels
+            else:
+                return labels
+
+        @app.callback([Output('select-file', 'value')],
+                      [
+                          Input('select-file', 'options')])
+        def set_variables(options):
+            """
+            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            :param options_x: All possible x-axis options
+            :param options_y: All possible x-axis options
+            :param options_char: All possible characteristic options
+            :return: The choosen x-axis and y-axis and characteristic
+            """
+
+            # print(options)
+            # print(len(options))
+            if (options is None):
+                return [None]
+            if len(options) <= 2:
+                print("here")
+                return [None]
+            return options[0]['value']
+
+        # @app.callback(Output('select-file', 'options'),
+        #             [Input('dummy', 'children')])
+        #
+        # def set_options_variable(dummy):
+        #     labels = [{'label': 'Select', 'value': 'select'}]
+        #     labels = labels + [{'label': 'a'}, {'value': 'b'}]
+        #     labels = labels + [{'label': 'c'}, {'value': 'd'}]
+        #
+
+            #
+            # return labels
+        #
+        # @app.callback([Output('select-file', 'value')],
+        #               [
+        #                   Input('select-file', 'options')
+        #               ])
+        # def set_variables(options):
+        #     """
+        #     Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+        #     :param options_x: All possible x-axis options
+        #     :param options_y: All possible x-axis options
+        #     :param options_char: All possible characteristic options
+        #     :return: The choosen x-axis and y-axis and characteristic
+        #     """
+        #     if (options is None):
+        #         return [None]
+        #     if len(options) <= 0:
+        #         return [None]
+        #     return [options[0]['value']]
+    #
+    def set_data(self, dfList):
         """
         Method to pass through data to ToolSelector from other classes.
         :param data: Pandas dataframe that is passed through
         :return: No return
         """
-        self.df = data
-        self.NormalPlot.set_data(data)
-        self.ExampleML2.set_data(data)
+
+        if (len(dfList)) == 1:
+            self.df = dfList[0]
+            self.dfList = dfList
+            self.NormalPlot.set_data(dfList[0])
+            self.ExampleML2.set_data(dfList[0])
+        else:
+
+            return
+
+
+

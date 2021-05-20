@@ -23,6 +23,7 @@ class Dashboard(DashComponent):
         """
         super().__init__(title="Interactive data visualiser")
         df = None
+        self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
@@ -97,18 +98,20 @@ class Dashboard(DashComponent):
                    :param filename: the name of the file
                    :return: dummy html.P, which is used to activate chained callbacks.
                    """
-            print("running")
             if contents:
                 contents = contents[0]
                 filename = filename[0]
                 if contents is None:
                     return
 
-                df = Dataframe(contents, filename).data
+                dfToAdd = Dataframe(contents, filename).data
+                self.dfList.insert(0, [dfToAdd, filename])
+                # print(len(self.dfList))
+                # print(self.dfList[0][1])
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
-                self.ToolSelector.set_data(df)
-                self.Table.set_data(df, contents, filename)
+                self.ToolSelector.set_data(self.dfList)
+                self.Table.set_data(self.dfList, contents, filename)
                 print("data uploaded")
                 return {}
 
