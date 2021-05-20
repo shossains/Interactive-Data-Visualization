@@ -27,7 +27,8 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable x"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...',
+                            clearable=False)
                     ])
                 ),
                 dbc.Col(
@@ -35,7 +36,8 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable y"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-y-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...',
+                            clearable=False)
                     ])
                 ),
                 dbc.Col(
@@ -43,7 +45,8 @@ class NormalPlot(DashComponent):
                         html.H6("Color based on"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-characteristics-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...',
+                            clearable=False)
                         # multi=True
                     ])
                 ),
@@ -60,7 +63,7 @@ class NormalPlot(DashComponent):
                                                                    {'label': 'Line', 'value': 'line'},
                                                                    {'label': 'Scatter', 'value': 'scatter'},
                                                                ],
-                                                               value='scatter')
+                                                               value='scatter', clearable=False)
                     ])
                 )
             ]),
