@@ -10,11 +10,22 @@ from src.main.python.oop.Figure_factories import FigureFactories
 
 class Instructions(DashComponent):
     def __init__(self, plot_factory, df, title="Instruction page"):
+        """
+        Instruction page with explanation and other info.
+        :param plot_factory: Factory with all plot functions
+        :param df: Dataframe with all data
+        :param title: Title of the page
+        """
         super().__init__(title=title)
         self.plot_factory = FigureFactories.FigureFactories()
         self.df = df
 
     def layout(self, params=None):
+        """
+               Shows the html layout of the Instructions page. Parameters are also passed through
+               :param params: Parameters selected at the current level of the dashboard.
+               :return: Html layout of the program.
+        """
         page = dbc.Container([
             html.Div([
                 html.H2("Welcome to the interactive data visualiser"),
