@@ -5,14 +5,16 @@
 <h4>Algemene mededelingen</h4>
 
 - Project gaat goed; wat onduidelijkheden over wat er nog moet gebeuren
-- Grote realistische datasets kunnen niet gestuurd worden wegens privacy redenenen
+- Grote realistische datasets kunnen niet gestuurd worden wegens privacy redenen
 	- Kleine datasets die nu geleverd zijn kunnen wel handmatig opgeschaald worden tot grotere datasets door replicatie
 - Communiceren mag frequenter
+- Machine van client heeft geen problemen met betrekking tot geheugen
+	- Een mogelijke feature met oog op efficiëntie zou kunnen zijn het lazy loading van een bepaald tijdsinterval
 
 <h4>Demo</h4>
 
 - Over het algemeen meer dan tevreden tot nu toe
-- Continue waardes worden autmatisch omgezet in een heatmap
+- Continue waardes worden automatisch omgezet in een heatmap
 - Één patiënt/persoon staat gelijk aan één csv bestand
 
 <h4>TODO</h4>
