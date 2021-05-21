@@ -39,7 +39,8 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable x"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
-                            placeholder='Select ...'),
+                            placeholder='Select ...',
+                            clearable=False)
                     ])
                 ),
                 dbc.Col(
@@ -47,7 +48,8 @@ class NormalPlot(DashComponent):
                         html.H6("Select variable y"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-y-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...',
+                            clearable=False)
                     ])
                 ),
                 dbc.Col(
@@ -55,7 +57,8 @@ class NormalPlot(DashComponent):
                         html.H6("Color based on"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-characteristics-normal-plot',
-                            placeholder='Select ...')
+                            placeholder='Select ...',
+                            clearable=False)
                         # multi=True
                     ])
                 ),
@@ -72,7 +75,7 @@ class NormalPlot(DashComponent):
                                                                    {'label': 'Line', 'value': 'line'},
                                                                    {'label': 'Scatter', 'value': 'scatter'},
                                                                ],
-                                                               value='scatter')
+                                                               value='scatter', clearable=False)
                     ])
                 )
             ]),
@@ -183,23 +186,26 @@ class NormalPlot(DashComponent):
             :param dummy: dummy html property
             :return: Possible options for dropdown x-axis.
             """
-            if 'row_index_label' in self.df.columns:
-                del self.df['row_index_label']
-
-            row_labels = np.arange(0, self.df.shape[0], 1)
-            self.df.insert(0, 'row_index_label', row_labels)
-
-            labels = [{'label': 'Select', 'value': 'select'}]
+            labels = []
 
             if self.df is not None:
-                dataframe = self.df
-                colorlabel = [{'label': 'Select', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
+                if self.df.columns is not None:
+                    labels = [{'label': '', 'value': 'select'}]
 
-                for i in dataframe.columns:
+                if 'row_index_label' in self.df.columns:
+                    del self.df['row_index_label']
+
+                row_labels = np.arange(0, self.df.shape[0], 1)
+                self.df.insert(0, 'row_index_label', row_labels)
+
+                dataFrame = self.df
+                colorLabel = [{'label': '', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]
+
+                for i in dataFrame.columns[1::]:
                     labels = labels + [{'label': i, 'value': i}]
-                    colorlabel = colorlabel + [{'label': i, 'value': i}]
+                    colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorlabel, labels
+                return labels, labels, colorLabel, labels
             else:
                 return labels, labels, labels, labels
 

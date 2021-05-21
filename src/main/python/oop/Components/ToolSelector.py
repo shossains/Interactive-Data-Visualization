@@ -47,6 +47,7 @@ class ToolSelector(DashComponent):
                         {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
                     ],
                     value='index',
+                    clearable=False
                 ),
             ]),
             html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),

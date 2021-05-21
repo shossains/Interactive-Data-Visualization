@@ -30,29 +30,26 @@ class FigureFactories(DashFigureFactory):
         if charvalue == 'no-color':
             charvalue = None
 
-        if 'scatter' in plotvalue:
+        elif 'scatter' in plotvalue:
             fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
 
-        if 'density' in plotvalue:
+        elif 'density' in plotvalue:
             fig = px.density_contour(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-        if 'line' in plotvalue:
+        elif 'line' in plotvalue:
             fig = px.line(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-        if 'histogram' in plotvalue:
+        elif 'histogram' in plotvalue:
             fig = px.histogram(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-        if 'box' in plotvalue:
+        elif 'box' in plotvalue:
             fig = px.box(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-        if 'bar' in plotvalue:
+        elif 'bar' in plotvalue:
             fig = px.bar(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
 
-        if 'area' in plotvalue:
+        elif 'area' in plotvalue:
             fig = px.area(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe)
-
-        else:
-            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
         
         return fig
 
