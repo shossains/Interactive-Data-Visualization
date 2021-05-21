@@ -169,11 +169,11 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            Input('query-normal-plot', 'value')
+            Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, data_process_dummy):
-        def update_graph(xvalue, yvalue, options_char, plotvalue, query):
+
+        def update_graph(xvalue, yvalue, options_char, plotvalue, query, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
