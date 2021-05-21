@@ -156,6 +156,7 @@ class NormalPlot(DashComponent):
             :param yvalue: Selected y-axis value in the data
             :param options_char: Selected characteristic of the data
             :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
             if xvalue is None or yvalue is None or options_char is None or self.df is None:

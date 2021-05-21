@@ -23,6 +23,7 @@ class FigureFactories(DashFigureFactory):
         :param yvalue: Selected y-axis value in the data
         :param charvalue: Selected characteristic of the data
         :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+        :param query: Query for filtering data
         :return: Graph object with the displayed plot
         """
 
