@@ -78,53 +78,32 @@ class ToolSelector(DashComponent):
                 return {'display': 'none'}, {'display': 'none'}
 
         @app.callback(Output('select-file', 'options'),
-                          Input('dummy', 'children'))
+                      Input('dummy', 'children'))
         def set_options_variable(dummy):
-            """
-            loads in possible parameters for the x and y-axis in dropdown from the data.
-            :param dummy: dummy html property
-            :return: Possible options for dropdown x-axis.
-            """
-            labels = [{'label': 'aaa', 'value': 'select'}]
+            labels = [{'label': 'Select', 'value': 'Select'}]
 
-            if self.dfList is not None:
-                length = len(self.dfList)
-                for i in range(length):
-                    labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
-                return labels
-            else:
-                return labels
+            length = len(self.dfList)
+            for i in range(length):
+                labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
+            return labels
 
-        @app.callback(Output('select-file', 'value'),
-                      Input('select-file', 'options'))
-        def set_variables(options):
-            """
-            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
-            :param options_x: All possible x-axis options
-            :param options_y: All possible x-axis options
-            :param options_char: All possible characteristic options
-            :return: The choosen x-axis and y-axis and characteristic
-            """
-            if (options is None):
-                return None
-            if len(options) <= 0:
-                return None
-            return options[0]['value']
+        # @app.callback(Output('select-file', 'value'),
+        #               Input('select-file', 'options'))
+        # def set_variables(options):
+        #     if (options is None):
+        #         return None
+        #     if len(options) <= 0:
+        #         return None
+        #     return options[0]['value']
 
         @app.callback(Output('intermediate-value', 'data'),
-            [Input('select-file', 'value')])
+                      [Input('select-file', 'value')])
         def update_graph(value):
-
-            print("called intermediate")
 
             if value is None:
                 return {}
             if value == "select":
                 return {}
-
-            # self.df = self.dfList[0][0]
-            # self.NormalPlot.set_data(self.dfList[0][0])
-            # self.ExampleML2.set_data(self.dfList[0][0])
 
             for i in self.dfList:
                 if (i[1] == value):
@@ -140,13 +119,6 @@ class ToolSelector(DashComponent):
         """
         self.dfList = dfList
 
-        # if (len(dfList)) == 1:
-        #     self.df = dfList[0][0]
-        #     self.NormalPlot.set_data(dfList[0][0])
-        #     self.ExampleML2.set_data(dfList[0][0])
-        # else:
-        #
-        #     return
 
 
 

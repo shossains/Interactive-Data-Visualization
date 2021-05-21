@@ -230,7 +230,6 @@ class NormalPlot(DashComponent):
                 return None, None, None, None
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
+
     def set_data(self, data):
-        print("called")
         self.df = data
-        print(self.df)
