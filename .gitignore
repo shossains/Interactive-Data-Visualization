@@ -1,0 +1,17 @@
+# Unit test / coverage reports
+.coverage
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+.Python
+env/
+venv/
+
+# PyBuilder
+target/
+.pybuilder/
+
+# Idea
+.idea
