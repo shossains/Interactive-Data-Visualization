@@ -1,5 +1,4 @@
-__all__ = ['Dashboard']
-
+import dash
 import numpy as np
 import pandas as pd
 import dash_html_components as html
@@ -7,6 +6,8 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+
+from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Figure_factories import FigureFactories
 
 
@@ -22,6 +23,7 @@ class NormalPlot(DashComponent):
         super().__init__(title=title)
         self.plot_factory = plot_factory
         self.df = df
+        self.original_data = df
 
     def layout(self, params=None):
         """
@@ -29,6 +31,16 @@ class NormalPlot(DashComponent):
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
+        buttonstyle = {
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            "margin-left": "15px",
+            "margin-right": "15px"
+        }
+
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -77,7 +89,19 @@ class NormalPlot(DashComponent):
                                                                ],
                                                                value='scatter', clearable=False)
                     ])
-                )
+                ),
+
+            ]),
+            # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
+            dbc.Row([html.Br()]),
+            dbc.Row(html.H5("Process data with client code")),
+            dbc.Row([
+                html.Div([
+                    html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0, style=buttonstyle),
+                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0, style=buttonstyle),
+                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
+                ]),
+                html.P(id="data-process-dummy"),
             ]),
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -135,11 +159,13 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
+            Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
+            :param data_process_dummy:
             :param xvalue: Selected x-axis value in the data
             :param yvalue: Selected y-axis value in the data
             :param options_char: Selected characteristic of the data
@@ -158,8 +184,9 @@ class NormalPlot(DashComponent):
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-dimensions-normal-plot', 'value'),
+            Input('data-process-dummy', 'children'),
         ])
-        def update_subgraph(options_char, dims):
+        def update_subgraph(options_char, dims, data_process_dummy):
             """
             updates subgraphs when comparing labels to each other
             :param options_char: Selected characteristic of the data
@@ -178,9 +205,10 @@ class NormalPlot(DashComponent):
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options')],
                       [
-                          Input('dummy', 'children')
+                          Input('dummy', 'children'),
+                          Input('data-process-dummy', 'children'),
                       ])
-        def set_options_variable(dummy):
+        def set_options_variable(dummy, data_process_dummy):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
             :param dummy: dummy html property
@@ -234,5 +262,31 @@ class NormalPlot(DashComponent):
                 return None, None, None, None
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
+        @app.callback(Output('data-process-dummy', 'children'), [
+            Input('example-function-1-button', 'n_clicks'),
+            Input('example-function-2-button', 'n_clicks'),
+            Input('reset-button', 'n_clicks'),
+        ])
+        def update_processed_data(button1, button2, reset_button):
+            """
+                When one of th buttons is clicked, the client code is executed for that example. Makes a deep copy of original data and alters this data in return.
+                :param button1: Activates example 1
+                :param button2: Activates example 2
+                :param reset_button: Reset to original data
+                :return:
+            """
+            changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+            if 'example-function-1-button' in changed_id:
+                self.df = example_function1(self.df)
+            elif 'example-function-2-button' in changed_id:
+                self.df = example_function2(self.df)
+            elif 'reset-button' in changed_id:
+                self.df = self.original_data
+            else:
+                self.df = self.original_data
+
+            return {}
+
     def set_data(self, data):
         self.df = data
+        self.original_data = data
