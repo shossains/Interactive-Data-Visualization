@@ -30,7 +30,7 @@ class FigureFactories(DashFigureFactory):
         if charvalue == 'no-color':
             charvalue = None
 
-        elif 'scatter' in plotvalue:
+        if 'scatter' in plotvalue:
             fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
 
         elif 'density' in plotvalue:
