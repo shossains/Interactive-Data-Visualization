@@ -30,6 +30,15 @@ class NormalPlot(DashComponent):
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
+            dbc.Row(html.H5("Select files to project")),
+            html.Div([
+                self.querystring(params)(dcc.Dropdown)(
+                    id='select-file',
+                    placeholder='Select ...'
+                ),
+                dcc.Store(id='intermediate-value')
+            ]),
+            dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([
                 dbc.Col(
@@ -172,9 +181,8 @@ class NormalPlot(DashComponent):
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options')],
-                      [
-                          Input('dummy', 'children')
-                      ])
+                       Input('intermediate-value', 'data')
+                      )
         def set_options_variable(dummy):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
@@ -182,6 +190,8 @@ class NormalPlot(DashComponent):
             :return: Possible options for dropdown x-axis.
             """
             labels = [{'label': 'Select', 'value': 'select'}]
+            print('hier')
+            print(self.df)
 
             if self.df is not None:
                 dataframe = self.df
@@ -221,4 +231,6 @@ class NormalPlot(DashComponent):
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
     def set_data(self, data):
+        print("called")
         self.df = data
+        print(self.df)

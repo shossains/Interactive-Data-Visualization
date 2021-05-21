@@ -106,8 +106,6 @@ class Dashboard(DashComponent):
 
                 dfToAdd = Dataframe(contents, filename).data
                 self.dfList.insert(0, [dfToAdd, filename])
-                # print(len(self.dfList))
-                # print(self.dfList[0][1])
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
