@@ -94,32 +94,6 @@ class NormalPlot(DashComponent):
                     ])
                 ),
             ),
-            dbc.Row([
-                dbc.Col(
-                    dcc.Loading(
-                        id="loading-icon-normal-plot",
-                        children=[html.Div(
-                            dcc.Graph(
-                                id='Mygraph-normal-plot'
-                            ),
-                        )],
-                        type="circle"
-                    ),
-
-                ),
-
-                dbc.Col(
-                    dcc.Loading(
-                        id="loading-icon2-normal-plot",
-                        children=[html.Div(
-                            dcc.Graph(
-                                id='Subgraph-normal-plot'
-                            ),
-                        )],
-                        type="circle"
-                    )
-                )
-            ]),
         ], fluid=True)
         return page
 

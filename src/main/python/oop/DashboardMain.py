@@ -1,6 +1,6 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions
+from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions, GraphPlot
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.Table import Table
@@ -26,6 +26,7 @@ class Dashboard(DashComponent):
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
+        self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
 
     def layout(self, params=None):
         """
@@ -79,7 +80,7 @@ class Dashboard(DashComponent):
 
                 dbc.Collapse([
                     # Row for uploading the data
-                    dbc.Row(
+                    dbc.Col(
                         html.Div(
                             dcc.Upload(
                                 id='upload-data',
@@ -95,7 +96,7 @@ class Dashboard(DashComponent):
                                     'borderStyle': 'dashed',
                                     'borderRadius': '10px',
                                     'textAlign': 'center',
-                                    'background-color': '#5ebfff',
+                                    'background-color': '#18bc9d',
                                     'color': 'white'
                                 },
                                 # Allow multiple files to be uploaded
@@ -104,11 +105,19 @@ class Dashboard(DashComponent):
                         )
                     ),
 
-                    # dbc.Row(html.Br()),  # Only for styling, spacing out
+                    dbc.Collapse(dbc.Nav(
+                        [
+                            dbc.NavLink("Home", href="/", active="exact"),
+                            dbc.NavLink("Instructions", href="/instructions", active="exact"),
+                            dbc.NavLink("Plot", href="/plotting", active="exact"),
+                        ],
+                        vertical=True,
+                        pills=True,
+                    ),
+                    id = "collapse"),
 
-                    self.querystring(params)(DashComponentTabs)(id="tabs",
-                                                                tabs=[self.Instructions, self.ToolSelector],
-                                                                params=params, component=self),
+                    dbc.Row(html.Div(id='sidebar-plot-menu')),
+
                     self.Table.layout(params),
 
                 ], id="collapse"),
@@ -172,6 +181,24 @@ class Dashboard(DashComponent):
                 return not is_open
             return is_open
 
+        @app.callback([Output("page-content", "children"),
+                       Output("sidebar-plot-menu", "children")],
+                      [Input("url", "pathname")])
+        def render_page_content(pathname):
+            if pathname == "/":
+                return html.P("This is the content of the home page!"), None
+            elif pathname == "/instructions":
+                return html.Div([self.Instructions.layout()]), None
+            elif pathname == "/plotting":
+                return html.Div([self.GraphPlot.layout()]), html.Div([self.ToolSelector.layout()])
+            # If the user tries to reach a different page, return a 404 message
+            return dbc.Jumbotron(
+                [
+                    html.H1("404: Not found", className="text-danger"),
+                    html.Hr(),
+                    html.P(f"The pathname {pathname} was not recognised..."),
+                ]
+            )
 
 if __name__ == '__main__':
     """"
