@@ -107,8 +107,10 @@ class NormalPlot(DashComponent):
             dbc.Row(html.H5("Process data with client code")),
             dbc.Row([
                 html.Div([
-                    html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0, style=buttonstyle),
-                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0, style=buttonstyle),
+                    html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
+                                style=buttonstyle),
+                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
+                                style=buttonstyle),
                     html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
                 ]),
                 html.P(id="data-process-dummy"),
@@ -172,7 +174,6 @@ class NormalPlot(DashComponent):
             Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-
         def update_graph(xvalue, yvalue, options_char, plotvalue, query, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
