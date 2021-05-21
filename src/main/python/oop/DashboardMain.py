@@ -68,10 +68,8 @@ class Dashboard(DashComponent):
                     align="center",
                 ),
 
-
-
                 # Row for uploading the data
-                dbc.Col(
+                dbc.Row(
                     html.Div(
                         dcc.Upload(
                             id='upload-data',
@@ -93,14 +91,14 @@ class Dashboard(DashComponent):
                             # Allow multiple files to be uploaded
                             multiple=True
                         ),
-                    ), width=2
+                    )
                 ),
 
                 # dbc.Row(html.Br()),  # Only for styling, spacing out
 
                 self.querystring(params)(DashComponentTabs)(id="tabs",
                                                             tabs=[self.Instructions, self.ToolSelector],
-                                                            params=params, component=self, ),
+                                                            params=params, component=self),
                 self.Table.layout(params),
                 html.P(id='dummy'),
                 html.Pre(id='dummy2')
@@ -112,55 +110,9 @@ class Dashboard(DashComponent):
             ],
             id="sidebar",
         )
-        # return dbc.Container([
-        #
-        #     dbc.Row(html.Br()), # Only for styling, spacing out
-        #
-        #     dbc.Row(dbc.Col(html.H1("Interactive data visualizer"), width="auto"), justify="center"),
-        #
-        #     # Row for uploading the data
-        #     dbc.Row(
-        #         dbc.Col(
-        #             html.Div(
-        #                 dcc.Upload(
-        #                     id='upload-data',
-        #                     children=html.Div([
-        #                         'Drag and Drop or ',
-        #                         html.A('Select Files')
-        #                     ]),
-        #                     style={
-        #                         # 'width': '20%',
-        #                         'height': '60px',
-        #                         'lineHeight': '60px',
-        #                         'borderWidth': '1px',
-        #                         'borderStyle': 'dashed',
-        #                         'borderRadius': '10px',
-        #                         'textAlign': 'center',
-        #                         'background-color': '#5ebfff',
-        #                         'color': 'white'
-        #                     },
-        #                     # Allow multiple files to be uploaded
-        #                     multiple=True
-        #                 ),
-        #            ), width=2
-        #         ), justify="center"
-        #     ),
-        #
-        #     dbc.Row(html.Br()), # Only for styling, spacing out
-        #
-        #     self.querystring(params)(DashComponentTabs)(id="tabs",
-        #                                                 tabs=[self.Instructions, self.ToolSelector],
-        #                                                 params=params, component=self,),
-        #     dbc.Row(html.Br()), # Only for styling, spacing out
-        #
-        #     # Shows table or not
-        #     self.Table.layout(params),
-        #     html.P(id='dummy'),
-        #     html.Pre(id='dummy2')
-        # ], fluid=True)
 
         content = html.Div(id="page-content")
-        return html.Div([dcc.Location(id="url"), sidebar, content])
+        return html.Div([sidebar, content])
 
     def component_callbacks(self, app):
         """
