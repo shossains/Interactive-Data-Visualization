@@ -68,38 +68,7 @@ class Dashboard(DashComponent):
                     align="center",
                 ),
 
-                # Row for uploading the data
-                dbc.Row(
-                    html.Div(
-                        dcc.Upload(
-                            id='upload-data',
-                            children=html.Div([
-                                'Drag and Drop or ',
-                                html.A('Select Files')
-                            ]),
-                            style={
-                                # 'width': '20%',
-                                'height': '60px',
-                                'lineHeight': '60px',
-                                'borderWidth': '1px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '10px',
-                                'textAlign': 'center',
-                                'background-color': '#5ebfff',
-                                'color': 'white'
-                            },
-                            # Allow multiple files to be uploaded
-                            multiple=True
-                        ),
-                    )
-                ),
 
-                # dbc.Row(html.Br()),  # Only for styling, spacing out
-
-                self.querystring(params)(DashComponentTabs)(id="tabs",
-                                                            tabs=[self.Instructions, self.ToolSelector],
-                                                            params=params, component=self),
-                self.Table.layout(params),
                 html.P(id='dummy'),
                 html.Pre(id='dummy2')
             ]
@@ -107,6 +76,42 @@ class Dashboard(DashComponent):
         sidebar = html.Div(
             [
                 sidebar_header,
+
+                dbc.Collapse([
+                    # Row for uploading the data
+                    dbc.Row(
+                        html.Div(
+                            dcc.Upload(
+                                id='upload-data',
+                                children=html.Div([
+                                    'Drag and Drop or ',
+                                    html.A('Select Files')
+                                ]),
+                                style={
+                                    # 'width': '20%',
+                                    'height': '60px',
+                                    'lineHeight': '60px',
+                                    'borderWidth': '1px',
+                                    'borderStyle': 'dashed',
+                                    'borderRadius': '10px',
+                                    'textAlign': 'center',
+                                    'background-color': '#5ebfff',
+                                    'color': 'white'
+                                },
+                                # Allow multiple files to be uploaded
+                                multiple=True
+                            ),
+                        )
+                    ),
+
+                    # dbc.Row(html.Br()),  # Only for styling, spacing out
+
+                    self.querystring(params)(DashComponentTabs)(id="tabs",
+                                                                tabs=[self.Instructions, self.ToolSelector],
+                                                                params=params, component=self),
+                    self.Table.layout(params),
+
+                ], id="collapse"),
             ],
             id="sidebar",
         )
