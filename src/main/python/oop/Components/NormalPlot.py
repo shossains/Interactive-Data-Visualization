@@ -90,15 +90,27 @@ class NormalPlot(DashComponent):
                                                                value='scatter', clearable=False)
                     ])
                 ),
-
             ]),
+            dbc.Row(
+                dbc.Col(
+                    html.Div([
+                        html.H6("Query Filter"),
+                        dcc.Input(id='query-normal-plot',
+                                  placeholder='Fill in your query',
+                                  debounce=True),
+
+                    ])
+                )
+            ),
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row([html.Br()]),
             dbc.Row(html.H5("Process data with client code")),
             dbc.Row([
                 html.Div([
-                    html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0, style=buttonstyle),
-                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0, style=buttonstyle),
+                    html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
+                                style=buttonstyle),
+                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
+                                style=buttonstyle),
                     html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
                 ]),
                 html.P(id="data-process-dummy"),
@@ -159,9 +171,10 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
+            Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, data_process_dummy):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, query, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
@@ -170,6 +183,7 @@ class NormalPlot(DashComponent):
             :param yvalue: Selected y-axis value in the data
             :param options_char: Selected characteristic of the data
             :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
             if xvalue is None or yvalue is None or options_char is None or self.df is None:
@@ -177,9 +191,12 @@ class NormalPlot(DashComponent):
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            dataframe = self.df.reset_index()
+            if query:
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
 
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue, query)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
@@ -240,15 +257,17 @@ class NormalPlot(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value')
+                       Output('select-dimensions-normal-plot', 'value'),
+                       Output('query-normal-plot', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options')
+                          Input('select-dimensions-normal-plot', 'options'),
+                          Input('query-normal-plot', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims):
+        def set_variables(options_x, options_y, options_char, dims, query):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -257,10 +276,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None
+                return None, None, None, None, ''
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
+                return None, None, None, None, ''
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, ''
 
         @app.callback(Output('data-process-dummy', 'children'), [
             Input('example-function-1-button', 'n_clicks'),

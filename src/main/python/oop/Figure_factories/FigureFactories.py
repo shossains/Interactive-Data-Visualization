@@ -15,7 +15,7 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
-    def graph_methods(dataframe, xvalue, yvalue, charvalue, plotvalue):
+    def graph_methods(dataframe, xvalue, yvalue, charvalue, plotvalue, query):
         """
         Plots a normal graph with different options how to plot.
         :param dataframe:  Dataframe with all data
@@ -23,6 +23,7 @@ class FigureFactories(DashFigureFactory):
         :param yvalue: Selected y-axis value in the data
         :param charvalue: Selected characteristic of the data
         :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+        :param query: Query for filtering data
         :return: Graph object with the displayed plot
         """
 
@@ -30,7 +31,7 @@ class FigureFactories(DashFigureFactory):
         if charvalue == 'no-color':
             charvalue = None
 
-        elif 'scatter' in plotvalue:
+        if 'scatter' in plotvalue:
             fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=charvalue, hover_data=dataframe, )
 
         elif 'density' in plotvalue:
