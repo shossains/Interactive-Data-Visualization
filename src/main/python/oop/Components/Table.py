@@ -1,5 +1,6 @@
 __all__ = ['Dashboard']
 
+import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -48,6 +49,32 @@ class Table(DashComponent):
         :return: Output of the callback functions.
         """
         @app.callback(
+            Output('main_table', 'selected_rows'),
+            Input('Mygraph-normal-plot', 'selectedData'))
+        def display_selected_data(graphPoints):
+            points_selected = []
+            print(graphPoints)
+            if graphPoints is not None:
+                print(graphPoints)
+                for point in graphPoints['points']:
+                    points_selected.append(point['customdata'][0])
+            return points_selected
+
+        # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button click which will call this function
+        @app.callback(
+            Output('dummy2', 'children'),
+            Input('main_table', 'selected_rows')
+        )
+        def selected_to_dataframe(selectedRows):
+            pdf = pd.DataFrame(columns=self.df.columns)
+
+            for i in selectedRows:
+                pdf = pdf.append(self.df.iloc[i])
+
+            print(pdf)
+            return None
+
+        @app.callback(
             Output(component_id='output-data-upload', component_property='style'),
             [Input(component_id='show-table', component_property='value')])
         def show_hide_table(visibility_state):
@@ -62,9 +89,7 @@ class Table(DashComponent):
                 return {'display': 'none'}
 
         @app.callback(Output('output-data-upload', 'children'),
-                      [
-                          Input('show-table', 'value')
-                      ])
+                      [Input('show-table', 'value')])
         def update_table(showtable):
             """
             Updates table and calls plot_factory show table
@@ -72,6 +97,19 @@ class Table(DashComponent):
             :return: Table
             """
             return self.plot_factory.show_table(self.df, self.contents, self.filename, showtable)
+
+    def selected_data_callbacks(self, app):
+        @app.callback(
+            Output('main_table', 'selected_rows'),
+            [Input('Mygraph-normal-plot', 'selectedData')])
+        def display_selected_data(selectedData):
+            print("at least it gets called lol")
+            points_selected = []
+            if selectedData is not None:
+                for point in selectedData['points']:
+                    points_selected.append(point['customdata'][0])
+                print(points_selected)
+            return points_selected
 
     def set_data(self, data, contents, filename):
         """

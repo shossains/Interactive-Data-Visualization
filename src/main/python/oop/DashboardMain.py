@@ -76,7 +76,8 @@ class Dashboard(DashComponent):
 
             # Shows table or not
             self.Table.layout(params),
-            html.P(id='dummy')
+            html.P(id='dummy'),
+            html.Pre(id='dummy2')
         ], fluid=True)
 
     def component_callbacks(self, app):
