@@ -36,7 +36,7 @@ class NormalPlot(DashComponent):
                     id='select-file',
                     placeholder='Select ...'
                 ),
-                dcc.Store(id='intermediate-value')
+                dcc.Store(id='file-name')
             ]),
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
@@ -181,18 +181,15 @@ class NormalPlot(DashComponent):
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options')],
-                       Input('intermediate-value', 'data')
+                       Input('file-name', 'data')
                       )
-        def set_options_variable(dummy):
+        def set_options_variable(file_name):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
-            :param dummy: dummy html property
+            :param dummy: intermediate-value
             :return: Possible options for dropdown x-axis.
             """
             labels = [{'label': 'Select', 'value': 'select'}]
-            print('hier')
-            print(self.df)
-
             if self.df is not None:
                 dataframe = self.df
                 colorlabel = [{'label': 'Select', 'value': 'select'}, {'label': 'No color', 'value': 'no-color'}]

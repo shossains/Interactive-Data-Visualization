@@ -77,7 +77,7 @@ class ToolSelector(DashComponent):
             else:
                 return {'display': 'none'}, {'display': 'none'}
 
-        @app.callback(Output('select-file', 'options'),
+        @app.callback(Output('select-fil' + 'e', 'options'),
                       Input('dummy', 'children'))
         def set_options_variable(dummy):
             labels = [{'label': 'Select', 'value': 'Select'}]
@@ -87,16 +87,7 @@ class ToolSelector(DashComponent):
                 labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
             return labels
 
-        # @app.callback(Output('select-file', 'value'),
-        #               Input('select-file', 'options'))
-        # def set_variables(options):
-        #     if (options is None):
-        #         return None
-        #     if len(options) <= 0:
-        #         return None
-        #     return options[0]['value']
-
-        @app.callback(Output('intermediate-value', 'data'),
+        @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):
 

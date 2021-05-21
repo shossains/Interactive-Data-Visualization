@@ -25,6 +25,7 @@ class Dashboard(DashComponent):
         df = None
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
+        # self.abc = ToolSelector(plotfactory, df, "second")
         self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
 
@@ -109,6 +110,7 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
+                # self.abc.set_data(self.dfList)
                 self.Table.set_data(self.dfList, contents, filename)
                 print("data uploaded")
                 return {}
