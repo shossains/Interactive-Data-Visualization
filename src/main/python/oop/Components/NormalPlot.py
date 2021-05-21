@@ -77,8 +77,19 @@ class NormalPlot(DashComponent):
                                                                ],
                                                                value='scatter', clearable=False)
                     ])
-                )
+                ),
             ]),
+            dbc.Row(
+                dbc.Col(
+                    html.Div([
+                        html.H6("Query Filter"),
+                        dcc.Input(id='query-normal-plot',
+                                  placeholder='Fill in your query',
+                                  debounce=True),
+
+                    ])
+                )
+            ),
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Subgraph")),
@@ -135,8 +146,9 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
+            Input('query-normal-plot', 'value')
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, query):
             """
             Updates a normal graph with different options how to plot.
 
@@ -152,8 +164,10 @@ class NormalPlot(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
+            if query is not None:
+                dataframe = dataframe.query(query)
 
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue, query)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
