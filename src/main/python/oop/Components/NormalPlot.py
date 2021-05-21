@@ -163,9 +163,8 @@ class NormalPlot(DashComponent):
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            dataframe = self.df.reset_index()
             if query:
-                dataframe = dataframe.query(query)
+                dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
 
@@ -228,15 +227,17 @@ class NormalPlot(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value')
+                       Output('select-dimensions-normal-plot', 'value'),
+                       Output('query-normal-plot', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options')
+                          Input('select-dimensions-normal-plot', 'options'),
+                          Input('query-normal-plot', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims):
+        def set_variables(options_x, options_y, options_char, dims, query):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -245,10 +246,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None
+                return None, None, None, None, ''
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
+                return None, None, None, None, ''
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, ''
 
     def set_data(self, data):
         self.df = data
