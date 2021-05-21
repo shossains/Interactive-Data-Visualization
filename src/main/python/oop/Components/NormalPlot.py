@@ -164,8 +164,10 @@ class NormalPlot(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
-            if query is not None:
+            if query:
                 dataframe = dataframe.query(query)
+            else:
+                dataframe = self.df.reset_index()
 
             return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue, query)
 
