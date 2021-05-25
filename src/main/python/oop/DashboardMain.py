@@ -3,7 +3,7 @@ __all__ = ['Dashboard']
 from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions, GraphPlot
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.Table import Table
+# from src.main.python.oop.Components.Table import Table
 from src.main.python.oop.Components.ToolSelector import ToolSelector
 from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
@@ -24,7 +24,7 @@ class Dashboard(DashComponent):
         super().__init__(title="Interactive data visualiser")
         df = None
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        self.Table = Table(plotfactory, df, "Show Table")
+        # self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
         self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
 
@@ -118,6 +118,7 @@ class Dashboard(DashComponent):
 
                     html.Div(id='sidebar-plot-menu'),
 
+                    # self.Table.layout(params),
 
 
                 ], id="collapse"),

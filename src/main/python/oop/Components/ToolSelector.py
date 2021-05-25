@@ -23,6 +23,7 @@ class ToolSelector(DashComponent):
         super().__init__(title=title)
         self.plot_factory = plot_factory
         self.df = df
+
         self.NormalPlot = NormalPlot(plot_factory, df, "Normal plot")
         self.ExampleML2 = ExampleML2(plot_factory, df, "Example Ml 2")
 
