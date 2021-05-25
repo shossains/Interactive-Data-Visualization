@@ -9,6 +9,8 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 from src.main.python.oop.Components.OtherToolExample import ExampleML2
 from src.main.python.oop.Components.NormalPlot import NormalPlot
 from src.main.python.oop.Figure_factories import FigureFactories
+from src.main.python.oop.Components.Table import Table
+
 
 
 class ToolSelector(DashComponent):
@@ -26,6 +28,8 @@ class ToolSelector(DashComponent):
         self.df = df
         self.NormalPlot = NormalPlot(plot_factory, df, "Normal plot")
         self.ExampleML2 = ExampleML2(plot_factory, df, "Example Ml 2")
+        # self.Table = Table(plot_factory, df, "Show Table")
+
 
     def layout(self, params=None):
         """
@@ -51,7 +55,9 @@ class ToolSelector(DashComponent):
                 ),
             ]),
             html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),
-            html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool')
+            html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool'),
+            dbc.Row(html.Br()), #For styling
+            # self.Table.layout(params), #Checkbox for showing table
         ], fluid=True)
         return page
 
@@ -86,12 +92,9 @@ class ToolSelector(DashComponent):
 
             length = len(self.dfList)
             for i in range(length):
-                #If a duplicate name exist, overwrite that one
-
-                #else just add
                 labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
 
-            # print(labels)
+
             return labels
 
         @app.callback(Output('file-name', 'data'),
@@ -108,6 +111,7 @@ class ToolSelector(DashComponent):
                     self.df = i[0]
                     self.NormalPlot.set_data(i[0])
                     self.ExampleML2.set_data(i[0])
+                    # self.Table.set_data(i[0])
 
     def set_data(self, dfList):
         """

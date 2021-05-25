@@ -5,6 +5,8 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 import dash_table
 import pandas as pd
 
+from src.main.python.oop.Dataframe import Dataframe
+
 
 class FigureFactories(DashFigureFactory):
 
@@ -68,7 +70,9 @@ class FigureFactories(DashFigureFactory):
         return px.scatter_matrix(dataframe, dimensions=dims, color=options_char)
 
     @staticmethod
-    def show_table(df, contents, filename, showtable):
+    def show_table(df, showtable):
+        if df is None:
+            return None
         """
             Makes a table from the uploaded data.
             :param df: dataframe
@@ -79,24 +83,14 @@ class FigureFactories(DashFigureFactory):
             :return: Table
             """
         if showtable is not None:
-            table = html.Div()
-            if contents:
-                contents = contents[0]
-
-                table = html.Div([
-                    html.H5(filename),
-                    dash_table.DataTable(
-                        data=df.to_dict('rows'),
-                        columns=[{'name': i, 'id': i} for i in df.columns]
-                    ),
-                    html.Hr(),
-                    html.Div('Raw Content'),
-
-                    html.Pre(contents[0:200] + '...', style={
-                        'whiteSpace': 'pre-wrap',
-                        'wordBreak': 'break-all'
-                    })
-                ], id='table-uploaded')
+            table = html.Div([
+                dash_table.DataTable(
+                    data=df.to_dict('rows'),
+                    columns=[{'name': i, 'id': i} for i in df.columns]
+                ),
+                html.Hr(),
+                html.Div('Raw Content'),
+            ], id='table-uploaded')
             return table
         else:
             return html.Div()

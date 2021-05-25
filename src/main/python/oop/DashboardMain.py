@@ -8,7 +8,6 @@ import dash_table
 from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.Table import Table
 from src.main.python.oop.Components.ToolSelector import ToolSelector
 from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
@@ -30,7 +29,6 @@ class Dashboard(DashComponent):
         df = None
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
 
     def layout(self, params=None):
@@ -79,9 +77,6 @@ class Dashboard(DashComponent):
                                                         tabs=[self.Instructions, self.ToolSelector],
                                                         params=params, component=self,),
             dbc.Row(html.Br()), # Only for styling, spacing out
-
-            # Shows table or not
-            self.Table.layout(params),
             html.Div(id='dummy')
         ], fluid=True)
 
@@ -112,7 +107,6 @@ class Dashboard(DashComponent):
                         self.dfList.insert(0, [dfToAdd, name])
 
                 self.ToolSelector.set_data(self.dfList)
-                self.Table.set_data(self.dfList, content, name)
 
                 print("data uploaded")
 
