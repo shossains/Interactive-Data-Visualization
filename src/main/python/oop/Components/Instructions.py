@@ -1,9 +1,7 @@
 __all__ = ['Dashboard']
 
 import dash_html_components as html
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Figure_factories import FigureFactories
 

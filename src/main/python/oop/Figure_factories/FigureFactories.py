@@ -1,9 +1,6 @@
 import plotly.graph_objs as go
 import plotly.express as px
-import dash_html_components as html
-from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
-import dash_table
-import pandas as pd
+from dash_oop_components import DashFigureFactory
 
 
 class FigureFactories(DashFigureFactory):

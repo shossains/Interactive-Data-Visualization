@@ -4,10 +4,8 @@ import dash_table
 import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
-import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
-from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
-from src.main.python.oop.Figure_factories import FigureFactories
+from dash.dependencies import Input, Output
+from dash_oop_components import DashComponent
 
 dcc.Checklist(id='show-table-ml2', options=[
     {'label': 'Show table', 'value': 'show-table'}]),
@@ -27,7 +25,8 @@ class Table(DashComponent):
 
     def layout(self, params=None):
         """
-        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the layout. Parameters are also passed through
+        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the
+        layout. Parameters are also passed through
         :param params: Parameters selected at the current level of the dashboard.
         :return: Html layout of the program.
         """

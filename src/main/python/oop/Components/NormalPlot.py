@@ -1,7 +1,6 @@
 __all__ = ['Dashboard']
 
 import numpy as np
-import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -9,8 +8,6 @@ from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.Table import Table
-from src.main.python.oop.Figure_factories import FigureFactories
-
 
 class NormalPlot(DashComponent):
 
@@ -101,6 +98,7 @@ class NormalPlot(DashComponent):
             ),
             self.Table.layout(params)
         ], fluid=True)
+        print(params)
         return page
 
     def component_callbacks(self, app):
