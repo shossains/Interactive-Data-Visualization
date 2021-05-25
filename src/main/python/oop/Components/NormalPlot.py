@@ -12,6 +12,7 @@ from src.main.python.oop.Components.ClientCode.ClientCode import example_functio
 from src.main.python.oop.Figure_factories import FigureFactories
 from src.main.python.oop.Components.Table import Table
 
+
 class NormalPlot(DashComponent):
 
     def __init__(self, plot_factory, df, title="Normal plot"):
@@ -160,8 +161,6 @@ class NormalPlot(DashComponent):
                :return: Output of the callback functions.
         """
 
-
-
         @app.callback(
             Output(component_id='output-data-upload', component_property='style'),
             [Input(component_id='show-table', component_property='value')])
@@ -197,21 +196,21 @@ class NormalPlot(DashComponent):
             Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, query, data_process_dummy):
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
             :param data_process_dummy:
             :param xvalue: Selected x-axis value in the data
             :param yvalue: Selected y-axis value in the data
-            :param options_char: Selected characteristic of the data
-            :param plotvalue: Selected kind of plot 'scatter', 'density' etc.
+            :param color_based_characteristic: Selected characteristic of the data
+            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
-            if xvalue is None or yvalue is None or options_char is None or self.df is None:
+            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return {}
-            if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
+            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
                 return {}
 
             if query:
@@ -219,7 +218,7 @@ class NormalPlot(DashComponent):
             else:
                 dataframe = self.df.reset_index()
 
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue, query)
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
@@ -228,7 +227,8 @@ class NormalPlot(DashComponent):
         ])
         def update_subgraph(options_char, dims, data_process_dummy):
             """
-            updates subgraphs when comparing labels to each other
+            Updates subgraphs based on new options.
+            :param data_process_dummy: just there as a dummy to trigger callback.
             :param options_char: Selected characteristic of the data
             :param dims: Multiple dimensions that are chosen
             :return: subgraph
@@ -237,7 +237,6 @@ class NormalPlot(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
-
             return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
@@ -251,6 +250,7 @@ class NormalPlot(DashComponent):
         def set_options_variable(file_name, data_process_dummy):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
+            :param data_process_dummy: just there as a dummy to trigger callback.
             :param file_name: intermediate-value
             :return: Possible options for dropdown x-axis.
             """
@@ -280,17 +280,15 @@ class NormalPlot(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value'),
-                       Output('query-normal-plot', 'value')
+                       Output('select-dimensions-normal-plot', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options'),
-                          Input('query-normal-plot', 'options')
+                          Input('select-dimensions-normal-plot', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims, query):
+        def set_variables(options_x, options_y, options_char, dims):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -299,10 +297,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None, ''
+                return None, None, None, None
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None, ''
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, ''
+                return None, None, None, None
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
         @app.callback(Output('data-process-dummy', 'children'), [
             Input('example-function-1-button', 'n_clicks'),
@@ -311,11 +309,12 @@ class NormalPlot(DashComponent):
         ])
         def update_processed_data(button1, button2, reset_button):
             """
-                When one of th buttons is clicked, the client code is executed for that example. Makes a deep copy of original data and alters this data in return.
+                When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
+                original data and alters this data in return.
                 :param button1: Activates example 1
                 :param button2: Activates example 2
                 :param reset_button: Reset to original data
-                :return:
+                :return: Nothing.
             """
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
@@ -328,7 +327,6 @@ class NormalPlot(DashComponent):
                 self.df = self.original_data
 
             return {}
-
 
     def set_data(self, data):
         self.df = data

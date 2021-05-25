@@ -29,7 +29,8 @@ class Dashboard(DashComponent):
 
     def layout(self, params=None):
         """
-        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the layout. Parameters are also passed through
+        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the
+        layout. Parameters are also passed through.
         :param params: Parameters selected at the current level of the dashboard.
         :return: Html layout of the program.
         """
@@ -61,8 +62,8 @@ class Dashboard(DashComponent):
                             id="sidebar-toggle",
                         ),
                     ],
-                    # the column containing the toggle will be only as wide as the
-                    # toggle, resulting in the toggle being right aligned
+                    # The column containing the toggle will be only as wide as the
+                    # toggle, resulting in the toggle being right aligned.
                     width="auto",
                     # vertically align the toggle in the center
                     align="center",
@@ -149,16 +150,16 @@ class Dashboard(DashComponent):
             '''
             if list_of_contents is not None:
                 for name, content in zip(list_of_names, list_of_contents):
-                    dfToAdd = Dataframe(content, name).data
+                    df_to_add = Dataframe(content, name).data
 
                     length = len(self.dfList)
                     # if a file with the same name has been detected, only update the dataframe, don't add it again
                     for i in range(length):
                         if name == self.dfList[i][1]:
-                            self.dfList[i] = [dfToAdd, name]
+                            self.dfList[i] = [df_to_add, name]
                             break
                     else:
-                        self.dfList.insert(0, [dfToAdd, name])
+                        self.dfList.insert(0, [df_to_add, name])
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
