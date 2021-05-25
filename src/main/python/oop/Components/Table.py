@@ -15,8 +15,8 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 from src.main.python.oop.Dataframe import Dataframe
 from src.main.python.oop.Figure_factories import FigureFactories
 
-dcc.Checklist(id='show-table-ml2', options=[
-    {'label': 'Show table', 'value': 'show-table'}]),
+# dcc.Checklist(id='show-table-ml2', options=[
+#     {'label': 'Show table', 'value': 'show-table'}]),
 
 
 class Table(DashComponent):
@@ -39,7 +39,7 @@ class Table(DashComponent):
         :return: Html layout of the program.
         """
         return html.Div([
-            dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
+            # dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
             html.Div(id='output-data-upload'),
             dcc.Loading(
                 id="loading-icon3",
@@ -80,32 +80,32 @@ class Table(DashComponent):
             print(pdf)
             return None
 
-        @app.callback(
-            Output(component_id='output-data-upload', component_property='style'),
-            [Input(component_id='show-table', component_property='value')])
-        def show_hide_table(visibility_state):
-            """
-            Shows or hides the table. Only loads in the data when checkbox selected.
-            :param visibility_state:
-            :return: visibility style
-            """
-            if visibility_state == ['show-table']:
-                return {'display': 'block'}
-            else:
-                return {'display': 'none'}
-
-        @app.callback(Output('output-data-upload', 'children'),
-                      [
-                          Input('show-table', 'value'),
-                          Input('select-file', 'value')
-                      ])
-        def update_table(showtable, select_file):
-            """
-            Updates table and calls plot_factory show table
-            :param showtable: Checkbox if marked shows table else it won't.
-            :return: Table
-            """
-            return self.show_table(self.df, showtable)
+        # @app.callback(
+        #     Output(component_id='output-data-upload', component_property='style'),
+        #     [Input(component_id='show-table', component_property='value')])
+        # def show_hide_table(visibility_state):
+        #     """
+        #     Shows or hides the table. Only loads in the data when checkbox selected.
+        #     :param visibility_state:
+        #     :return: visibility style
+        #     """
+        #     if visibility_state == ['show-table']:
+        #         return {'display': 'block'}
+        #     else:
+        #         return {'display': 'none'}
+        #
+        # @app.callback(Output('output-data-upload', 'children'),
+        #               [
+        #                   Input('show-table', 'value'),
+        #                   Input('select-file', 'value')
+        #               ])
+        # def update_table(showtable, select_file):
+        #     """
+        #     Updates table and calls plot_factory show table
+        #     :param showtable: Checkbox if marked shows table else it won't.
+        #     :return: Table
+        #     """
+        #     return self.show_table(self.df, showtable)
 
     def selected_data_callbacks(self, app):
         @app.callback(
@@ -128,25 +128,25 @@ class Table(DashComponent):
         """
         self.df = df
 
-    def show_table(self, df, showtable):
-        """
-            Makes a table from the uploaded data.
-            :param df: dataframe
-            :param showtable: Boolean to show table or don't show table.
-            :return: Table
-        """
-        if df is None:
-            return None
-
-        if showtable is not None:
-            table = html.Div([
-                dash_table.DataTable(
-                    data=df.to_dict('rows'),
-                    columns=[{'name': i, 'id': i} for i in df.columns]
-                ),
-                html.Hr(),
-                html.Div('Raw Content'),
-            ], id='table-uploaded')
-            return table
-        else:
-            return html.Div()
+    # def show_table(self, df, showtable):
+    #     """
+    #         Makes a table from the uploaded data.
+    #         :param df: dataframe
+    #         :param showtable: Boolean to show table or don't show table.
+    #         :return: Table
+    #     """
+    #     if df is None:
+    #         return None
+    #
+    #     if showtable is not None:
+    #         table = html.Div([
+    #             dash_table.DataTable(
+    #                 data=df.to_dict('rows'),
+    #                 columns=[{'name': i, 'id': i} for i in df.columns]
+    #             ),
+    #             html.Hr(),
+    #             html.Div('Raw Content'),
+    #         ], id='table-uploaded')
+    #         return table
+    #     else:
+    #         return html.Div()

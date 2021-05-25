@@ -24,7 +24,6 @@ class NormalPlot(DashComponent):
         super().__init__(title=title)
         self.plot_factory = plot_factory
         self.df = df
-        # self.Table = Table(plot_factory, df, "Show Table")
         self.original_data = df
 
     def layout(self, params=None):
@@ -116,6 +115,7 @@ class NormalPlot(DashComponent):
                     ])
                 )
             ),
+
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row([html.Br()]),
             dbc.Row(html.H5("Process data with client code")),
@@ -129,6 +129,7 @@ class NormalPlot(DashComponent):
                 ]),
                 html.P(id="data-process-dummy"),
             ]),
+
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Subgraph")),
@@ -143,7 +144,12 @@ class NormalPlot(DashComponent):
                         )
                     ])
                     , style={"padding-left": "5px", "padding-right": "5px"}),
-            )], fluid=True)
+            ),
+            dbc.Row(
+                dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
+            )
+
+        ], fluid=True)
         print(params)
         return page
 
@@ -153,6 +159,35 @@ class NormalPlot(DashComponent):
                :param app: Dash app that uses the code
                :return: Output of the callback functions.
         """
+
+
+
+        @app.callback(
+            Output(component_id='output-data-upload', component_property='style'),
+            [Input(component_id='show-table', component_property='value')])
+        def show_hide_table(visibility_state):
+            """
+            Shows or hides the table. Only loads in the data when checkbox selected.
+            :param visibility_state:
+            :return: visibility style
+            """
+            if visibility_state == ['show-table']:
+                return {'display': 'block'}
+            else:
+                return {'display': 'none'}
+
+        @app.callback(Output('output-data-upload', 'children'),
+                      [
+                          Input('show-table', 'value'),
+                          Input('select-file', 'value')
+                      ])
+        def update_table(showtable, select_file):
+            """
+            Updates table and calls plot_factory show table
+            :param showtable: Checkbox if marked shows table else it won't.
+            :return: Table
+            """
+            return self.plot_factory.show_table(self.df, showtable)
 
         @app.callback(Output('Mygraph-normal-plot', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
