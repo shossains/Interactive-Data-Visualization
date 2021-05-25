@@ -36,35 +36,37 @@ class NormalPlot(DashComponent):
             dbc.Row([
                 dbc.Col(
                     html.Div([
-                        html.H6("Select variable x"),
+                        html.H6("x-axis"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                ),
+                , style={"padding-left":"5px","padding-right":"5px"}),
                 dbc.Col(
                     html.Div([
-                        html.H6("Select variable y"),
+                        html.H6("y-axis"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-y-normal-plot',
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                ),
+                , style={"padding-left":"5px","padding-right":"5px"})]),
+            dbc.Row(html.Br()),
+            dbc.Row([
                 dbc.Col(
                     html.Div([
-                        html.H6("Color based on"),
+                        html.H6("color label"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-characteristics-normal-plot',
                             placeholder='Select ...',
                             clearable=False)
                         # multi=True
                     ])
-                ),
+                , style={"padding-left":"5px","padding-right":"5px"}),
                 dbc.Col(
                     html.Div([
-                        html.H6("Select plot method"),
+                        html.H6("plot method"),
                         self.querystring(params)(dcc.Dropdown)(id='select-plot-options-normal-plot',
                                                                options=[
                                                                    {'label': 'Area', 'value': 'area'},
@@ -75,9 +77,9 @@ class NormalPlot(DashComponent):
                                                                    {'label': 'Line', 'value': 'line'},
                                                                    {'label': 'Scatter', 'value': 'scatter'},
                                                                ],
-                                                               value='scatter', clearable=False)
+                                                               value='scatter', clearable=False, persistence_type='memory')
                     ])
-                )
+                , style={"padding-left":"5px","padding-right":"5px"})
             ]),
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -85,14 +87,14 @@ class NormalPlot(DashComponent):
             dbc.Row(
                 dbc.Col(
                     html.Div([
-                        html.H6("Select subgraph features"),
+                        html.H6("features"),
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-dimensions-normal-plot',
                             placeholder='Select ...',
                             multi=True
                         )
                     ])
-                ),
+                , style={"padding-left":"5px","padding-right":"5px"}),
             ),
         ], fluid=True)
         return page
