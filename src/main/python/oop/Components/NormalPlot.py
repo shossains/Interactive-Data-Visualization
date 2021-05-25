@@ -91,17 +91,27 @@ class NormalPlot(DashComponent):
                     ])
                 ),
             ]),
-            dbc.Row(
+            dbc.Row([
+                html.H6("Filtering"),
+                dbc.Col(
+                    html.Div([
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='query-labels',
+                            placeholder='Select ...',
+                            clearable=False)
+                        # multi=True
+                    ])
+                ),
                 dbc.Col(
                     html.Div([
                         html.H6("Query Filter"),
-                        dcc.Input(id='query-normal-plot',
+                        dcc.Input(id='query-input',
                                   placeholder='Fill in your query',
                                   debounce=True),
 
                     ])
                 )
-            ),
+            ]),
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row([html.Br()]),
             dbc.Row(html.H5("Process data with client code")),
@@ -171,10 +181,11 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            Input('query-normal-plot', 'value'),
+            Input('query-labels', 'value'),
+            Input('query-input', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, query, data_process_dummy):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, query_labels, query_inp, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
@@ -191,12 +202,13 @@ class NormalPlot(DashComponent):
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            if query:
+            if query_inp and query_labels:
+                query = query_labels + query_inp
                 dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
 
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue, query)
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
@@ -220,7 +232,8 @@ class NormalPlot(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
-                       Output('select-dimensions-normal-plot', 'options')],
+                       Output('select-dimensions-normal-plot', 'options'),
+                       Output('query-labels', 'options')],
                       [
                           Input('dummy', 'children'),
                           Input('data-process-dummy', 'children'),
@@ -250,24 +263,26 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorLabel, labels
+                return labels, labels, colorLabel, labels, labels
             else:
-                return labels, labels, labels, labels
+                return labels, labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
                        Output('select-dimensions-normal-plot', 'value'),
-                       Output('query-normal-plot', 'value')
+                       Output('query-labels', 'value'),
+                       Output('query-input', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
                           Input('select-dimensions-normal-plot', 'options'),
-                          Input('query-normal-plot', 'options')
+                          Input('query-labels', 'options'),
+                          Input('query-input', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims, query):
+        def set_variables(options_x, options_y, options_char, dims, query_labels, query_input):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -276,10 +291,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None, ''
+                return None, None, None, None, None, ''
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None, ''
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, ''
+                return None, None, None, None, None, ''
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, None, ''
 
         @app.callback(Output('data-process-dummy', 'children'), [
             Input('example-function-1-button', 'n_clicks'),
