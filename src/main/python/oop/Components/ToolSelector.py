@@ -77,7 +77,7 @@ class ToolSelector(DashComponent):
             else:
                 return {'display': 'none'}, {'display': 'none'}
 
-        @app.callback(Output('select-fil' + 'e', 'options'),
+        @app.callback(Output('select-file', 'options'),
                       Input('dummy', 'children'))
         def set_options_variable(dummy):
             labels = [{'label': 'Select', 'value': 'Select'}]

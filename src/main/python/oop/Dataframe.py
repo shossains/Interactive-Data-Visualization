@@ -3,7 +3,6 @@ import io
 import dash_html_components as html
 import pandas as pd
 
-
 class Dataframe:
 
     def __init__(self, contents, filename):
@@ -22,17 +21,8 @@ class Dataframe:
                 # Assume that the user uploaded a CSV or TXT file
                 # global df
                 data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-
-
-                # self.dataFrameList.insert(0, data)
-                # print(len(self.dataFrameList))
-                #
-                # self.data = self.dataFrameList[0]
-                # self.all_dims = self.dataFrameList[0]
-
                 self.data = pd.read_csv(
                     io.StringIO(decoded.decode('utf-8')))
-
             elif 'xls' in filename:
                 # Assume that the user uploaded an excel file
                 self.data = pd.read_excel(io.BytesIO(decoded))

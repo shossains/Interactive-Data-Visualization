@@ -1,5 +1,10 @@
 __all__ = ['Dashboard']
 
+import base64
+import datetime
+
+import dash_table
+
 from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions
 from dash_bootstrap_components.themes import FLATLY
 
@@ -9,11 +14,11 @@ from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash_oop_components import DashComponent, DashComponentTabs, DashApp
 import pandas as pd
 from src.main.python.oop.Dataframe import Dataframe
-
+import io
 
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
@@ -25,7 +30,6 @@ class Dashboard(DashComponent):
         df = None
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        # self.abc = ToolSelector(plotfactory, df, "second")
         self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
 
@@ -78,7 +82,7 @@ class Dashboard(DashComponent):
 
             # Shows table or not
             self.Table.layout(params),
-            html.P(id='dummy')
+            html.Div(id='dummy')
         ], fluid=True)
 
     def component_callbacks(self, app):
@@ -88,32 +92,20 @@ class Dashboard(DashComponent):
         :return: Output of the callback functions.
         """
         @app.callback(Output('dummy', 'children'),
-                      [
+
                           Input('upload-data', 'contents'),
-                          Input('upload-data', 'filename')
-                      ])
-        def upload_data(contents, filename):
-            """
-                   Updates the dataframe when a file is loaded in.
-                   :param contents: the contents of the file
-                   :param filename: the name of the file
-                   :return: dummy html.P, which is used to activate chained callbacks.
-                   """
-            if contents:
-                contents = contents[0]
-                filename = filename[0]
-                if contents is None:
-                    return
+                          State('upload-data', 'filename'),
+                          State('upload-data', 'last_modified')
+                      )
 
-                dfToAdd = Dataframe(contents, filename).data
-                self.dfList.insert(0, [dfToAdd, filename])
-
-                # IMPORTANT: Dont forget if you add new classes to give the data
-                self.ToolSelector.set_data(self.dfList)
-                # self.abc.set_data(self.dfList)
-                self.Table.set_data(self.dfList, contents, filename)
+        def update_output(list_of_contents, list_of_names, list_of_dates):
+            if list_of_contents is not None:
+                for name, content in zip(list_of_names, list_of_contents):
+                    dfToAdd = Dataframe(content, name).data
+                    self.dfList.insert(0, [dfToAdd, name])
+                    self.ToolSelector.set_data(self.dfList)
+                    self.Table.set_data(self.dfList, content, name)
                 print("data uploaded")
-                return {}
 
 if __name__ == '__main__':
     """"
