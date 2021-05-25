@@ -2,9 +2,11 @@ __all__ = ['Dashboard']
 
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_table
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+
 
 from src.main.python.oop.Dataframe import Dataframe
 from src.main.python.oop.Figure_factories import FigureFactories
@@ -74,7 +76,7 @@ class Table(DashComponent):
             :param showtable: Checkbox if marked shows table else it won't.
             :return: Table
             """
-            return self.plot_factory.show_table(self.df, showtable)
+            return self.show_table(self.df, showtable)
 
     def set_data(self, df):
         """
@@ -83,3 +85,28 @@ class Table(DashComponent):
         :return: Possible options for dropdown x-axis.
         """
         self.df = df
+
+    def show_table(self, df, showtable):
+        if df is None:
+            return None
+        """
+            Makes a table from the uploaded data.
+            :param df: dataframe
+            :param contents: contents of the data
+            :param filename: filename of the data
+            :param dummy: dummy html.P. Used to activate chained callbacks.
+            :param showtable: Boolean
+            :return: Table
+            """
+        if showtable is not None:
+            table = html.Div([
+                dash_table.DataTable(
+                    data=df.to_dict('rows'),
+                    columns=[{'name': i, 'id': i} for i in df.columns]
+                ),
+                html.Hr(),
+                html.Div('Raw Content'),
+            ], id='table-uploaded')
+            return table
+        else:
+            return html.Div()

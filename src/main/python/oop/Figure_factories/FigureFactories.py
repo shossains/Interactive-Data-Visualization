@@ -69,28 +69,4 @@ class FigureFactories(DashFigureFactory):
             
         return px.scatter_matrix(dataframe, dimensions=dims, color=options_char)
 
-    @staticmethod
-    def show_table(df, showtable):
-        if df is None:
-            return None
-        """
-            Makes a table from the uploaded data.
-            :param df: dataframe
-            :param contents: contents of the data
-            :param filename: filename of the data
-            :param dummy: dummy html.P. Used to activate chained callbacks.
-            :param showtable: Boolean
-            :return: Table
-            """
-        if showtable is not None:
-            table = html.Div([
-                dash_table.DataTable(
-                    data=df.to_dict('rows'),
-                    columns=[{'name': i, 'id': i} for i in df.columns]
-                ),
-                html.Hr(),
-                html.Div('Raw Content'),
-            ], id='table-uploaded')
-            return table
-        else:
-            return html.Div()
+

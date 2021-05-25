@@ -87,13 +87,17 @@ class Dashboard(DashComponent):
         :return: Output of the callback functions.
         """
         @app.callback(Output('dummy', 'children'),
-
                           Input('upload-data', 'contents'),
                           State('upload-data', 'filename'),
-                          State('upload-data', 'last_modified')
-                      )
-
+                          State('upload-data', 'last_modified'))
         def update_output(list_of_contents, list_of_names, list_of_dates):
+            '''
+            Initialises and/or updates the list containing data frames when a new file is uploaded.
+            :param list_of_contents: Content of the data frames.
+            :param list_of_names: Names of the data frames.
+            :param list_of_dates: Last modified date of the frames.
+            :return: dummy, which is a placeholder because Dash requires a output.
+            '''
             if list_of_contents is not None:
                 for name, content in zip(list_of_names, list_of_contents):
                     dfToAdd = Dataframe(content, name).data
