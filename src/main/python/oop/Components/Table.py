@@ -33,14 +33,11 @@ class Table(DashComponent):
 
     def layout(self, params=None):
         """
-        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the
-        layout. Parameters are also passed through
+        Shows the html layout of the table component.
         :param params: Parameters selected at the current level of the dashboard.
         :return: Html layout of the program.
         """
         return html.Div([
-            # dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
-            html.Div(id='output-data-upload'),
             dcc.Loading(
                 id="loading-icon3",
                 children=[html.Div(id='output-data-upload')],
@@ -50,8 +47,8 @@ class Table(DashComponent):
 
     def component_callbacks(self, app):
         """
-        Automatically does the callbacks of the interactive parts of the normal plot components.
-        :param app: Dash app that uses the code
+        Automatically does the callbacks of the interactive parts of the table component.
+        :param app: Dash app that uses the code.
         :return: Output of the callback functions.
         """
         @app.callback(
