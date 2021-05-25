@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
+from src.main.python.oop.Components.NestedFiltering import NestedFiltering
 from src.main.python.oop.Figure_factories import FigureFactories
 
 
@@ -24,6 +25,7 @@ class NormalPlot(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
         self.original_data = df
+        self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
 
     def layout(self, params=None):
         """
@@ -91,44 +93,9 @@ class NormalPlot(DashComponent):
                     ])
                 ),
             ]),
-            dbc.Row([
-                html.H6("Filtering"),
-                dbc.Col(
-                    html.Div([
-                        self.querystring(params)(dcc.Dropdown)(
-                            id='query-labels',
-                            placeholder='Select ...',
-                            clearable=False)
-                        # multi=True
-                    ])
-                ),
-                dbc.Col(
-                    html.Div([
-                        self.querystring(params)(dcc.Dropdown)(
-                            id='query-conditions',
-                            placeholder='Select ...',
-                            options=[
-                                {'label': '==', 'value': '=='},
-                                {'label': '<', 'value': '<'},
-                                {'label': '>', 'value': '>'},
-                                {'label': '<=', 'value': '<='},
-                                {'label': '>=', 'value': '>='},
-                                {'label': '!=', 'value': '!='},
-                            ],
-                            clearable=False)
-                        # multi=True
-                    ])
-                ),
-                dbc.Col(
-                    html.Div([
-                        html.H6("Query Filter"),
-                        dcc.Input(id='query-input',
-                                  placeholder='Fill in your query',
-                                  debounce=True),
 
-                    ])
-                )
-            ]),
+            # Nested filtering
+            self.NestedFiltering.layout(params),
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row([html.Br()]),
             dbc.Row(html.H5("Process data with client code")),
@@ -198,12 +165,12 @@ class NormalPlot(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            Input('query-labels', 'value'),
-            Input('query-conditions', 'value'),
-            Input('query-input', 'value'),
+            # Input('query-labels', 'value'),
+            # Input('query-conditions', 'value'),
+            # Input('query-input', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, query_labels, query_conditions, query_inp, data_process_dummy):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
@@ -220,11 +187,11 @@ class NormalPlot(DashComponent):
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            if query_inp and query_labels and query_conditions:
-                query = query_labels + query_conditions + query_inp
-                dataframe = self.df.query(query)
-            else:
-                dataframe = self.df.reset_index()
+            # if query_inp and query_labels and query_conditions:
+            #     query = query_labels + query_conditions + query_inp
+            #     dataframe = self.df.query(query)
+            # else:
+            dataframe = self.df.reset_index()
 
             return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, options_char, plotvalue)
 
@@ -251,7 +218,8 @@ class NormalPlot(DashComponent):
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options'),
-                       Output('query-labels', 'options')],
+                       # Output('query-labels', 'options')],
+                       ],
                       [
                           Input('dummy', 'children'),
                           Input('data-process-dummy', 'children'),
@@ -281,28 +249,28 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorLabel, labels, labels
+                return labels, labels, colorLabel, labels
             else:
-                return labels, labels, labels, labels, labels
+                return labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
                        Output('select-dimensions-normal-plot', 'value'),
-                       Output('query-labels', 'value'),
-                       Output('query-conditions', 'value'),
-                       Output('query-input', 'value')
+                       # Output('query-labels', 'value'),
+                       # Output('query-conditions', 'value'),
+                       # Output('query-input', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
                           Input('select-dimensions-normal-plot', 'options'),
-                          Input('query-labels', 'options'),
-                          Input('query-conditions', 'options'),
-                          Input('query-input', 'options')
+                          # Input('query-labels', 'options'),
+                          # Input('query-conditions', 'options'),
+                          # Input('query-input', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims, query_labels, query_conditions, query_input):
+        def set_variables(options_x, options_y, options_char, dims):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -311,10 +279,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None, None, None, ''
+                return None, None, None, None  # , None, None, ''
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None, None, None, ''
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, None, None, ''
+                return None, None, None, None  # , None, None, ''
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None  # , None, None, ''
 
         @app.callback(Output('data-process-dummy', 'children'), [
             Input('example-function-1-button', 'n_clicks'),
