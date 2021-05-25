@@ -6,6 +6,14 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
+import dash_table
+import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output, State
+from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+
+
+from src.main.python.oop.Dataframe import Dataframe
+from src.main.python.oop.Figure_factories import FigureFactories
 
 dcc.Checklist(id='show-table-ml2', options=[
     {'label': 'Show table', 'value': 'show-table'}]),
@@ -87,8 +95,11 @@ class Table(DashComponent):
                 return {'display': 'none'}
 
         @app.callback(Output('output-data-upload', 'children'),
-                      [Input('show-table', 'value')])
-        def update_table(showtable):
+                      [
+                          Input('show-table', 'value'),
+                          Input('select-file', 'value')
+                      ])
+        def update_table(showtable, select_file):
             """
             Updates table and calls plot_factory show table
             :param showtable: Checkbox if marked shows table else it won't.
@@ -109,39 +120,33 @@ class Table(DashComponent):
                 print(points_selected)
             return points_selected
 
-    def set_data(self, data):
+    def set_data(self, df):
         """
         Loads in possible parameters for the x and y-axis in dropdown from the data.
         :param dummy: dummy html property
         :return: Possible options for dropdown x-axis.
         """
-        self.df = data
+        self.df = df
 
     def show_table(self, df, showtable):
-            """
-                Makes a table from the uploaded data.
-                :param df: dataframe
-                :param contents: contents of the data
-                :param filename: filename of the data
-                :param dummy: dummy html.P. Used to activate chained callbacks.
-                :param showtable: Boolean
-                :return: Table
-                """
-            table = html.Div()
-            if showtable is not None:
-                table = html.Div([
-                    dash_table.DataTable(
-                        id='main_table',
-                        data=df.to_dict('rows'),
-                        columns=[{'name': i, 'id': i} for i in df.columns],
-                        filter_action='native',
-                        sort_action='native',
-                        sort_mode='multi',
-                        row_selectable='multi',
-                        hidden_columns=['row_index_label'],
-                    ),
-                    html.Hr(),
-                    html.Div('Raw Content'),
-                ], id='table-uploaded')
-            return table
+        """
+            Makes a table from the uploaded data.
+            :param df: dataframe
+            :param showtable: Boolean to show table or don't show table.
+            :return: Table
+        """
+        if df is None:
+            return None
 
+        if showtable is not None:
+            table = html.Div([
+                dash_table.DataTable(
+                    data=df.to_dict('rows'),
+                    columns=[{'name': i, 'id': i} for i in df.columns]
+                ),
+                html.Hr(),
+                html.Div('Raw Content'),
+            ], id='table-uploaded')
+            return table
+        else:
+            return html.Div()

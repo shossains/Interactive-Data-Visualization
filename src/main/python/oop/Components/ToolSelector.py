@@ -9,6 +9,8 @@ from dash_oop_components import DashComponent
 from src.main.python.oop.Components.OtherToolExample import ExampleML2
 from src.main.python.oop.Components.NormalPlot import NormalPlot
 
+
+
 class ToolSelector(DashComponent):
     def __init__(self, plot_factory, df, title="Tool selector"):
         """
@@ -19,9 +21,9 @@ class ToolSelector(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
+        self.dfList = []
         self.plot_factory = plot_factory
         self.df = df
-
         self.NormalPlot = NormalPlot(plot_factory, df, "Normal plot")
         self.ExampleML2 = ExampleML2(plot_factory, df, "Example Ml 2")
 
@@ -76,12 +78,46 @@ class ToolSelector(DashComponent):
             else:
                 return {'display': 'none'}, {'display': 'none'}
 
-    def set_data(self, data):
+        @app.callback(Output('select-file', 'options'),
+                      Input('dummy', 'children')
+                    )
+        def set_options_variable(dummy):
+
+            labels = [{'label': 'Select', 'value': 'Select'}]
+
+            length = len(self.dfList)
+            for i in range(length):
+                labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
+
+
+            return labels
+
+        @app.callback(Output('file-name', 'data'),
+                      [Input('select-file', 'value')])
+        def update_graph(value):
+
+            if value is None:
+                return {}
+            if value == "select":
+                return {}
+
+            for i in self.dfList:
+                if (i[1] == value):
+                    self.df = i[0]
+                    self.NormalPlot.set_data(i[0])
+                    self.ExampleML2.set_data(i[0])
+                    self.GraphPlot.set_data(i[0])
+                    # Something has to change here, line above needs to be moved
+                    # or done in an other way
+
+    def set_data(self, dfList):
         """
         Method to pass through data to ToolSelector from other classes.
-        :param data: Pandas dataframe that is passed through
+        :param dfList: Pandas list of dataframes that is passed through
         :return: No return
         """
-        self.df = data
-        self.NormalPlot.set_data(data)
-        self.ExampleML2.set_data(data)
+        self.dfList = dfList
+
+
+
+

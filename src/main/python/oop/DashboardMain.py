@@ -11,6 +11,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashComponent, DashApp
 from src.main.python.oop.Dataframe import Dataframe
+import io
 
 
 class Dashboard(DashComponent):
@@ -21,6 +22,7 @@ class Dashboard(DashComponent):
         """
         super().__init__(title="Interactive data visualiser")
         df = None
+        self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
         self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
@@ -66,7 +68,6 @@ class Dashboard(DashComponent):
                     align="center",
                 ),
 
-
                 html.P(id='dummy'),
                 html.Pre(id='dummy2')
             ]
@@ -111,7 +112,7 @@ class Dashboard(DashComponent):
                         vertical=True,
                         pills=True,
                     ),
-                    id = "collapse"),
+                        id="collapse"),
 
                     html.Div(id='sidebar-plot-menu'),
 
@@ -129,32 +130,36 @@ class Dashboard(DashComponent):
         :param app: Dash app that uses the code
         :return: Output of the callback functions.
         """
-        @app.callback(Output('dummy', 'children'),
-                      [
-                          Input('upload-data', 'contents'),
-                          Input('upload-data', 'filename')
-                      ])
-        def upload_data(contents, filename):
-            """
-                   Updates the dataframe when a file is loaded in.
-                   :param contents: the contents of the file
-                   :param filename: the name of the file
-                   :return: dummy html.P, which is used to activate chained callbacks.
-                   """
-            print("running")
-            if contents:
-                contents = contents[0]
-                filename = filename[0]
-                if contents is None:
-                    return
 
-                df = Dataframe(contents, filename).data
+        @app.callback(Output('dummy', 'children'),
+                      Input('upload-data', 'contents'),
+                      State('upload-data', 'filename'),
+                      State('upload-data', 'last_modified'))
+        def update_output(list_of_contents, list_of_names, list_of_dates):
+            '''
+            Initialises and/or updates the list containing data frames when a new file is uploaded.
+            :param list_of_contents: Content of the data frames.
+            :param list_of_names: Names of the data frames.
+            :param list_of_dates: Last modified date of the frames.
+            :return: dummy, which is a placeholder because Dash requires a output.
+            '''
+            if list_of_contents is not None:
+                for name, content in zip(list_of_names, list_of_contents):
+                    dfToAdd = Dataframe(content, name).data
+
+                    length = len(self.dfList)
+                    # if a file with the same name has been detected, only update the dataframe, don't add it again
+                    for i in range(length):
+                        if name == self.dfList[i][1]:
+                            self.dfList[i] = [dfToAdd, name]
+                            break
+                    else:
+                        self.dfList.insert(0, [dfToAdd, name])
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
-                self.ToolSelector.set_data(df)
-                self.GraphPlot.set_data(df)
+                self.ToolSelector.set_data(self.dfList)
+                self.GraphPlot.set_data(self.dfList)
                 print("data uploaded")
-                return {}
 
         @app.callback(
             Output("sidebar", "className"),
@@ -195,6 +200,7 @@ class Dashboard(DashComponent):
                 ]
             )
 
+
 if __name__ == '__main__':
     """"
     Main function to be run
@@ -212,7 +218,3 @@ else:
     plot_factory = FigureFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     app = DashApp(dashboard, querystrings=True, bootstrap=FLATLY).app
-
-
-
-
