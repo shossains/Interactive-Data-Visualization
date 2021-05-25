@@ -1,17 +1,15 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import NormalPlot, OtherToolExample, Instructions, GraphPlot
+from src.main.python.oop.Components import Instructions, GraphPlot
 from dash_bootstrap_components.themes import FLATLY
 
-# from src.main.python.oop.Components.Table import Table
 from src.main.python.oop.Components.ToolSelector import ToolSelector
 from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-from dash_oop_components import DashComponent, DashComponentTabs, DashApp
-import pandas as pd
+from dash_oop_components import DashComponent, DashApp
 from src.main.python.oop.Dataframe import Dataframe
 
 
