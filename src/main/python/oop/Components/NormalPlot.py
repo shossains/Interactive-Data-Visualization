@@ -4,10 +4,8 @@ import numpy as np
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
-from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
-
-from src.main.python.oop.Components.Table import Table
+from dash.dependencies import Input, Output
+from dash_oop_components import DashComponent
 
 class NormalPlot(DashComponent):
 
@@ -20,7 +18,6 @@ class NormalPlot(DashComponent):
         """
         super().__init__(title=title)
         self.plot_factory = plot_factory
-        # self.Table = Table(plot_factory, df, "Show Table")
         self.df = df
 
     def layout(self, params=None):
@@ -42,7 +39,7 @@ class NormalPlot(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                , style={"padding-left":"5px","padding-right":"5px"}),
+                    , style={"padding-left": "5px", "padding-right": "5px"}),
                 dbc.Col(
                     html.Div([
                         html.H6("y-axis"),
@@ -51,7 +48,7 @@ class NormalPlot(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                , style={"padding-left":"5px","padding-right":"5px"})]),
+                    , style={"padding-left": "5px", "padding-right": "5px"})]),
             dbc.Row(html.Br()),
             dbc.Row([
                 dbc.Col(
@@ -63,7 +60,7 @@ class NormalPlot(DashComponent):
                             clearable=False)
                         # multi=True
                     ])
-                , style={"padding-left":"5px","padding-right":"5px"}),
+                    , style={"padding-left": "5px", "padding-right": "5px"}),
                 dbc.Col(
                     html.Div([
                         html.H6("plot method"),
@@ -77,9 +74,10 @@ class NormalPlot(DashComponent):
                                                                    {'label': 'Line', 'value': 'line'},
                                                                    {'label': 'Scatter', 'value': 'scatter'},
                                                                ],
-                                                               value='scatter', clearable=False, persistence_type='memory')
+                                                               value='scatter', clearable=False,
+                                                               persistence_type='memory')
                     ])
-                , style={"padding-left":"5px","padding-right":"5px"})
+                    , style={"padding-left": "5px", "padding-right": "5px"})
             ]),
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -94,10 +92,8 @@ class NormalPlot(DashComponent):
                             multi=True
                         )
                     ])
-                , style={"padding-left":"5px","padding-right":"5px"}),
-            ),
-            # self.Table.layout(params)
-        ], fluid=True)
+                    , style={"padding-left": "5px", "padding-right": "5px"}),
+            )], fluid=True)
         print(params)
         return page
 
@@ -213,6 +209,4 @@ class NormalPlot(DashComponent):
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
     def set_data(self, data):
-        # self.Table.set_data(data)
-        # self.GraphPlot.set_data(data)
         self.df = data

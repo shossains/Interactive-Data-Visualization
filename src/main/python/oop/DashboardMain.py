@@ -22,7 +22,6 @@ class Dashboard(DashComponent):
         super().__init__(title="Interactive data visualiser")
         df = None
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        # self.Table = Table(plotfactory, df, "Show Table")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
         self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
 
@@ -115,9 +114,6 @@ class Dashboard(DashComponent):
                     id = "collapse"),
 
                     html.Div(id='sidebar-plot-menu'),
-
-                    # self.Table.layout(params),
-
 
                 ], id="collapse"),
             ],
