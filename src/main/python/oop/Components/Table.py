@@ -1,5 +1,6 @@
 __all__ = ['Dashboard']
 
+import dash_table
 import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
@@ -21,9 +22,7 @@ class Table(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
-        self.contents = None
-        self.filename = None
-        self.plot_factory = FigureFactories.FigureFactories()
+        self.plot_factory = plot_factory
         self.df = df
 
     def layout(self, params=None):
@@ -96,7 +95,7 @@ class Table(DashComponent):
             :param showtable: Checkbox if marked shows table else it won't.
             :return: Table
             """
-            return self.plot_factory.show_table(self.df, self.contents, self.filename, showtable)
+            return self.show_table(self.df, showtable)
 
     def selected_data_callbacks(self, app):
         @app.callback(
@@ -111,12 +110,39 @@ class Table(DashComponent):
                 print(points_selected)
             return points_selected
 
-    def set_data(self, data, contents, filename):
+    def set_data(self, data):
         """
         Loads in possible parameters for the x and y-axis in dropdown from the data.
         :param dummy: dummy html property
         :return: Possible options for dropdown x-axis.
         """
         self.df = data
-        self.contents = contents
-        self.filename = filename
+
+    def show_table(self, df, showtable):
+            """
+                Makes a table from the uploaded data.
+                :param df: dataframe
+                :param contents: contents of the data
+                :param filename: filename of the data
+                :param dummy: dummy html.P. Used to activate chained callbacks.
+                :param showtable: Boolean
+                :return: Table
+                """
+            table = html.Div()
+            if showtable is not None:
+                table = html.Div([
+                    dash_table.DataTable(
+                        id='main_table',
+                        data=df.to_dict('rows'),
+                        columns=[{'name': i, 'id': i} for i in df.columns],
+                        filter_action='native',
+                        sort_action='native',
+                        sort_mode='multi',
+                        row_selectable='multi',
+                        hidden_columns=['row_index_label'],
+                    ),
+                    html.Hr(),
+                    html.Div('Raw Content'),
+                ], id='table-uploaded')
+            return table
+
