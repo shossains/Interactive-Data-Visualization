@@ -116,9 +116,9 @@ class Dashboard(DashComponent):
                     ),
                     id = "collapse"),
 
-                    dbc.Row(html.Div(id='sidebar-plot-menu')),
+                    html.Div(id='sidebar-plot-menu'),
 
-                    self.Table.layout(params),
+
 
                 ], id="collapse"),
             ],
