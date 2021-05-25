@@ -8,7 +8,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Figure_factories import FigureFactories
-
+from src.main.python.oop.Components.Table import Table
 
 
 class GraphPlot(DashComponent):
@@ -20,6 +20,7 @@ class GraphPlot(DashComponent):
                 :param title: Title of the page
                 """
         super().__init__(title=title)
+        # self.Table = Table(self, plot_factory, df)
         self.plot_factory = plot_factory
         self.df = df
 
@@ -30,22 +31,35 @@ class GraphPlot(DashComponent):
                     id="loading-icon-normal-plot",
                     children=[html.Div(
                         dcc.Graph(
-                            id='Mygraph-normal-plot'
+                            id='Mygraph-normal-plot',
+                            config={
+                            "displaylogo":False,
+                            "showTips":True,
+                            "showAxisDragHandles":True,
+                            "scrollZoom":True
+                            }
                         ),
                     )],
-                    type="circle"
+                    type="graph"
                 ),
 
                 dcc.Loading(
                     id="loading-icon2-normal-plot",
                     children=[html.Div(
                         dcc.Graph(
-                            id='Subgraph-normal-plot'
+                            id='Subgraph-normal-plot',
+                            config={
+                                "displaylogo": False,
+                                "showTips": True,
+                                "showAxisDragHandles": True,
+                                "scrollZoom": True
+                            }
                         ),
                     )],
-                    type="circle"
+                    type="graph"
                 )
             ]),
+            # html.Div(self.Table.layout(params))
         ], fluid=True)
         return page
 
