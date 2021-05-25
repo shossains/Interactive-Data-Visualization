@@ -78,13 +78,20 @@ class ToolSelector(DashComponent):
                 return {'display': 'none'}, {'display': 'none'}
 
         @app.callback(Output('select-file', 'options'),
-                      Input('dummy', 'children'))
+                      Input('dummy', 'children')
+                    )
         def set_options_variable(dummy):
+
             labels = [{'label': 'Select', 'value': 'Select'}]
 
             length = len(self.dfList)
             for i in range(length):
+                #If a duplicate name exist, overwrite that one
+
+                #else just add
                 labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
+
+            # print(labels)
             return labels
 
         @app.callback(Output('file-name', 'data'),

@@ -102,9 +102,18 @@ class Dashboard(DashComponent):
             if list_of_contents is not None:
                 for name, content in zip(list_of_names, list_of_contents):
                     dfToAdd = Dataframe(content, name).data
-                    self.dfList.insert(0, [dfToAdd, name])
-                    self.ToolSelector.set_data(self.dfList)
-                    self.Table.set_data(self.dfList, content, name)
+
+                    length = len(self.dfList)
+                    for i in range(length):
+                        if name == self.dfList[i][1]:
+                            self.dfList[i] = [dfToAdd, name]
+                            break;
+                    else:
+                        self.dfList.insert(0, [dfToAdd, name])
+
+                self.ToolSelector.set_data(self.dfList)
+                self.Table.set_data(self.dfList, content, name)
+
                 print("data uploaded")
 
 if __name__ == '__main__':

@@ -20,7 +20,6 @@ class Dataframe:
             if 'csv' in filename:
                 # Assume that the user uploaded a CSV or TXT file
                 # global df
-                data = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
                 self.data = pd.read_csv(
                     io.StringIO(decoded.decode('utf-8')))
             elif 'xls' in filename:
