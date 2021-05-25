@@ -104,6 +104,23 @@ class NormalPlot(DashComponent):
                 ),
                 dbc.Col(
                     html.Div([
+                        self.querystring(params)(dcc.Dropdown)(
+                            id='query-conditions',
+                            placeholder='Select ...',
+                            options=[
+                                {'label': '==', 'value': '=='},
+                                {'label': '<', 'value': '<'},
+                                {'label': '>', 'value': '>'},
+                                {'label': '<=', 'value': '<='},
+                                {'label': '>=', 'value': '>='},
+                                {'label': '!=', 'value': '!='},
+                            ],
+                            clearable=False)
+                        # multi=True
+                    ])
+                ),
+                dbc.Col(
+                    html.Div([
                         html.H6("Query Filter"),
                         dcc.Input(id='query-input',
                                   placeholder='Fill in your query',
@@ -182,10 +199,11 @@ class NormalPlot(DashComponent):
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
             Input('query-labels', 'value'),
+            Input('query-conditions', 'value'),
             Input('query-input', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, options_char, plotvalue, query_labels, query_inp, data_process_dummy):
+        def update_graph(xvalue, yvalue, options_char, plotvalue, query_labels, query_conditions, query_inp, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
@@ -202,8 +220,8 @@ class NormalPlot(DashComponent):
             if xvalue == "select" or yvalue == "select" or options_char == "select" or plotvalue == "select":
                 return {}
 
-            if query_inp and query_labels:
-                query = query_labels + query_inp
+            if query_inp and query_labels and query_conditions:
+                query = query_labels + query_conditions + query_inp
                 dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
@@ -272,6 +290,7 @@ class NormalPlot(DashComponent):
                        Output('select-characteristics-normal-plot', 'value'),
                        Output('select-dimensions-normal-plot', 'value'),
                        Output('query-labels', 'value'),
+                       Output('query-conditions', 'value'),
                        Output('query-input', 'value')
                        ],
                       [
@@ -280,9 +299,10 @@ class NormalPlot(DashComponent):
                           Input('select-characteristics-normal-plot', 'options'),
                           Input('select-dimensions-normal-plot', 'options'),
                           Input('query-labels', 'options'),
+                          Input('query-conditions', 'options'),
                           Input('query-input', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims, query_labels, query_input):
+        def set_variables(options_x, options_y, options_char, dims, query_labels, query_conditions, query_input):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param options_x: All possible x-axis options
@@ -291,10 +311,10 @@ class NormalPlot(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None, None, ''
+                return None, None, None, None, None, None, ''
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None, None, ''
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, None, ''
+                return None, None, None, None, None, None, ''
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None, None, None, ''
 
         @app.callback(Output('data-process-dummy', 'children'), [
             Input('example-function-1-button', 'n_clicks'),
