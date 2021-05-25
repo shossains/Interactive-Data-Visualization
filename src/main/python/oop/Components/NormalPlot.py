@@ -125,7 +125,7 @@ class NormalPlot(DashComponent):
                     )
                 ),
             ]),
-            self.Table.layout(params),  # Checkbox for showing table
+            self.Table.layout(params),  #Checkbox for showing table
         ], fluid=True)
         return page
 
@@ -188,7 +188,7 @@ class NormalPlot(DashComponent):
         def set_options_variable(file_name):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
-            :param dummy: intermediate-value
+            :param file_name: intermediate-value
             :return: Possible options for dropdown x-axis.
             """
             labels = [{'label': 'Select', 'value': 'select'}]

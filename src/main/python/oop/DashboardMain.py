@@ -103,6 +103,7 @@ class Dashboard(DashComponent):
                     dfToAdd = Dataframe(content, name).data
 
                     length = len(self.dfList)
+                    #if a file with the same name has been detected, only update the dataframe, don't add it again
                     for i in range(length):
                         if name == self.dfList[i][1]:
                             self.dfList[i] = [dfToAdd, name]
@@ -111,7 +112,6 @@ class Dashboard(DashComponent):
                         self.dfList.insert(0, [dfToAdd, name])
 
                 self.ToolSelector.set_data(self.dfList)
-
                 print("data uploaded")
 
 if __name__ == '__main__':

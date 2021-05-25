@@ -116,7 +116,7 @@ class ToolSelector(DashComponent):
     def set_data(self, dfList):
         """
         Method to pass through data to ToolSelector from other classes.
-        :param data: Pandas dataframe that is passed through
+        :param dfList: Pandas list of dataframes that is passed through
         :return: No return
         """
         self.dfList = dfList

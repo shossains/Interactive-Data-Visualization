@@ -60,17 +60,3 @@ class Dataframe:
         @rtype: object
         """
         self.data = columns
-
-    def get_content(self):
-        """
-        gets content
-        @rtype: object
-        """
-        return self.contents
-
-    def get_filename(self):
-        """
-        gets filename
-        @rtype: object
-        """
-        return self.filename

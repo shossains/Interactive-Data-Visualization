@@ -24,8 +24,6 @@ class Table(DashComponent):
         :param title: Title of the page
         """
         super().__init__(title=title)
-        self.contents = None
-        self.filename = None
         self.plot_factory = plot_factory
         self.df = df
 
@@ -87,17 +85,15 @@ class Table(DashComponent):
         self.df = df
 
     def show_table(self, df, showtable):
-        if df is None:
-            return None
         """
             Makes a table from the uploaded data.
             :param df: dataframe
-            :param contents: contents of the data
-            :param filename: filename of the data
-            :param dummy: dummy html.P. Used to activate chained callbacks.
-            :param showtable: Boolean
+            :param showtable: Boolean to show table or don't show table.
             :return: Table
-            """
+        """
+        if df is None:
+            return None
+
         if showtable is not None:
             table = html.Div([
                 dash_table.DataTable(
