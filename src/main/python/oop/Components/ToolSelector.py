@@ -52,7 +52,7 @@ class ToolSelector(DashComponent):
             ]),
             html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),
             html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool')
-        ], fluid=True)
+        ], fluid=True, style={"padding-left":"0px","padding-right":"0px"})
         return page
 
     def component_callbacks(self, app):
