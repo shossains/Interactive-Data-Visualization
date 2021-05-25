@@ -5,6 +5,9 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
 
+from src.main.python.oop.Components.Table import Table
+
+
 class GraphPlot(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
         """
@@ -14,7 +17,7 @@ class GraphPlot(DashComponent):
                 :param title: Title of the page
                 """
         super().__init__(title=title)
-        # self.Table = Table(self, plot_factory, df)
+        self.Table = Table(plot_factory, df, "Show Table")
         self.plot_factory = plot_factory
         self.df = df
 
@@ -51,10 +54,15 @@ class GraphPlot(DashComponent):
                         ),
                     )],
                     type="graph"
-                )
-            ]),
-            # html.Div(self.Table.layout(params))
+                ),
+
+                html.Div(self.Table.layout(params))
+            ])
         ], fluid=True)
         return page
 
     # def component_callbacks(self, app):
+
+    def set_data(self, data):
+        self.Table.set_data(data)
+        self.df = data

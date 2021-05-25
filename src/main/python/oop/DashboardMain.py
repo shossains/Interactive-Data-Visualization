@@ -156,7 +156,7 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(df)
-                # self.Table.set_data(df, contents, filename)
+                self.GraphPlot.set_data(df)
                 print("data uploaded")
                 return {}
 
