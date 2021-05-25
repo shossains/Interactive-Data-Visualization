@@ -77,7 +77,8 @@ class Dashboard(DashComponent):
                                                         tabs=[self.Instructions, self.ToolSelector],
                                                         params=params, component=self,),
             dbc.Row(html.Br()), # Only for styling, spacing out
-            html.Div(id='dummy')
+            html.P(id='dummy'),
+            html.Pre(id='dummy2')
         ], fluid=True)
 
     def component_callbacks(self, app):
