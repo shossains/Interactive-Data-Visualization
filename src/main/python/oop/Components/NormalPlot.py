@@ -4,7 +4,7 @@ import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ALL
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
@@ -249,9 +249,9 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorLabel, labels
+                return labels, labels, colorLabel, labels, labels
             else:
-                return labels, labels, labels, labels
+                return labels, labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),

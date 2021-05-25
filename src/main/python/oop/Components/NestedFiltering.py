@@ -4,8 +4,9 @@ import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, MATCH, ALL
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Figure_factories import FigureFactories
@@ -34,6 +35,7 @@ class NestedFiltering(DashComponent):
             "margin-left": "15px",
             "margin-right": "15px"
         }
+        self.filters= []
 
     def layout(self, params=None):
         """
@@ -44,7 +46,7 @@ class NestedFiltering(DashComponent):
         page = dbc.Container([
             dbc.Row([
                 html.H6("Filtering"),
-                dbc.Col(html.Div(id="filters")),
+                dbc.Col(html.Div(id="filters", children=[])),
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
@@ -52,6 +54,7 @@ class NestedFiltering(DashComponent):
                     html.Button("Remove filter", id="remove-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
             ]),
+            html.P(id="test-dummy")
         ], fluid=True)
         return page
 
@@ -65,24 +68,21 @@ class NestedFiltering(DashComponent):
         @app.callback(Output('filters', 'children'), [
             Input('add-filter-button', 'n_clicks'),
             Input('remove-filter-button', 'n_clicks'),
-        ])
-        def add_filter(add_filter_button, remove_filter_button):
+            State('filters', 'children')]
+        )
+        def add_filter(add_filter_button, remove_filter_button, filters):
 
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'add-filter-button' in changed_id:
                 self.amount_filters = self.amount_filters + 1
-            elif 'remove-filter-button' in changed_id:
-                self.amount_filters = 0
-                # return {}
-
-            filters = []
-
-            for i in range(self.amount_filters):
                 page = html.Div(dbc.Row([
                     dbc.Col(
                         html.Div([
                             dcc.Dropdown(
-                                id='query-labels' + str(i),
+                                id={
+                                    'type': 'query-label',
+                                    'index': self.amount_filters
+                                },
                                 placeholder='Select ...',
                                 clearable=False)
                             # multi=True
@@ -91,7 +91,10 @@ class NestedFiltering(DashComponent):
                     dbc.Col(
                         html.Div([
                             dcc.Dropdown(
-                                id='query-conditions' + str(i),
+                                id={
+                                    'type': 'query-condition',
+                                    'index': self.amount_filters
+                                },
                                 placeholder='Select ...',
                                 options=[
                                     {'label': '==', 'value': '=='},
@@ -107,23 +110,80 @@ class NestedFiltering(DashComponent):
                     dbc.Col(
                         html.Div([
                             html.H6("Query Filter"),
-                            dcc.Input(id='query-input' + str(i),
-                                      placeholder='Fill in your query',
-                                      debounce=True),
+                            dcc.Input(id={
+                                'type': 'query-input',
+                                'index': self.amount_filters
+                            },
+                                placeholder='Fill in your query',
+                                debounce=True),
 
                         ])
                     ),
                     dbc.Col(
                         html.Div([
-                            html.Button("Remove filter", id="remove-filter-button" + str(i), n_clicks=0,
-                                        style=self.buttonstyle)
+                            html.Button("Remove filter",
+                                        id={
+                                            'type': 'remove-filter',
+                                            'index': self.amount_filters
+                                        },
+                                        n_clicks=0,
+                                        style=self.buttonstyle
+                            )
                         ])
-                    )
+                    ),
                 ]))
 
-                filters.append(page)
+                self.filters.append(page)
+                return self.filters
 
-            return html.Div(filters)
+            elif 'remove-filter-button' in changed_id:
+                self.amount_filters = 0
+                self.filters = []
+                return html.Div()
+
+        # @app.callback(, [
+        #     [
+        #         Input('dummy', 'children'),
+        #         Input('data-process-dummy', 'children'),
+        #     ])
+        # def update_query(dummy, data_process_dummy):
+        #     if self.df is not None:
+        #         if self.df.columns is not None:
+        #             labels = [{'label': '', 'value': 'select'}]
+        #
+        #         if 'row_index_label' in self.df.columns:
+        #             del self.df['row_index_label']
+        #
+        #         row_labels = np.arange(0, self.df.shape[0], 1)
+        #         self.df.insert(0, 'row_index_label', row_labels)
+        #
+        #         dataFrame = self.df
+        #
+        #         for i in dataFrame.columns[1::]:
+        #             labels = labels + [{'label': i, 'value': i}]
+        #             colorLabel = colorLabel + [{'label': i, 'value': i}]
+        #
+        #         return labels, labels, colorLabel, labels
+        #     else:
+        #         return labels, labels, labels, labels
+        #
+        # @app.callback(Output('test-dummy', 'children'), [
+        #     Input({'type':  'query-condition', 'index': ALL}, 'value'),
+        #     Input({'type':  'query-label', 'index': ALL}, 'value'),
+        #     Input({'type': 'query-input', 'index': ALL}, 'value'),
+        # ])
+        # def update_query(labels, conditions, input):
+        #     query = ""
+        #     amount = enumerate(labels)
+        #     for i in amount:
+        #
+        #         query = query + str(labels[i]) + str(query[i])
+        #
+        #         if i != amount:
+        #             query = query + " & "
+        #
+        #         print(query)
+        #         return {}
 
 
 
