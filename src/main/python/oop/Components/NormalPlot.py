@@ -7,6 +7,8 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+
+from src.main.python.oop.Components.Table import Table
 from src.main.python.oop.Figure_factories import FigureFactories
 
 
@@ -21,6 +23,7 @@ class NormalPlot(DashComponent):
         """
         super().__init__(title=title)
         self.plot_factory = plot_factory
+        self.Table = Table(plot_factory, df, "Show Table")
         self.df = df
 
     def layout(self, params=None):
@@ -94,6 +97,7 @@ class NormalPlot(DashComponent):
                     ])
                 ),
             ),
+            self.Table.layout(params)
         ], fluid=True)
         return page
 
@@ -209,4 +213,5 @@ class NormalPlot(DashComponent):
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
     def set_data(self, data):
+        self.Table.set_data(data)
         self.df = data
