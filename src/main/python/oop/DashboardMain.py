@@ -119,6 +119,10 @@ class Dashboard(DashComponent):
                 ], id="collapse"),
             ],
             id="sidebar",
+            style={
+                # 'height':'90vh',
+                'overflow-y':'auto'
+            }
         )
 
         content = html.Div(id="page-content")
