@@ -9,7 +9,7 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Figure_factories import FigureFactories
-
+from src.main.python.oop.Components.Table import Table
 
 class NormalPlot(DashComponent):
 
@@ -23,6 +23,7 @@ class NormalPlot(DashComponent):
         super().__init__(title=title)
         self.plot_factory = plot_factory
         self.df = df
+        self.Table = Table(plot_factory, df, "Show Table")
         self.original_data = df
 
     def layout(self, params=None):
@@ -43,6 +44,15 @@ class NormalPlot(DashComponent):
 
         page = dbc.Container([
             # Only for styling, spaces out selectors
+            dbc.Row(html.Br()),
+            dbc.Row(html.H5("Select files to project")),
+            html.Div([
+                self.querystring(params)(dcc.Dropdown)(
+                    id='select-file',
+                    placeholder='Select ...'
+                ),
+                dcc.Store(id='file-name')
+            ]),
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([
@@ -154,8 +164,9 @@ class NormalPlot(DashComponent):
                         )],
                         type="circle"
                     )
-                )
+                ),
             ]),
+            self.Table.layout(params),  #Checkbox for showing table
         ], fluid=True)
         return page
 
@@ -222,13 +233,13 @@ class NormalPlot(DashComponent):
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options')],
                       [
-                          Input('dummy', 'children'),
+                          Input('file-name', 'data'),
                           Input('data-process-dummy', 'children'),
                       ])
-        def set_options_variable(dummy, data_process_dummy):
+        def set_options_variable(file_name, data_process_dummy):
             """
             loads in possible parameters for the x and y-axis in dropdown from the data.
-            :param dummy: dummy html property
+            :param file_name: intermediate-value
             :return: Possible options for dropdown x-axis.
             """
             labels = []
@@ -306,6 +317,8 @@ class NormalPlot(DashComponent):
 
             return {}
 
+
     def set_data(self, data):
         self.df = data
+        self.Table.set_data(data)
         self.original_data = data
