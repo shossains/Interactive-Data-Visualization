@@ -88,7 +88,8 @@ class FigureFactories(DashFigureFactory):
                     sort_mode='multi',
                     row_selectable='multi',
                     hidden_columns=['row_index_label'],
-                    page_size=50
+                    page_size=50,
+                    css=[{"selector":".show-hide", "rule":"display: none"}]
                 ),
                 html.Hr(),
                 html.Div('Raw Content'),
