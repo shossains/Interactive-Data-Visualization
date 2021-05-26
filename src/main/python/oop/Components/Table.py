@@ -51,16 +51,16 @@ class Table(DashComponent):
         :param app: Dash app that uses the code.
         :return: Output of the callback functions.
         """
-        @app.callback(
-            Output('main_table', 'selected_rows'),
-            Input('Mygraph-normal-plot', 'selectedData'))
-        def display_selected_data(graphPoints):
-            points_selected = []
-            print(graphPoints)
-            if graphPoints is not None:
-                for point in graphPoints['points']:
-                    points_selected.append(point['customdata'][0])
-            return points_selected
+        # @app.callback(
+        #     Output('main_table', 'selected_rows'),
+        #     Input('Mygraph-normal-plot', 'selectedData'))
+        # def display_selected_data(graphPoints):
+        #     points_selected = []
+        #     print(graphPoints)
+        #     if graphPoints is not None:
+        #         for point in graphPoints['points']:
+        #             points_selected.append(point['customdata'][0])
+        #     return points_selected
 
         # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button click which will call this function
         # @app.callback(
