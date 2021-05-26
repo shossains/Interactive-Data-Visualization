@@ -56,9 +56,7 @@ class Table(DashComponent):
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
             points_selected = []
-            print(graphPoints)
             if graphPoints is not None:
-                print(graphPoints)
                 for point in graphPoints['points']:
                     points_selected.append(point['customdata'][0])
             return points_selected
@@ -74,7 +72,6 @@ class Table(DashComponent):
             for i in selectedRows:
                 pdf = pdf.append(self.df.iloc[i])
 
-            print(pdf)
             return None
 
         # @app.callback(
@@ -109,12 +106,10 @@ class Table(DashComponent):
             Output('main_table', 'selected_rows'),
             [Input('Mygraph-normal-plot', 'selectedData')])
         def display_selected_data(selectedData):
-            print("at least it gets called lol")
             points_selected = []
             if selectedData is not None:
                 for point in selectedData['points']:
                     points_selected.append(point['customdata'][0])
-                print(points_selected)
             return points_selected
 
     def set_data(self, df):

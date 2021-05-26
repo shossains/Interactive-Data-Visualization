@@ -50,7 +50,8 @@ class NormalPlot(DashComponent):
             html.Div([
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
-                    placeholder='Select ...'
+                    placeholder='Select ...',
+                    multi = True
                 ),
                 dcc.Store(id='file-name')
             ]),
@@ -151,7 +152,6 @@ class NormalPlot(DashComponent):
             )
 
         ], fluid=True)
-        print(params)
         return page
 
     def component_callbacks(self, app):

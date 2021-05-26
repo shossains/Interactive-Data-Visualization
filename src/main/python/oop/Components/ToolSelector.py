@@ -3,12 +3,14 @@ __all__ = ['Dashboard']
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
 from src.main.python.oop.Components.GraphPlot import GraphPlot
 from src.main.python.oop.Components.OtherToolExample import ExampleML2
 from src.main.python.oop.Components.NormalPlot import NormalPlot
+
 
 
 class ToolSelector(DashComponent):
@@ -95,17 +97,40 @@ class ToolSelector(DashComponent):
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):
-
-            if value is None:
+            print("hier")
+            # print(value)
+            print("hier2")
+            if (value is None):
                 return {}
-            if value == "select":
+
+            if len(value) <= 0:
                 return {}
 
-            for i in self.dfList:
-                if (i[1] == value):
-                    self.df = i[0]
-                    self.NormalPlot.set_data(i[0])
-                    self.ExampleML2.set_data(i[0])
+            matches = {}
+
+            # for i in range(len(self.dfList)):
+            #     print(self.dfList[i][1])
+
+            if len(value) == 1:
+                for i in self.dfList:
+                    if i[1] == value[0]:
+                        self.df = i[0]
+                        self.NormalPlot.set_data(i[0])
+                        self.ExampleML2.set_data(i[0])
+                        break
+            else:
+                for i in self.dfList:
+                    for v in value:
+                        if i[1] == v:
+                            df = pd.concat([self.df, i[0]]).reset_index(drop=True)
+                            # df = pd.concat()
+
+                self.df = df
+                self.NormalPlot.set_data(df)
+                self.ExampleML2.set_data(df)
+                print('done')
+
+
                     # self.GraphPlot.set_data(i[0])
                     # Something has to change here, line above needs to be moved
                     # or done in another way

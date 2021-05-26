@@ -163,7 +163,6 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
-                # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
         @app.callback(
