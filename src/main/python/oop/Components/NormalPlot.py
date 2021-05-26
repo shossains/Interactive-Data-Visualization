@@ -186,7 +186,7 @@ class NormalPlot(DashComponent):
             # Input('query-conditions', 'value'),
             # Input('query-input', 'value'),
             Input('test-dummy', 'value'),
-            Input('data-process-dummy', 'children'),
+            Input('data-process-dummy', 'value'),
         ])
         def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
             """
@@ -211,7 +211,7 @@ class NormalPlot(DashComponent):
             #     dataframe = self.df.query(query)
             # else:
 
-            if query:
+            if query and data_process_dummy == 'true':
                 dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
@@ -307,12 +307,13 @@ class NormalPlot(DashComponent):
                 return None, None, None, None  # , None, None, ''
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None  # , None, None, ''
 
-        @app.callback(Output('data-process-dummy', 'children'), [
+        @app.callback(Output('data-process-dummy', 'value'), [
             Input('example-function-1-button', 'n_clicks'),
             Input('example-function-2-button', 'n_clicks'),
             Input('reset-button', 'n_clicks'),
+            Input('apply-filter-button', 'n_clicks'),
         ])
-        def update_processed_data(button1, button2, reset_button):
+        def update_processed_data(button1, button2, reset_button, apply):
             """
                 When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
                 original data and alters this data in return.
@@ -328,10 +329,10 @@ class NormalPlot(DashComponent):
                 self.df = example_function2(self.df)
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
-            else:
-                self.df = self.original_data
+            elif 'apply-filter-button' in changed_id:
+                return 'true'
 
-            return {}
+            return ''
 
     def get_data(self, data):
         self

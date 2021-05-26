@@ -49,8 +49,11 @@ class NestedFiltering(DashComponent):
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
+                # dbc.Col(html.Div([
+                #     html.Button("Remove filter", id="remove-filter-button", n_clicks=0,
+                #                 style=self.buttonstyle)])),
                 dbc.Col(html.Div([
-                    html.Button("Remove filter", id="remove-filter-button", n_clicks=0,
+                    html.Button("Apply filter", id="apply-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
             ]),
             html.P(id="test-dummy")
@@ -111,7 +114,6 @@ class NestedFiltering(DashComponent):
                         },
                             placeholder='Fill in your query',
                             debounce=True),
-
                     ])
                 ),
 
@@ -150,10 +152,11 @@ class NestedFiltering(DashComponent):
             Input({'type':  'query-label', 'index': ALL}, 'value'),
             Input({'type':  'query-condition', 'index': ALL}, 'value'),
             Input({'type': 'query-input', 'index': ALL}, 'value'),
+            Input('apply-filter-button', 'n_clicks'),
         ])
-        def update_query(labels, conditions, input):
+        def apply_query(labels, conditions, input, apply):
             query = ""
-            if labels is not None and conditions is not None and input is not None:
+            if None not in labels and None not in conditions and None not in input:
                 amount = len(labels)
                 for i in range(amount):
                     print(i)
