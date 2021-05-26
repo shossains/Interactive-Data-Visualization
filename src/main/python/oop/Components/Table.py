@@ -63,18 +63,17 @@ class Table(DashComponent):
             return points_selected
 
         # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button click which will call this function
-        @app.callback(
-            Output('dummy2', 'children'),
-            Input('main_table', 'selected_rows')
-        )
-        def selected_to_dataframe(selectedRows):
-            pdf = pd.DataFrame(columns=self.df.columns)
-
-            for i in selectedRows:
-                pdf = pdf.append(self.df.iloc[i])
-
-            print(pdf)
-            return None
+        # @app.callback(
+        #     Output('dummy2', 'children'),
+        #     Input('main_table', 'selected_rows')
+        # )
+        # def selected_to_dataframe(selectedRows):
+        #     pdf = pd.DataFrame(columns=self.df.columns)
+        #
+        #     for i in selectedRows:
+        #         pdf = pdf.append(self.df.iloc[i])
+        #
+        #     return None
 
         # @app.callback(
         #     Output(component_id='output-data-upload', component_property='style'),
