@@ -22,51 +22,25 @@ class GraphPlot(DashComponent):
         self.df = df
 
     def layout(self, params=None):
-        page = dbc.Container([
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Loading(
-                            id="loading-icon-normal-plot",
-                            children=[html.Div(
-                                dcc.Graph(
-                                    id='Mygraph-normal-plot',
-                                    config={
-                                        "displaylogo": False,
-                                        "showTips": True,
-                                        "showAxisDragHandles": True,
-                                        "scrollZoom": True
-                                    }
-                                ),
-                            )],
-                            type="graph"
-                        )
-                    )
-                ),
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Loading(
-                            id="loading-icon2-normal-plot",
-                            children=[html.Div(
-                                dcc.Graph(
-                                    id='Subgraph-normal-plot',
-                                    config={
-                                        "displaylogo": False,
-                                        "showTips": True,
-                                        "showAxisDragHandles": True,
-                                        "scrollZoom": True
-                                    }
-                                )
-                            )],
-                            type="graph"
-                        )
-                    )
-                ),
-                dbc.Row(
-                    dbc.Col(
-                        html.Div(self.Table.layout(params))
-                    )
+        page = dbc.Row(
+            dbc.Col(
+                dcc.Loading(
+                    id="loading-icon-normal-plot",
+                    children=[html.Div(
+                        dcc.Graph(
+                            id=params[0],
+                            config={
+                                "displaylogo": False,
+                                "showTips": True,
+                                "showAxisDragHandles": True,
+                                "scrollZoom": True
+                            }
+                        ),
+                    )],
+                    type="graph"
                 )
-        ], fluid=True)
+            )
+        )
         return page
 
     # def component_callbacks(self, app):

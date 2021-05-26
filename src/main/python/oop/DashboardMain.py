@@ -1,6 +1,6 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import Instructions, GraphPlot
+from src.main.python.oop.Components import Instructions, GraphPlot, MainGraph
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.ToolSelector import ToolSelector
@@ -25,7 +25,8 @@ class Dashboard(DashComponent):
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
-        self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
+        # self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
+        self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
 
     def layout(self, params=None):
         """
@@ -195,7 +196,7 @@ class Dashboard(DashComponent):
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
-                return html.Div([self.GraphPlot.layout()]), html.Div([self.ToolSelector.layout()])
+                return html.Div([self.MainGraph.layout()]), html.Div([self.ToolSelector.layout()])
             # If the user tries to reach a different page, return a 404 message
             return dbc.Jumbotron(
                 [
