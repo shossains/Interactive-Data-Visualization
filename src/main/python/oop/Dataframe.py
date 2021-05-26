@@ -1,6 +1,5 @@
 import base64
 import io
-import dash_html_components as html
 import pandas as pd
 
 class Dataframe:
