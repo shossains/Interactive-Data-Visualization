@@ -6,9 +6,8 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
-from src.main.python.oop.Components.GraphPlot import GraphPlot
-from src.main.python.oop.Components.OtherMenu import OtherMenu
-from src.main.python.oop.Components.StandardMenu import StandardMenu
+from src.main.python.oop.Components.Menu.OtherMenu import OtherMenu
+from src.main.python.oop.Components.Menu.StandardMenu import StandardMenu
 
 
 class ToolSelector(DashComponent):
@@ -38,16 +37,15 @@ class ToolSelector(DashComponent):
             dbc.Row(html.Br()),  # Only for styling, spacing out
             # Selector for tool
             html.Div([
-                html.H5("Select machine learning tool"),
+                html.H5("Select a menu"),
                 self.querystring(params)(
                     dcc.Dropdown)(
                     id='select-tool',
                     options=[
-                        {'label': 'Choose ML method', 'value': 'index'},
                         {'label': 'Standard menu', 'value': 'standard-menu'},
                         {'label': 'Other menu  (not implemented)', 'value': 'other-menu'}
                     ],
-                    value='index',
+                    value='standard-menu',
                     clearable=False
                 ),
             ]),
@@ -105,7 +103,6 @@ class ToolSelector(DashComponent):
                     self.df = i[0]
                     self.StandardMenu.set_data(i[0])
                     self.OtherMenu.set_data(i[0])
-                    # self.GraphPlot.set_data(i[0])
                     # Something has to change here, line above needs to be moved
                     # or done in another way
 

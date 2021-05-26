@@ -20,10 +20,11 @@ class OtherMenu(DashComponent):
 
     def layout(self, params=None):
         page = dbc.Container([
+            html.Br(),
             html.Div([
-                html.H3("This is another tool "),
+                html.H3("This would be another menu, only serves as a demo"),
             ],
-                id='OtherToolExample', style={'display': 'block'}),
+                id='other-menu-selection', style={'display': 'block'}),
         ], fluid=True)
         return page
 

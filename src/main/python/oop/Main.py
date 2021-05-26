@@ -1,6 +1,6 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import Instructions, GraphPlot
+from src.main.python.oop.Components.Content import InstructionsContent, PlotContent
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.ToolSelector import ToolSelector
@@ -11,7 +11,6 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashComponent, DashApp
 from src.main.python.oop.Dataframe import Dataframe
-import io
 
 
 class Dashboard(DashComponent):
@@ -24,8 +23,8 @@ class Dashboard(DashComponent):
         df = None
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
-        self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
+        self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
+        self.PlotContent = PlotContent.PlotContent(plotfactory, df, "Graph")
 
     def layout(self, params=None):
         """
@@ -163,7 +162,6 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
-                # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
         @app.callback(
@@ -195,7 +193,7 @@ class Dashboard(DashComponent):
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
-                return html.Div([self.GraphPlot.layout()]), html.Div([self.ToolSelector.layout()])
+                return html.Div([self.PlotContent.layout()]), html.Div([self.ToolSelector.layout()])
             # If the user tries to reach a different page, return a 404 message
             return dbc.Jumbotron(
                 [
