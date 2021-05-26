@@ -104,18 +104,18 @@ class Table(DashComponent):
         #     """
         #     return self.show_table(self.df, showtable)
 
-    def selected_data_callbacks(self, app):
-        @app.callback(
-            Output('main_table', 'selected_rows'),
-            [Input('Mygraph-normal-plot', 'selectedData')])
-        def display_selected_data(selectedData):
-            print("at least it gets called lol")
-            points_selected = []
-            if selectedData is not None:
-                for point in selectedData['points']:
-                    points_selected.append(point['customdata'][0])
-                print(points_selected)
-            return points_selected
+    # def selected_data_callbacks(self, app):
+    #     @app.callback(
+    #         Output('main_table', 'selected_rows'),
+    #         [Input('Mygraph-normal-plot', 'selectedData')])
+    #     def display_selected_data(selectedData):
+    #         print("at least it gets called lol")
+    #         points_selected = []
+    #         if selectedData is not None:
+    #             for point in selectedData['points']:
+    #                 points_selected.append(point['customdata'][0])
+    #             print(points_selected)
+    #         return points_selected
 
     def set_data(self, df):
         """
