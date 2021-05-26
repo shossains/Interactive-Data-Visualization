@@ -235,7 +235,6 @@ class NormalPlot(DashComponent):
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
                        Output('select-dimensions-normal-plot', 'options'),
-                       Output({'type': 'query-labels', 'index': ALL}, 'options')
                        ],
                       [
                           Input('file-name', 'data'),
@@ -267,9 +266,9 @@ class NormalPlot(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorLabel, labels, labels
+                return labels, labels, colorLabel, labels
             else:
-                return labels, labels, labels, labels, labels
+                return labels, labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
@@ -331,3 +330,4 @@ class NormalPlot(DashComponent):
     def set_data(self, data):
         self.df = data
         self.original_data = data
+        self.NestedFiltering.set_data(data)

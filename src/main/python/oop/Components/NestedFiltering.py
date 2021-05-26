@@ -7,7 +7,6 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State, MATCH, ALL
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
-
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Figure_factories import FigureFactories
 
@@ -35,7 +34,7 @@ class NestedFiltering(DashComponent):
             "margin-left": "15px",
             "margin-right": "15px"
         }
-        self.filters= []
+        self.filters = []
 
     def layout(self, params=None):
         """
@@ -66,87 +65,86 @@ class NestedFiltering(DashComponent):
         """
 
         @app.callback(Output('filters', 'children'),
-            Input('add-filter-button', 'n_clicks'),
-            State('filters', 'children')
-        )
+                      Input('add-filter-button', 'n_clicks'),
+                      State('filters', 'children')
+                      )
         def add_filter(n_clicksa, children):
 
-                page = html.Div(dbc.Row([
-                    dbc.Col(
-                        html.Div([
-                            dcc.Dropdown(
-                                id={
-                                    'type': 'query-label',
-                                    'index': n_clicksa
-                                },
-                                placeholder='Select ...',
-                                clearable=False)
-                            # multi=True
-                        ])
-                    ),
-                    dbc.Col(
-                        html.Div([
-                            dcc.Dropdown(
-                                id={
-                                    'type': 'query-condition',
-                                    'index': n_clicksa
-                                },
-                                placeholder='Select ...',
-                                options=[
-                                    {'label': '==', 'value': '=='},
-                                    {'label': '<', 'value': '<'},
-                                    {'label': '>', 'value': '>'},
-                                    {'label': '<=', 'value': '<='},
-                                    {'label': '>=', 'value': '>='},
-                                    {'label': '!=', 'value': '!='},
-                                ],
-                                clearable=False)
-                        ])
-                    ),
-                    dbc.Col(
-                        html.Div([
-                            html.H6("Query Filter"),
-                            dcc.Input(id={
-                                'type': 'query-input',
+            page = html.Div(dbc.Row([
+                dbc.Col(
+                    html.Div([
+                        dcc.Dropdown(
+                            id={
+                                'type': 'query-label',
                                 'index': n_clicksa
                             },
-                                placeholder='Fill in your query',
-                                debounce=True),
+                            placeholder='Select ...',
+                            clearable=False)
+                        # multi=True
+                    ])
+                ),
+                dbc.Col(
+                    html.Div([
+                        dcc.Dropdown(
+                            id={
+                                'type': 'query-condition',
+                                'index': n_clicksa
+                            },
+                            placeholder='Select ...',
+                            options=[
+                                {'label': '==', 'value': '=='},
+                                {'label': '<', 'value': '<'},
+                                {'label': '>', 'value': '>'},
+                                {'label': '<=', 'value': '<='},
+                                {'label': '>=', 'value': '>='},
+                                {'label': '!=', 'value': '!='},
+                            ],
+                            clearable=False)
+                    ])
+                ),
+                dbc.Col(
+                    html.Div([
+                        html.H6("Query Filter"),
+                        dcc.Input(id={
+                            'type': 'query-input',
+                            'index': n_clicksa
+                        },
+                            placeholder='Fill in your query',
+                            debounce=True),
 
-                        ])
-                    ),
+                    ])
+                ),
 
-                ]))
+            ]))
 
-                children.append(page)
-                return children
+            children.append(page)
+            return children
 
+        @app.callback(
+            Output({'type': 'query-label', 'index': MATCH}, 'options'),
+            [
+                Input('file-name', 'data'),
+                Input('data-process-dummy', 'children'),
+            ])
+        def update_query(dummy, data_process_dummy):
+            if self.df is not None:
+                if self.df.columns is not None:
+                    labels = [{'label': '', 'value': 'select'}]
 
-        # @app.callback(, [
-        #     [
-        #         Input('dummy', 'children'),
-        #         Input('data-process-dummy', 'children'),
-        #     ])
-        # def update_query(dummy, data_process_dummy):
-        #     if self.df is not None:
-        #         if self.df.columns is not None:
-        #             labels = [{'label': '', 'value': 'select'}]
-        #
-        #         if 'row_index_label' in self.df.columns:
-        #             del self.df['row_index_label']
-        #
-        #         row_labels = np.arange(0, self.df.shape[0], 1)
-        #         self.df.insert(0, 'row_index_label', row_labels)
-        #
-        #         dataFrame = self.df
-        #
-        #         for i in dataFrame.columns[1::]:
-        #             labels = labels + [{'label': i, 'value': i}]
-        #             colorLabel = colorLabel + [{'label': i, 'value': i}]
-        #
-        #         return labels, labels, colorLabel, labels
-        #     else:
-        #         return labels, labels, labels, labels
+                if 'row_index_label' in self.df.columns:
+                    del self.df['row_index_label']
+
+                row_labels = np.arange(0, self.df.shape[0], 1)
+                self.df.insert(0, 'row_index_label', row_labels)
+
+                dataFrame = self.df
+
+                for i in dataFrame.columns[1::]:
+                    labels = labels + [{'label': i, 'value': i}]
+
+                return labels
+            else:
+                return [{'label': 'no-label', 'value': 'no-label'}]
         #
         # @app.callback(Output('test-dummy', 'children'), [
         #     Input({'type':  'query-condition', 'index': ALL}, 'value'),
@@ -165,9 +163,6 @@ class NestedFiltering(DashComponent):
         #
         #         print(query)
         #         return {}
-
-
-
 
     def set_data(self, data):
         self.df = data
