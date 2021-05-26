@@ -21,11 +21,12 @@ class MainGraph(DashComponent):
         self.df = df
         self.MainGraph = GraphPlot.GraphPlot(plot_factory, df, "Main Graph")
         self.SubGraph = GraphPlot.GraphPlot(plot_factory, df, "Sub Graph")
+        self.Table = Table.Table(plot_factory, df, "Show Table")
 
     def layout(self, params=None):
         page = dbc.Container([
-            html.P("Habibti please, ana akeed, inti wa ana ahla"),
             html.Div(self.MainGraph.layout(params=["Mygraph-normal-plot"])),
-            html.Div(self.SubGraph.layout(params=["Subgraph-normal-plot"]))
+            html.Div(self.SubGraph.layout(params=["Subgraph-normal-plot"])),
+            html.Div(self.Table.layout(params))
         ], fluid=True)
         return page

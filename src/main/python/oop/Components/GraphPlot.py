@@ -17,7 +17,7 @@ class GraphPlot(DashComponent):
                 :param title: Title of the page
                 """
         super().__init__(title=title)
-        self.Table = Table(plot_factory, df, "Show Table")
+        # self.Table = Table(plot_factory, df, "Show Table")
         self.plot_factory = plot_factory
         self.df = df
 
