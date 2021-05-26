@@ -151,7 +151,6 @@ class StandardMenu(DashComponent):
             )
 
         ], fluid=True)
-        print(params)
         return page
 
     def component_callbacks(self, app):
