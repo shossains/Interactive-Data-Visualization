@@ -31,7 +31,6 @@ class NestedFiltering(DashComponent):
             'textAlign': 'center',
             'background-color': '#5ebfff',
             'color': 'white',
-            "margin-left": "15px",
             "margin-right": "15px"
         }
         self.filters = []
@@ -46,6 +45,7 @@ class NestedFiltering(DashComponent):
             dbc.Row([
                 html.H6("Filtering"),
                 dbc.Col(html.Div(id="filters", children=[])),
+                dbc.Col(html.Br()),
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
@@ -116,7 +116,9 @@ class NestedFiltering(DashComponent):
                             debounce=True),
                     ])
                 ),
-
+                dbc.Col(html.Div(
+                    html.Br()
+                ))
             ]))
 
             children.append(page)
@@ -160,7 +162,7 @@ class NestedFiltering(DashComponent):
                 amount = len(labels)
                 for i in range(amount):
                     print(i)
-                    query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
+                    query = query  + str(labels[i]) + str(conditions[i]) + str(input[i])
 
                     if i < amount - 1:
                         query = query + " & "

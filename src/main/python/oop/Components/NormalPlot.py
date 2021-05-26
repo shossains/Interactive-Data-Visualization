@@ -185,10 +185,9 @@ class NormalPlot(DashComponent):
             # Input('query-labels', 'value'),
             # Input('query-conditions', 'value'),
             # Input('query-input', 'value'),
-            Input('test-dummy', 'value'),
             Input('data-process-dummy', 'value'),
-        ])
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
+        ], State('test-dummy', 'value'),)
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
             """
             Updates a normal graph with different options how to plot.
 
