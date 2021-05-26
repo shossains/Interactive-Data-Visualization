@@ -10,11 +10,10 @@ from src.main.python.oop.Components.Menu.OtherMenu import OtherMenu
 from src.main.python.oop.Components.Menu.StandardMenu import StandardMenu
 
 
-class ToolSelector(DashComponent):
+class MenuSelector(DashComponent):
     def __init__(self, plot_factory, df, title="Tool selector"):
         """
-        Initializes the tool selector. Menu which loads in all tools (subclasses). Feature to display tool the
-        selected tool.
+        Initializes the menu selector. Menu which loads in all menu's (subclasses).
         :param plot_factory: Factory with all plot functions
         :param df: Dataframe with all data
         :param title: Title of the page
@@ -28,19 +27,19 @@ class ToolSelector(DashComponent):
 
     def layout(self, params=None):
         """
-        Shows the html layout of the tool selector. StandardMenu and OtherMenu are integrated within the layout.
+        Shows the html layout of the menu selector. StandardMenu and OtherMenu are integrated within the layout.
         Parameters are also passed through
-        :param params: Parameters selected at the current level of the tool selector.
+        :param params: Parameters selected at the current level of the menu selector.
         :return: Html layout of the program.
         """
         page = dbc.Container([
             dbc.Row(html.Br()),  # Only for styling, spacing out
-            # Selector for tool
+            # Selector for menu
             html.Div([
                 html.H5("Select a menu"),
                 self.querystring(params)(
                     dcc.Dropdown)(
-                    id='select-tool',
+                    id='select-menu',
                     options=[
                         {'label': 'Standard menu', 'value': 'standard-menu'},
                         {'label': 'Other menu  (not implemented)', 'value': 'other-menu'}
@@ -63,11 +62,11 @@ class ToolSelector(DashComponent):
 
         @app.callback([Output(component_id='view-standard-menu', component_property='style'),
                        Output(component_id='view-other-menu', component_property='style')],
-                      Input('select-tool', 'value'))
+                      Input('select-menu', 'value'))
         def choose_component(selection):
             """"
             Chooses which component to show and which not. Show StandardMenu class or OtherMenu.
-            @:param selection: Gets the id of the selected dropdown of the component id select-tool. 'standard-menu',
+            @:param selection: Gets the id of the selected dropdown of the component id select-menu. 'standard-menu',
             'other-menu', 'index'.
             """
             if selection == 'standard-menu':
@@ -108,7 +107,7 @@ class ToolSelector(DashComponent):
 
     def set_data(self, dfList):
         """
-        Method to pass through data to ToolSelector from other classes.
+        Method to pass through data to MenuSelector from other classes.
         :param dfList: Pandas list of dataframes that is passed through
         :return: No return
         """

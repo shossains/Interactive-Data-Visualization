@@ -3,7 +3,7 @@ __all__ = ['Dashboard']
 from src.main.python.oop.Components.Content import InstructionsContent, PlotContent
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.ToolSelector import ToolSelector
+from src.main.python.oop.Components.MenuSelector import MenuSelector
 from src.main.python.oop.Figure_factories import VisualFactories
 import dash_html_components as html
 import dash_core_components as dcc
@@ -16,13 +16,13 @@ from src.main.python.oop.Dataframe import Dataframe
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
         """
-        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table and Instructions
+        Initializes the main component of the dashboard. Makes the subclasses MenuSelector, Table and Instructions
         @rtype: object
         """
         super().__init__(title="Interactive data visualiser")
         df = None
         self.dfList = []
-        self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
+        self.ToolSelector = MenuSelector(plotfactory, df, "Tool selector")
         self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
         self.PlotContent = PlotContent.PlotContent(plotfactory, df, "Graph")
 
