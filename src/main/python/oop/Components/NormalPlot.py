@@ -140,7 +140,7 @@ class NormalPlot(DashComponent):
             )
 
         ], fluid=True)
-        print(params)
+
         return page
 
     def component_callbacks(self, app):
@@ -185,9 +185,10 @@ class NormalPlot(DashComponent):
             # Input('query-labels', 'value'),
             # Input('query-conditions', 'value'),
             # Input('query-input', 'value'),
+            Input('test-dummy', 'value'),
             Input('data-process-dummy', 'children'),
         ])
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy):
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
             """
             Updates a normal graph with different options how to plot.
 
@@ -199,6 +200,7 @@ class NormalPlot(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
+
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return {}
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
@@ -208,7 +210,11 @@ class NormalPlot(DashComponent):
             #     query = query_labels + query_conditions + query_inp
             #     dataframe = self.df.query(query)
             # else:
-            dataframe = self.df.reset_index()
+
+            if query:
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
 
             return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
 
@@ -326,6 +332,9 @@ class NormalPlot(DashComponent):
                 self.df = self.original_data
 
             return {}
+
+    def get_data(self, data):
+        self
 
     def set_data(self, data):
         self.df = data

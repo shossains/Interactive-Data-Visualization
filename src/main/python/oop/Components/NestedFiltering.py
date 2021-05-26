@@ -145,24 +145,26 @@ class NestedFiltering(DashComponent):
                 return labels
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
-        #
-        # @app.callback(Output('test-dummy', 'children'), [
-        #     Input({'type':  'query-condition', 'index': ALL}, 'value'),
-        #     Input({'type':  'query-label', 'index': ALL}, 'value'),
-        #     Input({'type': 'query-input', 'index': ALL}, 'value'),
-        # ])
-        # def update_query(labels, conditions, input):
-        #     query = ""
-        #     amount = enumerate(labels)
-        #     for i in amount:
-        #
-        #         query = query + str(labels[i]) + str(query[i])
-        #
-        #         if i != amount:
-        #             query = query + " & "
-        #
-        #         print(query)
-        #         return {}
+
+        @app.callback(Output('test-dummy', 'value'), [
+            Input({'type':  'query-label', 'index': ALL}, 'value'),
+            Input({'type':  'query-condition', 'index': ALL}, 'value'),
+            Input({'type': 'query-input', 'index': ALL}, 'value'),
+        ])
+        def update_query(labels, conditions, input):
+            query = ""
+            if labels is not None and conditions is not None and input is not None:
+                amount = len(labels)
+                for i in range(amount):
+                    print(i)
+                    query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
+
+                    if i < amount - 1:
+                        query = query + " & "
+
+                return query
+            else:
+                return query
 
     def set_data(self, data):
         self.df = data
