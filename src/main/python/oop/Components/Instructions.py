@@ -1,9 +1,7 @@
 __all__ = ['Dashboard']
 
 import dash_html_components as html
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Figure_factories import FigureFactories
 
@@ -28,14 +26,17 @@ class Instructions(DashComponent):
         """
         page = dbc.Container([
             html.Div([
-                html.H2("Welcome to the interactive data visualiser"),
-                html.H5("Made by Glenn van den Belt, Shaan Hossain, Joost Jansen, Adrian Kuiper,  Philip Tempelman"),
-
-                html.H4("Instructions"),
+                html.H1("Welcome to the interactive data visualiser", style={'text-align': 'center'}),
+                html.H6("Made by", style={'text-align': 'center'}),
+                html.H4("Glenn van den Belt", style={'text-align': 'center'}),
+                html.H4("Shaan Hossain", style={'text-align': 'center'}),
+                html.H4("Joost Jansen", style={'text-align': 'center'}),
+                html.H4("Adrian Kuiper", style={'text-align': 'center'}),
+                html.H4("Philip Tempelman", style={'text-align': 'center'}),
+                html.H2("Instructions"),
                 html.H6("Explanation texts")
             ], id='Instructions')
         ], fluid=True)
         return page
 
-    #def component_callbacks(self, app):
-
+    # def component_callbacks(self, app):
