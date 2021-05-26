@@ -8,7 +8,7 @@ from dash_oop_components import DashComponent
 from src.main.python.oop.Components.Table import Table
 
 
-class GraphPlot(DashComponent):
+class PlotContent(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
         """
                 Graph function that will only show the graph and not the options reliant from it

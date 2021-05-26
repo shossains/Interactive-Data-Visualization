@@ -1,31 +1,30 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import Instructions, GraphPlot
+from src.main.python.oop.Components.Content import InstructionsContent, PlotContent
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.ToolSelector import ToolSelector
-from src.main.python.oop.Figure_factories import FigureFactories
+from src.main.python.oop.Components.MenuSelector import MenuSelector
+from src.main.python.oop.Figure_factories import VisualFactories
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashComponent, DashApp
 from src.main.python.oop.Dataframe import Dataframe
-import io
 
 
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
         """
-        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table and Instructions
+        Initializes the main component of the dashboard. Makes the subclasses MenuSelector, Table and Instructions
         @rtype: object
         """
         super().__init__(title="Interactive data visualiser")
         df = None
         self.dfList = []
-        self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
-        self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
+        self.ToolSelector = MenuSelector(plotfactory, df, "Tool selector")
+        self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
+        self.PlotContent = PlotContent.PlotContent(plotfactory, df, "Graph")
 
     def layout(self, params=None):
         """
@@ -163,7 +162,6 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.ToolSelector.set_data(self.dfList)
-                # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
         @app.callback(
@@ -195,7 +193,7 @@ class Dashboard(DashComponent):
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
-                return html.Div([self.GraphPlot.layout()]), html.Div([self.ToolSelector.layout()])
+                return html.Div([self.PlotContent.layout()]), html.Div([self.ToolSelector.layout()])
             # If the user tries to reach a different page, return a 404 message
             return dbc.Jumbotron(
                 [
@@ -210,7 +208,7 @@ if __name__ == '__main__':
     """"
     Main function to be run
     """
-    plot_factory = FigureFactories.FigureFactories()
+    plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
     DashApp.run(debug=True)
@@ -218,8 +216,8 @@ else:
     '''
     This code exists to be able to run test_application.py
     When running test_application, the __name__ is not equal to __main__
-    Dash testing api is looking for a Dash app instance in the DashboardMain.py, which is created here.
+    Dash testing api is looking for a Dash app instance in the Main.py, which is created here.
     '''
-    plot_factory = FigureFactories.FigureFactories()
+    plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     app = DashApp(dashboard, querystrings=True, bootstrap=FLATLY).app
