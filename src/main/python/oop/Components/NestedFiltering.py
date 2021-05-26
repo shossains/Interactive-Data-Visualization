@@ -65,23 +65,19 @@ class NestedFiltering(DashComponent):
                :return: Output of the callback functions.
         """
 
-        @app.callback(Output('filters', 'children'), [
+        @app.callback(Output('filters', 'children'),
             Input('add-filter-button', 'n_clicks'),
-            Input('remove-filter-button', 'n_clicks'),
-            State('filters', 'children')]
+            State('filters', 'children')
         )
-        def add_filter(add_filter_button, remove_filter_button, filters):
+        def add_filter(n_clicksa, children):
 
-            changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-            if 'add-filter-button' in changed_id:
-                self.amount_filters = self.amount_filters + 1
                 page = html.Div(dbc.Row([
                     dbc.Col(
                         html.Div([
                             dcc.Dropdown(
                                 id={
                                     'type': 'query-label',
-                                    'index': self.amount_filters
+                                    'index': n_clicksa
                                 },
                                 placeholder='Select ...',
                                 clearable=False)
@@ -93,7 +89,7 @@ class NestedFiltering(DashComponent):
                             dcc.Dropdown(
                                 id={
                                     'type': 'query-condition',
-                                    'index': self.amount_filters
+                                    'index': n_clicksa
                                 },
                                 placeholder='Select ...',
                                 options=[
@@ -112,34 +108,19 @@ class NestedFiltering(DashComponent):
                             html.H6("Query Filter"),
                             dcc.Input(id={
                                 'type': 'query-input',
-                                'index': self.amount_filters
+                                'index': n_clicksa
                             },
                                 placeholder='Fill in your query',
                                 debounce=True),
 
                         ])
                     ),
-                    dbc.Col(
-                        html.Div([
-                            html.Button("Remove filter",
-                                        id={
-                                            'type': 'remove-filter',
-                                            'index': self.amount_filters
-                                        },
-                                        n_clicks=0,
-                                        style=self.buttonstyle
-                            )
-                        ])
-                    ),
+
                 ]))
 
-                self.filters.append(page)
-                return self.filters
+                children.append(page)
+                return children
 
-            elif 'remove-filter-button' in changed_id:
-                self.amount_filters = 0
-                self.filters = []
-                return html.Div()
 
         # @app.callback(, [
         #     [
