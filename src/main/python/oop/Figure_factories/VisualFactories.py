@@ -81,8 +81,14 @@ class FigureFactories(DashFigureFactory):
         if show_table_boolean is not None:
             table = html.Div([
                 dash_table.DataTable(
+                    id='main_table',
                     data=df.to_dict('rows'),
-                    columns=[{'name': i, 'id': i} for i in df.columns]
+                    columns=[{'name': i, 'id': i} for i in df.columns[1::]],
+                    filter_action='native',
+                    sort_action='native',
+                    sort_mode='multi',
+                    row_selectable='multi',
+                    hidden_columns=['row_index_label'],
                 ),
                 html.Hr(),
                 html.Div('Raw Content'),

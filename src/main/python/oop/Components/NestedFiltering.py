@@ -8,7 +8,6 @@ from dash.dependencies import Input, Output, State, MATCH, ALL
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
-from src.main.python.oop.Figure_factories import FigureFactories
 
 
 class NestedFiltering(DashComponent):

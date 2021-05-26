@@ -8,11 +8,13 @@ from dash_oop_components import DashComponent, DashFigureFactory, DashComponent,
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Components.NestedFiltering import NestedFiltering
+from src.main.python.oop.Figure_factories import VisualFactories
+from src.main.python.oop.Components.Table import Table
 
 
-class NormalPlot(DashComponent):
+class StandardMenu(DashComponent):
 
-    def __init__(self, plot_factory, df, title="Normal plot"):
+    def __init__(self, plot_factory, df, title="Standard menu"):
         """
         Plot function of basic plot options with graph and subgraph
         :param plot_factory: Factory with all plot functions
@@ -27,7 +29,7 @@ class NormalPlot(DashComponent):
 
     def layout(self, params=None):
         """
-               Shows the html layout of the Normal plot. Parameters are also passed through
+               Shows the html layout of the Standard menu. Parameters are also passed through
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
@@ -199,7 +201,6 @@ class NormalPlot(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
-
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return {}
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":

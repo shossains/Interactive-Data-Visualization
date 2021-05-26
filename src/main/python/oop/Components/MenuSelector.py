@@ -6,16 +6,14 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
-from src.main.python.oop.Components.GraphPlot import GraphPlot
-from src.main.python.oop.Components.OtherToolExample import ExampleML2
-from src.main.python.oop.Components.NormalPlot import NormalPlot
+from src.main.python.oop.Components.Menu.OtherMenu import OtherMenu
+from src.main.python.oop.Components.Menu.StandardMenu import StandardMenu
 
 
-class ToolSelector(DashComponent):
+class MenuSelector(DashComponent):
     def __init__(self, plot_factory, df, title="Tool selector"):
         """
-        Initializes the tool selector. Menu which loads in all tools (subclasses). Feature to display tool the
-        selected tool.
+        Initializes the menu selector. Menu which loads in all menu's (subclasses).
         :param plot_factory: Factory with all plot functions
         :param df: Dataframe with all data
         :param title: Title of the page
@@ -24,35 +22,34 @@ class ToolSelector(DashComponent):
         self.dfList = []
         self.plot_factory = plot_factory
         self.df = df
-        self.NormalPlot = NormalPlot(plot_factory, df, "Normal plot")
-        self.ExampleML2 = ExampleML2(plot_factory, df, "Example Ml 2")
+        self.StandardMenu = StandardMenu(plot_factory, df, "Standard menu")
+        self.OtherMenu = OtherMenu(plot_factory, df, "Example Ml 2")
 
     def layout(self, params=None):
         """
-        Shows the html layout of the tool selector. NormalPlot and otherToolExample are integrated within the layout.
+        Shows the html layout of the menu selector. StandardMenu and OtherMenu are integrated within the layout.
         Parameters are also passed through
-        :param params: Parameters selected at the current level of the tool selector.
+        :param params: Parameters selected at the current level of the menu selector.
         :return: Html layout of the program.
         """
         page = dbc.Container([
             dbc.Row(html.Br()),  # Only for styling, spacing out
-            # Selector for tool
+            # Selector for menu
             html.Div([
-                html.H5("Select machine learning tool"),
+                html.H5("Select a menu"),
                 self.querystring(params)(
                     dcc.Dropdown)(
-                    id='select-tool',
+                    id='select-menu',
                     options=[
-                        {'label': 'Choose ML method', 'value': 'index'},
-                        {'label': 'Normal plot', 'value': 'normal-plot'},
-                        {'label': 'other machine learning tool  (not implemented)', 'value': 'other-ml-tool'}
+                        {'label': 'Standard menu', 'value': 'standard-menu'},
+                        {'label': 'Other menu  (not implemented)', 'value': 'other-menu'}
                     ],
-                    value='index',
+                    value='standard-menu',
                     clearable=False
                 ),
             ]),
-            html.Div([self.NormalPlot.layout(params)], id='view-normal-plot'),
-            html.Div([self.ExampleML2.layout(params)], id='view-other-ml-tool')
+            html.Div([self.StandardMenu.layout(params)], id='view-standard-menu'),
+            html.Div([self.OtherMenu.layout(params)], id='view-other-menu')
         ], fluid=True, style={"padding-left": "0px", "padding-right": "0px"})
         return page
 
@@ -63,18 +60,18 @@ class ToolSelector(DashComponent):
         :return: Output of the callback functions.
         """
 
-        @app.callback([Output(component_id='view-normal-plot', component_property='style'),
-                       Output(component_id='view-other-ml-tool', component_property='style')],
-                      Input('select-tool', 'value'))
+        @app.callback([Output(component_id='view-standard-menu', component_property='style'),
+                       Output(component_id='view-other-menu', component_property='style')],
+                      Input('select-menu', 'value'))
         def choose_component(selection):
             """"
-            Chooses which component to show and which not. Show NormalPlot class or OtherToolExamples.
-            @:param selection: Gets the id of the selected dropdown of the component id select-tool. 'normal-plot',
-            'other-ml-tool', 'index'.
+            Chooses which component to show and which not. Show StandardMenu class or OtherMenu.
+            @:param selection: Gets the id of the selected dropdown of the component id select-menu. 'standard-menu',
+            'other-menu', 'index'.
             """
-            if selection == 'normal-plot':
+            if selection == 'standard-menu':
                 return {'display': 'block'}, {'display': 'none'}
-            if selection == 'other-ml-tool':
+            if selection == 'other-menu':
                 return {'display': 'none'}, {'display': 'block'}
             else:
                 return {'display': 'none'}, {'display': 'none'}
@@ -95,24 +92,22 @@ class ToolSelector(DashComponent):
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):
-
             if value is None:
                 return {}
             if value == "select":
                 return {}
 
             for i in self.dfList:
-                if (i[1] == value):
+                if i[1] == value:
                     self.df = i[0]
-                    self.NormalPlot.set_data(i[0])
-                    self.ExampleML2.set_data(i[0])
-                    # self.GraphPlot.set_data(i[0])
+                    self.StandardMenu.set_data(i[0])
+                    self.OtherMenu.set_data(i[0])
                     # Something has to change here, line above needs to be moved
                     # or done in another way
 
     def set_data(self, dfList):
         """
-        Method to pass through data to ToolSelector from other classes.
+        Method to pass through data to MenuSelector from other classes.
         :param dfList: Pandas list of dataframes that is passed through
         :return: No return
         """
