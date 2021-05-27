@@ -191,16 +191,17 @@ class NestedFiltering(DashComponent):
         ])
         def apply_query(labels, conditions, input, apply):
             query = ""
-            if None not in labels and None not in conditions and None not in input:
+
+            if labels and conditions and input:
+
                 amount = len(labels)
                 for i in range(amount):
-                    print(i)
-                    if labels[i] and conditions[i] and input[i]:
+
+                    if labels[i] is not None and conditions[i] is not None and input[i] is not None:
                         query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
 
-                    if i < amount - 1:
-                        query = query + " & "
-
+                    if i+1 < len(labels) and labels[i+1] is not None and conditions[i+1] is not None and input[i+1] is not None:
+                        query = query + ' & '
                 return query
             else:
                 return query
