@@ -97,19 +97,20 @@ class ToolSelector(DashComponent):
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):
-            print("hier")
-            # print(value)
-            print("hier2")
+            """
+            Sets the dataframes based on which files are selected to project.
+            :param value: the selected files in the 'select files to project' dropdown.
+
+            NOTE: Don't use "File_to_project as a name for a column. This name is hardcoded in this piece of code to
+            ensure that it is possible to view multiple files in one plot.
+            """
             if (value is None):
                 return {}
 
             if len(value) <= 0:
                 return {}
 
-            matches = {}
-
-            # for i in range(len(self.dfList)):
-            #     print(self.dfList[i][1])
+            df = self.df
 
             if len(value) == 1:
                 for i in self.dfList:
@@ -122,18 +123,13 @@ class ToolSelector(DashComponent):
                 for i in self.dfList:
                     for v in value:
                         if i[1] == v:
-                            df = pd.concat([self.df, i[0]]).reset_index(drop=True)
-                            # df = pd.concat()
+                            dfToAdd = i[0]
+                            dfToAdd['File_to_project'] = i[1]
+                            df = pd.concat([self.df, dfToAdd]).reset_index(drop=True)
 
                 self.df = df
                 self.NormalPlot.set_data(df)
                 self.ExampleML2.set_data(df)
-                print('done')
-
-
-                    # self.GraphPlot.set_data(i[0])
-                    # Something has to change here, line above needs to be moved
-                    # or done in another way
 
     def set_data(self, dfList):
         """
