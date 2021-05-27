@@ -308,8 +308,6 @@ class StandardMenu(DashComponent):
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
-
-            print(self.df)
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
                 self.df = example_function1(self.df)
