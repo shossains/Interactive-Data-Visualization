@@ -101,7 +101,7 @@ class ToolSelector(DashComponent):
             Sets the dataframes based on which files are selected to project.
             :param value: the selected files in the 'select files to project' dropdown.
 
-            NOTE: Don't use "File_to_project as a name for a column. This name is hardcoded in this piece of code to
+            NOTE: Don't use "Different Files" as a name for a column. This name is hardcoded in this piece of code to
             ensure that it is possible to view multiple files in one plot.
             """
             if (value is None):
@@ -110,7 +110,6 @@ class ToolSelector(DashComponent):
             if len(value) <= 0:
                 return {}
 
-            df = self.df
 
             if len(value) == 1:
                 for i in self.dfList:
@@ -120,13 +119,15 @@ class ToolSelector(DashComponent):
                         self.ExampleML2.set_data(i[0])
                         break
             else:
+                df = pd.DataFrame()
                 for i in self.dfList:
                     for v in value:
                         if i[1] == v:
                             dfToAdd = i[0]
-                            dfToAdd['File_to_project'] = i[1]
-                            df = pd.concat([self.df, dfToAdd]).reset_index(drop=True)
+                            dfToAdd['Different Files'] = i[1]
+                            df = pd.concat([df, dfToAdd]).reset_index(drop=True)
 
+                print(df)
                 self.df = df
                 self.NormalPlot.set_data(df)
                 self.ExampleML2.set_data(df)
