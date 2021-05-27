@@ -48,11 +48,8 @@ class NestedFiltering(DashComponent):
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
-                # dbc.Col(html.Div([
-                #     html.Button("Remove filter", id="remove-filter-button", n_clicks=0,
-                #                 style=self.buttonstyle)])),
                 dbc.Col(html.Div([
-                    html.Button("Apply filter", id="apply-filter-button", n_clicks=0,
+                    html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
             ]),
             html.P(id="test-dummy")
@@ -67,61 +64,80 @@ class NestedFiltering(DashComponent):
         """
 
         @app.callback(Output('filters', 'children'),
+                      Output({'type': 'remove-filter-button', 'index': ALL}, 'n_clicks'),
                       Input('add-filter-button', 'n_clicks'),
+                      Input({'type': 'remove-filter-button', 'index': ALL}, 'n_clicks'),
                       State('filters', 'children')
                       )
-        def add_filter(n_clicksa, children):
-
-            page = html.Div(dbc.Row([
-                dbc.Col(
-                    html.Div([
-                        dcc.Dropdown(
-                            id={
-                                'type': 'query-label',
-                                'index': n_clicksa
+        def add_filter(add_filter_clicks, remove_filter_clicks, children):
+            changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+            if 'add-filter-button' in changed_id:
+                page = html.Div(dbc.Row([
+                    dbc.Col(
+                        html.Div([
+                            dcc.Dropdown(
+                                id={
+                                    'type': 'query-label',
+                                    'index': add_filter_clicks
+                                },
+                                placeholder='Select ...',
+                                clearable=False)
+                            # multi=True
+                        ])
+                    ),
+                    dbc.Col(
+                        html.Div([
+                            dcc.Dropdown(
+                                id={
+                                    'type': 'query-condition',
+                                    'index': add_filter_clicks
+                                },
+                                placeholder='Select ...',
+                                options=[
+                                    {'label': '==', 'value': '=='},
+                                    {'label': '<', 'value': '<'},
+                                    {'label': '>', 'value': '>'},
+                                    {'label': '<=', 'value': '<='},
+                                    {'label': '>=', 'value': '>='},
+                                    {'label': '!=', 'value': '!='},
+                                ],
+                                clearable=False)
+                        ])
+                    ),
+                    dbc.Col(
+                        html.Div([
+                            html.H6("Query Filter"),
+                            dcc.Input(id={
+                                'type': 'query-input',
+                                'index': add_filter_clicks
                             },
-                            placeholder='Select ...',
-                            clearable=False)
-                        # multi=True
-                    ])
-                ),
-                dbc.Col(
-                    html.Div([
-                        dcc.Dropdown(
-                            id={
-                                'type': 'query-condition',
-                                'index': n_clicksa
-                            },
-                            placeholder='Select ...',
-                            options=[
-                                {'label': '==', 'value': '=='},
-                                {'label': '<', 'value': '<'},
-                                {'label': '>', 'value': '>'},
-                                {'label': '<=', 'value': '<='},
-                                {'label': '>=', 'value': '>='},
-                                {'label': '!=', 'value': '!='},
-                            ],
-                            clearable=False)
-                    ])
-                ),
-                dbc.Col(
-                    html.Div([
-                        html.H6("Query Filter"),
-                        dcc.Input(id={
-                            'type': 'query-input',
-                            'index': n_clicksa
-                        },
-                            placeholder='Fill in your query',
-                            debounce=True),
-                    ])
-                ),
-                dbc.Col(html.Div(
-                    html.Br()
-                ))
-            ]))
+                                placeholder='Fill in your query',
+                                debounce=True),
+                        ])
+                    ),
+                    dbc.Col(
+                        html.Div([
+                            html.Button("Remove filter", id={
+                                'type': "remove-filter-button",
+                                'index': add_filter_clicks
+                            }, n_clicks=0,
+                                        style=self.buttonstyle)])
+                    ),
+                    dbc.Col(html.Div(
+                        html.Br()
+                    ))
+                ]), id={
+                    'type': "filter-page",
+                    'index': add_filter_clicks
+                })
 
-            children.append(page)
-            return children
+                children.append(page)
+
+            if 'remove-filter-button' in changed_id:
+                index = remove_filter_clicks.index(1)
+                del children[index]
+
+            return children, len(remove_filter_clicks) * [0]
 
         @app.callback(
             Output({'type': 'query-label', 'index': MATCH}, 'options'),
@@ -149,29 +165,29 @@ class NestedFiltering(DashComponent):
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
 
-        @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
-                       Output({'type': 'query-condition', 'index': MATCH}, 'value'),
-                       Output({'type': 'query-input', 'index': MATCH}, 'value')
-                       ],
-                      [
-                          Input('file-name', 'data')
-                      ])
-        def set_variables(q_label):
-            """
-            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
-            :param options_x: All possible x-axis options
-            :param options_y: All possible x-axis options
-            :param options_char: All possible characteristic options
-            :return: The chosen x-axis and y-axis and characteristic
-            """
-
-            return None, None, ''
+        # @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
+        #                Output({'type': 'query-condition', 'index': MATCH}, 'value'),
+        #                Output({'type': 'query-input', 'index': MATCH}, 'value')
+        #                ],
+        #               [
+        #                   Input('file-name', 'data')
+        #               ])
+        # def set_variables(q_label):
+        #     """
+        #     Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+        #     :param options_x: All possible x-axis options
+        #     :param options_y: All possible x-axis options
+        #     :param options_char: All possible characteristic options
+        #     :return: The chosen x-axis and y-axis and characteristic
+        #     """
+        #
+        #     return None, None, ''
 
         @app.callback(Output('test-dummy', 'value'), [
-            Input({'type':  'query-label', 'index': ALL}, 'value'),
-            Input({'type':  'query-condition', 'index': ALL}, 'value'),
+            Input({'type': 'query-label', 'index': ALL}, 'value'),
+            Input({'type': 'query-condition', 'index': ALL}, 'value'),
             Input({'type': 'query-input', 'index': ALL}, 'value'),
-            Input('apply-filter-button', 'n_clicks'),
+            Input('apply-filter-button', 'add_filter_clicks'),
         ])
         def apply_query(labels, conditions, input, apply):
             query = ""
