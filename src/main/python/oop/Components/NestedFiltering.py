@@ -129,7 +129,7 @@ class NestedFiltering(DashComponent):
                 Input('file-name', 'data'),
                 Input('data-process-dummy', 'children'),
             ])
-        def update_query(dummy, data_process_dummy):
+        def options_query(dummy, data_process_dummy):
             if self.df is not None:
                 if self.df.columns is not None:
                     labels = [{'label': '', 'value': 'select'}]
@@ -149,6 +149,24 @@ class NestedFiltering(DashComponent):
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
 
+        @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
+                       Output({'type': 'query-condition', 'index': MATCH}, 'value'),
+                       Output({'type': 'query-input', 'index': MATCH}, 'value')
+                       ],
+                      [
+                          Input('file-name', 'data')
+                      ])
+        def set_variables(q_label):
+            """
+            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            :param options_x: All possible x-axis options
+            :param options_y: All possible x-axis options
+            :param options_char: All possible characteristic options
+            :return: The chosen x-axis and y-axis and characteristic
+            """
+
+            return None, None, ''
+
         @app.callback(Output('test-dummy', 'value'), [
             Input({'type':  'query-label', 'index': ALL}, 'value'),
             Input({'type':  'query-condition', 'index': ALL}, 'value'),
@@ -161,7 +179,8 @@ class NestedFiltering(DashComponent):
                 amount = len(labels)
                 for i in range(amount):
                     print(i)
-                    query = query  + str(labels[i]) + str(conditions[i]) + str(input[i])
+                    if labels[i] and conditions[i] and input[i]:
+                        query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
 
                     if i < amount - 1:
                         query = query + " & "

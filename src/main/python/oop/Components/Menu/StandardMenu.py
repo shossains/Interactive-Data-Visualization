@@ -184,9 +184,6 @@ class StandardMenu(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            # Input('query-labels', 'value'),
-            # Input('query-conditions', 'value'),
-            # Input('query-input', 'value'),
             Input('data-process-dummy', 'value'),
         ], State('test-dummy', 'value'),)
         def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
@@ -205,11 +202,6 @@ class StandardMenu(DashComponent):
                 return {}
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
                 return {}
-
-            # if query_inp and query_labels and query_conditions:
-            #     query = query_labels + query_conditions + query_inp
-            #     dataframe = self.df.query(query)
-            # else:
 
             if query and data_process_dummy == 'true':
                 dataframe = self.df.query(query)
@@ -280,18 +272,12 @@ class StandardMenu(DashComponent):
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
                        Output('select-dimensions-normal-plot', 'value'),
-                       # Output('query-labels', 'value'),
-                       # Output('query-conditions', 'value'),
-                       # Output('query-input', 'value')
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
                           Input('select-variable-y-normal-plot', 'options'),
                           Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options'),
-                          # Input('query-labels', 'options'),
-                          # Input('query-conditions', 'options'),
-                          # Input('query-input', 'options')
+                          Input('select-dimensions-normal-plot', 'options')
                       ])
         def set_variables(options_x, options_y, options_char, dims):
             """
@@ -302,10 +288,10 @@ class StandardMenu(DashComponent):
             :return: The chosen x-axis and y-axis and characteristic
             """
             if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None  # , None, None, ''
+                return None, None, None, None
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None  # , None, None, ''
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None  # , None, None, ''
+                return None, None, None, None
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
         @app.callback(Output('data-process-dummy', 'value'), [
             Input('example-function-1-button', 'n_clicks'),
@@ -322,6 +308,8 @@ class StandardMenu(DashComponent):
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
+
+            print(self.df)
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
                 self.df = example_function1(self.df)
