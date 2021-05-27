@@ -127,7 +127,6 @@ class ToolSelector(DashComponent):
                             dfToAdd['Different Files'] = i[1]
                             df = pd.concat([df, dfToAdd]).reset_index(drop=True)
 
-                print(df)
                 self.df = df
                 self.NormalPlot.set_data(df)
                 self.ExampleML2.set_data(df)
