@@ -26,14 +26,7 @@ class StandardMenu(DashComponent):
         self.df = df
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
-
-    def layout(self, params=None):
-        """
-               Shows the html layout of the Standard menu. Parameters are also passed through
-               :param params: Parameters selected at the current level of the dashboard.
-               :return: Html layout of the program.
-        """
-        buttonstyle = {
+        self.buttonstyle = {
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
@@ -43,6 +36,12 @@ class StandardMenu(DashComponent):
             "margin-right": "15px"
         }
 
+    def layout(self, params=None):
+        """
+               Shows the html layout of the Standard menu. Parameters are also passed through
+               :param params: Parameters selected at the current level of the dashboard.
+               :return: Html layout of the program.
+        """
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -104,19 +103,23 @@ class StandardMenu(DashComponent):
                                                                persistence_type='memory')
                     ]),
                     style={"padding-left": "5px", "padding-right": "5px"}
-                )
+                ),
             ]),
+
+            #Empty space between main menu and filter menu
+            dbc.Row(html.Br()),
+
             # Nested filtering
             self.NestedFiltering.layout(params),
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
-            dbc.Row([html.Br()]),
+            dbc.Row(html.Br()),
             dbc.Row(html.H5("Process data with client code")),
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
-                                style=buttonstyle),
+                                style=self.buttonstyle),
                     html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
-                                style=buttonstyle),
+                                style=self.buttonstyle),
                     html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
                 ]),
                 html.P(id="data-process-dummy"),
