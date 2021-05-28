@@ -9,13 +9,13 @@ from dash.dependencies import Input, Output, State
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
-from src.main.python.oop.Figure_factories import FigureFactories
+from src.main.python.oop.Figure_factories import VisualFactories
 from src.main.python.oop.Components.Table import Table
 
 
-class NormalPlot(DashComponent):
+class StandardMenu(DashComponent):
 
-    def __init__(self, plot_factory, df, title="Normal plot"):
+    def __init__(self, plot_factory, df, title="Standard menu"):
         """
         Plot function of basic plot options with graph and subgraph
         :param plot_factory: Factory with all plot functions
@@ -29,7 +29,7 @@ class NormalPlot(DashComponent):
 
     def layout(self, params=None):
         """
-               Shows the html layout of the Normal plot. Parameters are also passed through
+               Shows the html layout of the Standard menu. Parameters are also passed through
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """

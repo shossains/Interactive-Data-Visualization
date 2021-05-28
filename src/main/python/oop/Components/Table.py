@@ -13,7 +13,7 @@ from dash_oop_components import DashFigureFactory, DashComponent, DashComponentT
 
 
 from src.main.python.oop.Dataframe import Dataframe
-from src.main.python.oop.Figure_factories import FigureFactories
+from src.main.python.oop.Figure_factories import VisualFactories
 
 # dcc.Checklist(id='show-table-ml2', options=[
 #     {'label': 'Show table', 'value': 'show-table'}]),
@@ -56,7 +56,9 @@ class Table(DashComponent):
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
             points_selected = []
+            print(graphPoints)
             if graphPoints is not None:
+                print(graphPoints)
                 for point in graphPoints['points']:
                     points_selected.append(point['customdata'][0])
             return points_selected
