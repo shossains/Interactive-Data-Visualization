@@ -3,6 +3,7 @@ __all__ = ['Dashboard']
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
@@ -92,18 +93,38 @@ class MenuSelector(DashComponent):
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):
+            """
+            Sets the dataframes based on which files are selected to project.
+            :param value: the selected files in the 'select files to project' dropdown.
+
+            NOTE: Don't use "Different Files" as a name for a column. This name is hardcoded in this piece of code to
+            ensure that it is possible to view multiple files in one plot.
+            """
             if value is None:
                 return {}
             if value == "select":
                 return {}
 
-            for i in self.dfList:
-                if i[1] == value:
-                    self.df = i[0]
-                    self.StandardMenu.set_data(i[0])
-                    self.OtherMenu.set_data(i[0])
-                    # Something has to change here, line above needs to be moved
-                    # or done in another way
+
+            if len(value) == 1:
+                for i in self.dfList:
+                    if i[1] == value[0]:
+                        self.df = i[0]
+                        self.StandardMenu.set_data(i[0])
+                        self.OtherMenu.set_data(i[0])
+                        break
+            else:
+                df = pd.DataFrame()
+                for i in self.dfList:
+                    for v in value:
+                        if i[1] == v:
+                            dfToAdd = i[0]
+                            dfToAdd['Different Files'] = i[1]
+                            df = pd.concat([df, dfToAdd]).reset_index(drop=True)
+
+                self.df = df
+                self.StandardMenu.set_data(df)
+                self.OtherMenu.set_data(df)
 
     def set_data(self, dfList):
         """
