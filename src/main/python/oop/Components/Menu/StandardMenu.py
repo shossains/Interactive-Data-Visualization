@@ -35,6 +35,10 @@ class StandardMenu(DashComponent):
             "margin-left": "15px",
             "margin-right": "15px"
         }
+        self.dropdownstyle = {
+            'padding-left': '5px',
+            'padding-right': '5px'
+        }
 
     def layout(self, params=None):
         """
@@ -64,7 +68,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"}),
+                    , style=self.dropdownstyle),
                 dbc.Col(
                     html.Div([
                         html.H6("y-axis"),
@@ -73,7 +77,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"})]),
+                    , style=self.dropdownstyle)]),
             dbc.Row(html.Br()),
             dbc.Row([
                 dbc.Col(
@@ -85,7 +89,7 @@ class StandardMenu(DashComponent):
                             clearable=False)
                         # multi=True
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"}),
+                    , style=self.dropdownstyle),
                 dbc.Col(
                     html.Div([
                         html.H6("plot method"),
@@ -102,7 +106,7 @@ class StandardMenu(DashComponent):
                                                                value='scatter', clearable=False,
                                                                persistence_type='memory')
                     ]),
-                    style={"padding-left": "5px", "padding-right": "5px"}
+                    style=self.dropdownstyle
                 ),
             ]),
 
@@ -120,7 +124,7 @@ class StandardMenu(DashComponent):
                                 style=self.buttonstyle),
                     html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
                                 style=self.buttonstyle),
-                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
+                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=self.buttonstyle)
                 ]),
                 html.P(id="data-process-dummy"),
             ]),

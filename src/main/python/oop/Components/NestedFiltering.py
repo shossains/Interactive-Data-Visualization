@@ -30,9 +30,21 @@ class NestedFiltering(DashComponent):
             'textAlign': 'center',
             'background-color': '#5ebfff',
             'color': 'white',
-            "margin-right": "15px"
+            'width': '100%'
+        }
+        self.removebuttonstyle = {
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#e74c3c',
+            'color': 'white',
+            "margin-right": "15px",
         }
         self.filters = []
+        self.dropdownstyle={
+            'padding-left':'5px',
+            'padding-right':'5px'
+        }
 
     def layout(self, params=None):
         """
@@ -40,20 +52,19 @@ class NestedFiltering(DashComponent):
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
-        page = dbc.Container([
-            dbc.Row([
-                html.H6("Filtering"),
-                dbc.Col(html.Div(id="filters", children=[])),
-                dbc.Col(html.Br()),
+        page = html.Div([
+                dbc.Row(html.H5("Filtering")),
+                html.Div(id="filters", children=[]),
+                dbc.Row([
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
                 dbc.Col(html.Div([
                     html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
-            ]),
-            html.P(id="test-dummy")
-        ], fluid=True)
+                    ])
+            ,
+            html.P(id="test-dummy")])
         return page
 
     def component_callbacks(self, app):
@@ -72,64 +83,65 @@ class NestedFiltering(DashComponent):
         def add_filter(add_filter_clicks, remove_filter_clicks, children):
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'add-filter-button' in changed_id:
-                page = html.Div(dbc.Row([
-                    dbc.Col(
-                        html.Div([
-                            dcc.Dropdown(
-                                id={
-                                    'type': 'query-label',
-                                    'index': add_filter_clicks
-                                },
-                                placeholder='Select ...',
-                                clearable=False)
-                            # multi=True
-                        ])
-                    ),
-                    dbc.Col(
-                        html.Div([
-                            dcc.Dropdown(
-                                id={
-                                    'type': 'query-condition',
-                                    'index': add_filter_clicks
-                                },
-                                placeholder='Select ...',
-                                options=[
-                                    {'label': '==', 'value': '=='},
-                                    {'label': '<', 'value': '<'},
-                                    {'label': '>', 'value': '>'},
-                                    {'label': '<=', 'value': '<='},
-                                    {'label': '>=', 'value': '>='},
-                                    {'label': '!=', 'value': '!='},
-                                ],
-                                clearable=False)
-                        ])
-                    ),
-                    dbc.Col(
-                        html.Div([
-                            html.H6("Query Filter"),
-                            dcc.Input(id={
-                                'type': 'query-input',
-                                'index': add_filter_clicks
-                            },
-                                placeholder='Fill in your query',
-                                debounce=True),
-                        ])
-                    ),
-                    dbc.Col(
-                        html.Div([
-                            html.Button("Remove filter", id={
-                                'type': "remove-filter-button",
-                                'index': add_filter_clicks
-                            }, n_clicks=0,
-                                        style=self.buttonstyle)])
-                    ),
-                    dbc.Col(html.Div(
-                        html.Br()
-                    ))
-                ]), id={
+                page = html.Div([
+                    dbc.Row([
+                        dbc.Col(
+                            html.Div([
+                                dcc.Dropdown(
+                                    id={
+                                        'type': 'query-label',
+                                        'index': add_filter_clicks
+                                    },
+                                    placeholder='Select ...',
+                                    clearable=False)
+                            ])
+                        , style=self.dropdownstyle),
+                        dbc.Col(
+                            html.Div([
+                                dcc.Dropdown(
+                                    id={
+                                        'type': 'query-condition',
+                                        'index': add_filter_clicks
+                                    },
+                                    placeholder='Select ...',
+                                    options=[
+                                        {'label': '==', 'value': '=='},
+                                        {'label': '<', 'value': '<'},
+                                        {'label': '>', 'value': '>'},
+                                        {'label': '<=', 'value': '<='},
+                                        {'label': '>=', 'value': '>='},
+                                        {'label': '!=', 'value': '!='},
+                                    ],
+                                    clearable=False)
+                            ])
+                        , style=self.dropdownstyle),
+                    ]),
+                    dbc.Row([
+                        dbc.Col(
+                            html.Div([
+                                dbc.Row(html.H6("Query Filter")),
+                                dcc.Input(id={
+                                    'type': 'query-input',
+                                    'index': add_filter_clicks},
+                                    placeholder='Fill in your query',
+                                    debounce=True),
+                            ])
+                        ),
+                        dbc.Col(
+                            html.Div([
+                                html.Button("Remove filter",
+                                            id={
+                                                'type': "remove-filter-button",
+                                                'index': add_filter_clicks},
+                                            n_clicks=0,
+                                            style=self.removebuttonstyle)
+                            ])
+                        ),
+                    ]),
+                    dbc.Row(html.Br())
+                    ], id={
                     'type': "filter-page",
-                    'index': add_filter_clicks
-                })
+                    'index': add_filter_clicks})
 
                 children.append(page)
 
