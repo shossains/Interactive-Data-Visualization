@@ -15,6 +15,7 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
+
     def graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type):
         """
         Plots a normal graph with different options how to plot.

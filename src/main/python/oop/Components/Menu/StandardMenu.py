@@ -3,12 +3,11 @@ import numpy as np
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
-from dash_oop_components import DashComponent
-from dash.dependencies import Input, Output, State
-from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
+from dash.dependencies import Input, Output, State, ALL, MATCH
+from dash_oop_components import DashComponent, DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
+from src.main.python.oop.Components.NestedFiltering import NestedFiltering
 from src.main.python.oop.Figure_factories import VisualFactories
 from src.main.python.oop.Components.Table import Table
 
@@ -26,14 +25,8 @@ class StandardMenu(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
         self.original_data = df
-
-    def layout(self, params=None):
-        """
-               Shows the html layout of the Standard menu. Parameters are also passed through
-               :param params: Parameters selected at the current level of the dashboard.
-               :return: Html layout of the program.
-        """
-        buttonstyle = {
+        self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
+        self.buttonstyle = {
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
@@ -42,7 +35,17 @@ class StandardMenu(DashComponent):
             "margin-left": "15px",
             "margin-right": "15px"
         }
+        self.dropdownstyle = {
+            'padding-left': '5px',
+            'padding-right': '5px'
+        }
 
+    def layout(self, params=None):
+        """
+               Shows the html layout of the Standard menu. Parameters are also passed through
+               :param params: Parameters selected at the current level of the dashboard.
+               :return: Html layout of the program.
+        """
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -66,7 +69,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"}),
+                    , style=self.dropdownstyle),
                 dbc.Col(
                     html.Div([
                         html.H6("y-axis"),
@@ -75,7 +78,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"})]),
+                    , style=self.dropdownstyle)]),
             dbc.Row(html.Br()),
             dbc.Row([
                 dbc.Col(
@@ -87,7 +90,7 @@ class StandardMenu(DashComponent):
                             clearable=False)
                         # multi=True
                     ])
-                    , style={"padding-left": "5px", "padding-right": "5px"}),
+                    , style=self.dropdownstyle),
                 dbc.Col(
                     html.Div([
                         html.H6("plot method"),
@@ -104,30 +107,25 @@ class StandardMenu(DashComponent):
                                                                value='scatter', clearable=False,
                                                                persistence_type='memory')
                     ]),
-                    style={"padding-left": "5px", "padding-right": "5px"}
-                )
+                    style=self.dropdownstyle
+                ),
             ]),
-            dbc.Row(
-                dbc.Col(
-                    html.Div([
-                        html.H6("Query Filter"),
-                        dcc.Input(id='query-normal-plot',
-                                  placeholder='Fill in your query',
-                                  debounce=True),
-                    ])
-                )
-            ),
 
+            #Empty space between main menu and filter menu
+            dbc.Row(html.Br()),
+
+            # Nested filtering
+            self.NestedFiltering.layout(params),
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
-            dbc.Row([html.Br()]),
+            dbc.Row(html.Br()),
             dbc.Row(html.H5("Process data with client code")),
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
-                                style=buttonstyle),
+                                style=self.buttonstyle),
                     html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
-                                style=buttonstyle),
-                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=buttonstyle)
+                                style=self.buttonstyle),
+                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=self.buttonstyle)
                 ]),
                 html.P(id="data-process-dummy"),
             ]),
@@ -152,6 +150,7 @@ class StandardMenu(DashComponent):
             )
 
         ], fluid=True)
+
         return page
 
     def component_callbacks(self, app):
@@ -193,10 +192,9 @@ class StandardMenu(DashComponent):
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
-            Input('query-normal-plot', 'value'),
-            Input('data-process-dummy', 'children'),
-        ])
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
+            Input('data-process-dummy', 'value'),
+        ], State('query', 'value'))
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
             """
             Updates a normal graph with different options how to plot.
 
@@ -213,7 +211,7 @@ class StandardMenu(DashComponent):
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
                 return {}
 
-            if query:
+            if query and data_process_dummy == 'true':
                 dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
@@ -242,7 +240,8 @@ class StandardMenu(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
-                       Output('select-dimensions-normal-plot', 'options')],
+                       Output('select-dimensions-normal-plot', 'options'),
+                       ],
                       [
                           Input('file-name', 'data'),
                           Input('data-process-dummy', 'children'),
@@ -280,7 +279,7 @@ class StandardMenu(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value')
+                       Output('select-dimensions-normal-plot', 'value'),
                        ],
                       [
                           Input('select-variable-x-normal-plot', 'options'),
@@ -302,12 +301,13 @@ class StandardMenu(DashComponent):
                 return None, None, None, None
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
-        @app.callback(Output('data-process-dummy', 'children'), [
+        @app.callback(Output('data-process-dummy', 'value'), [
             Input('example-function-1-button', 'n_clicks'),
             Input('example-function-2-button', 'n_clicks'),
             Input('reset-button', 'n_clicks'),
+            Input('apply-filter-button', 'n_clicks'),
         ])
-        def update_processed_data(button1, button2, reset_button):
+        def update_processed_data(button1, button2, reset_button, apply):
             """
                 When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
                 original data and alters this data in return.
@@ -323,11 +323,15 @@ class StandardMenu(DashComponent):
                 self.df = example_function2(self.df)
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
-            else:
-                self.df = self.original_data
+            elif 'apply-filter-button' in changed_id:
+                return 'true'
 
-            return {}
+            return ''
+
+    def get_data(self, data):
+        self
 
     def set_data(self, data):
         self.df = data
         self.original_data = data
+        self.NestedFiltering.set_data(data)
