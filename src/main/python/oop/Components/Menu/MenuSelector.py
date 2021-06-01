@@ -7,8 +7,8 @@ import pandas as pd
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
-from src.main.python.oop.Components.Menu.OtherMenu import OtherMenu
-from src.main.python.oop.Components.Menu.StandardMenu import StandardMenu
+from src.main.python.oop.Components.Menu.OtherMenu.OtherMenu import OtherMenu
+from src.main.python.oop.Components.Menu.StandardMenu.StandardMenu import StandardMenu
 
 
 class MenuSelector(DashComponent):
