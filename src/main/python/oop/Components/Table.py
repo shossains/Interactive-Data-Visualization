@@ -52,7 +52,7 @@ class Table(DashComponent):
         :return: Output of the callback functions.
         """
         @app.callback(
-            Output('main_table', 'selected_rows'),
+            Output('main_table', 'selected_rows' + self.title),
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
             points_selected = []

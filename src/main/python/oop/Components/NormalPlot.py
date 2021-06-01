@@ -15,7 +15,7 @@ from src.main.python.oop.Components.Table import Table
 
 class NormalPlot(DashComponent):
 
-    def __init__(self, plot_factory, df, title="Normal plot"):
+    def __init__(self, plot_factory, df, indexNumber, title="Normal plot"):
         """
         Plot function of basic plot options with graph and subgraph
         :param plot_factory: Factory with all plot functions
@@ -26,6 +26,7 @@ class NormalPlot(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
         self.original_data = df
+        self.indexNumber = indexNumber
 
     def layout(self, params=None):
         """
