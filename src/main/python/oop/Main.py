@@ -3,7 +3,7 @@ __all__ = ['Dashboard']
 from src.main.python.oop.Components.Content import InstructionsContent, PlotContent
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.MenuSelector import MenuSelector
+from src.main.python.oop.Components.Menu.MenuSelector import MenuSelector
 from src.main.python.oop.Figure_factories import VisualFactories
 import dash_html_components as html
 import dash_core_components as dcc

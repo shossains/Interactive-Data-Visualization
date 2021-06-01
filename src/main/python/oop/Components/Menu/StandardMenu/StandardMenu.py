@@ -5,12 +5,8 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State, ALL, MATCH
 from dash_oop_components import DashComponent, DashFigureFactory, DashComponent, DashComponentTabs, DashApp
-
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
-from src.main.python.oop.Components.NestedFiltering import NestedFiltering
-from src.main.python.oop.Figure_factories import VisualFactories
-from src.main.python.oop.Components.Table import Table
-
+from src.main.python.oop.Components.Menu.StandardMenu.NestedFiltering import NestedFiltering
 
 class StandardMenu(DashComponent):
 
