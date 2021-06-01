@@ -85,13 +85,15 @@ In the map python/oop/Components/ClientCode The client can add code. This code s
 
 2.  **Extend Graphical User Interface (GUI)** 
 
-The interactive data visualiser can easily be extended, since all code is Object-Oriented Structured. 
+The interactive data visualiser can easily be extended, since all code is Object-Oriented Structured.
+The Structure of the classes are visible below:
+![Class-Diagram](Class-Diagram.png)
+
+Code can be extended by adding other Menu's to the the MenuSelector or extending already existing menu's such as StandardMenu. To add a new class to an existing class initialise the new class in the init. And put new_class.layout(params) in the layout of the class you want to extend. The new class is now integrated with the old one. IMPORTANT: All id's in all classes need to be unique.
 
 
 *Requirements:*
   * Fully understanding Dash and Dash_OOP_components and  experiences with Pandas dataframes
-  * A button need to be added to the layout and the GUI logic needs to be added to update_processed_data. Both these methods are to be found in python/oop/Components/Menu/StandardMenu.py 
-
 
 -----------------------------------------------------------
 Developers
