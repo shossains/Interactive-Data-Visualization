@@ -28,13 +28,15 @@ class GraphPlot(DashComponent):
                     id="loading-icon-normal-plot",
                     children=[html.Div(
                         dcc.Graph(
+                            figure={'layout': {'title': params[1]}},
                             id=params[0],
                             config={
                                 "displaylogo": False,
                                 "showTips": True,
                                 "showAxisDragHandles": True,
-                                "scrollZoom": True
-                            }
+                                "scrollZoom": True,
+                                "edits": {"titleText": True}
+                            },
                         ),
                     )],
                     type="graph"

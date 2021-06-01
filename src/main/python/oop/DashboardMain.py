@@ -27,6 +27,9 @@ class Dashboard(DashComponent):
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
         # self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
         self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
+        self.SidebarHeaderStyle = {'position': 'fixed', 'width': 'inherit', 'top': '0px', 'padding-top': '32px',
+                                   'background-color': 'inherit', 'z-index': '99'}
+        self.SidebarCollapsedStyle = {'padding-top': '61.3px', }
 
     def layout(self, params=None):
         """
@@ -71,9 +74,9 @@ class Dashboard(DashComponent):
                 ),
 
                 html.P(id='dummy'),
-                html.Pre(id='dummy2')
+                html.P(id='dummy2')
             ]
-        )
+        , style=self.SidebarHeaderStyle)
         sidebar = html.Div(
             [
                 sidebar_header,
@@ -118,13 +121,9 @@ class Dashboard(DashComponent):
 
                     html.Div(id='sidebar-plot-menu'),
 
-                ], id="collapse"),
+                ], id="collapse", style=self.SidebarCollapsedStyle),
             ],
-            id="sidebar",
-            style={
-                # 'height':'90vh',
-                'overflow-y':'auto'
-            }
+            id="sidebar", style={'overflow': 'auto'}
         )
 
         content = html.Div(id="page-content")

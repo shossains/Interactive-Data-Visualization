@@ -40,6 +40,8 @@
   #sidebar.collapsed {
     margin-left: -15.5rem;
     padding-right: 0.5rem;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
   }
 
   /* move the sidebar toggle up to the top left corner */
