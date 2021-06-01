@@ -25,7 +25,7 @@ class Dashboard(DashComponent):
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
-        # self.GraphPlot = GraphPlot.GraphPlot(plotfactory, df, "Graph")
+
         self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
         self.SidebarHeaderStyle = {'position': 'fixed', 'width': 'inherit', 'top': '0px', 'padding-top': '32px',
                                    'background-color': 'inherit', 'z-index': '99'}
@@ -74,7 +74,8 @@ class Dashboard(DashComponent):
                 ),
 
                 html.P(id='dummy'),
-                html.P(id='dummy2')
+                html.P(id='dummy2'),
+                html.P(id='dummy3')
             ]
         , style=self.SidebarHeaderStyle)
         sidebar = html.Div(

@@ -48,5 +48,5 @@ class GraphPlot(DashComponent):
     # def component_callbacks(self, app):
 
     def set_data(self, data):
-        self.Table.set_data(data)
+        # self.Table.set_data(data)
         self.df = data

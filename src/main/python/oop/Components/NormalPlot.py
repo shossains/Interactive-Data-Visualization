@@ -55,6 +55,14 @@ class NormalPlot(DashComponent):
                 ),
                 dcc.Store(id='file-name')
             ]),
+            dbc.Row(html.H5("Select graph")),
+            html.Div([
+                self.querystring(params)(dcc.Dropdown)(
+                    id='select-graph',
+                    placeholder='Select...'
+                ),
+                dcc.Store(id='graph-name')
+            ]),
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([

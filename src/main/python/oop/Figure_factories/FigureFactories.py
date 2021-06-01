@@ -31,7 +31,7 @@ class FigureFactories(DashFigureFactory):
             color_based_characteristic = None
 
         if 'scatter' in plot_type:
-            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, )
+            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe)
 
         elif 'density' in plot_type:
             fig = px.density_contour(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe)
