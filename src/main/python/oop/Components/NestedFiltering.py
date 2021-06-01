@@ -41,9 +41,9 @@ class NestedFiltering(DashComponent):
             "margin-right": "15px",
         }
         self.filters = []
-        self.dropdownstyle={
-            'padding-left':'5px',
-            'padding-right':'5px'
+        self.dropdownstyle = {
+            'padding-left': '5px',
+            'padding-right': '5px'
         }
 
     def layout(self, params=None):
@@ -53,18 +53,19 @@ class NestedFiltering(DashComponent):
                :return: Html layout of the program.
         """
         page = html.Div([
-                dbc.Row(html.H5("Filtering")),
-                html.Div(id="filters", children=[]),
-                dbc.Row([
+            dbc.Row(html.H5("Filtering")),
+            html.Div(id="filters", children=[]),
+            dbc.Row([
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
                                 style=self.buttonstyle)])),
                 dbc.Col(html.Div([
                     html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
-                    ])
+            ])
             ,
-            html.P(id="test-dummy")])
+            html.P(id="test-dummy"),
+            html.P(id="test-dummy2")])
         return page
 
     def component_callbacks(self, app):
@@ -78,9 +79,11 @@ class NestedFiltering(DashComponent):
                       Output({'type': 'remove-filter-button', 'index': ALL}, 'n_clicks'),
                       Input('add-filter-button', 'n_clicks'),
                       Input({'type': 'remove-filter-button', 'index': ALL}, 'n_clicks'),
+                      Input('file-name', 'data'),
                       State('filters', 'children')
                       )
-        def add_filter(add_filter_clicks, remove_filter_clicks, children):
+        def add_filter(add_filter_clicks, remove_filter_clicks, file_name, children):
+
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'add-filter-button' in changed_id:
                 page = html.Div([
@@ -95,7 +98,7 @@ class NestedFiltering(DashComponent):
                                     placeholder='Select ...',
                                     clearable=False)
                             ])
-                        , style=self.dropdownstyle),
+                            , style=self.dropdownstyle),
                         dbc.Col(
                             html.Div([
                                 dcc.Dropdown(
@@ -114,7 +117,7 @@ class NestedFiltering(DashComponent):
                                     ],
                                     clearable=False)
                             ])
-                        , style=self.dropdownstyle),
+                            , style=self.dropdownstyle),
                     ]),
                     dbc.Row([
                         dbc.Col(
@@ -139,15 +142,18 @@ class NestedFiltering(DashComponent):
                         ),
                     ]),
                     dbc.Row(html.Br())
-                    ], id={
+                ], id={
                     'type': "filter-page",
                     'index': add_filter_clicks})
 
                 children.append(page)
 
-            if 'remove-filter-button' in changed_id:
+            elif 'remove-filter-button' in changed_id:
                 index = remove_filter_clicks.index(1)
                 del children[index]
+
+            else:
+                children = []
 
             return children, len(remove_filter_clicks) * [0]
 
@@ -177,23 +183,17 @@ class NestedFiltering(DashComponent):
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
 
-        # @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
-        #                Output({'type': 'query-condition', 'index': MATCH}, 'value'),
-        #                Output({'type': 'query-input', 'index': MATCH}, 'value')
-        #                ],
-        #               [
-        #                   Input('file-name', 'data')
-        #               ])
+        # @app.callback(
+        #     Output({'type': 'query-label'}, 'value'),
+        #     Output({'type': 'query-condition'}, 'value'),
+        #     Output({'type': 'query-input'}, 'value'),
+        #     Input('select-file', 'value')
+        # )
         # def set_variables(q_label):
         #     """
-        #     Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
-        #     :param options_x: All possible x-axis options
-        #     :param options_y: All possible x-axis options
-        #     :param options_char: All possible characteristic options
-        #     :return: The chosen x-axis and y-axis and characteristic
         #     """
-        #
-        #     return None, None, ''
+        #     print("function called!")
+        #     return None, None, ""
 
         @app.callback(Output('test-dummy', 'value'), [
             Input({'type': 'query-label', 'index': ALL}, 'value'),
@@ -212,7 +212,8 @@ class NestedFiltering(DashComponent):
                     if labels[i] is not None and conditions[i] is not None and input[i] is not None:
                         query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
 
-                    if i+1 < len(labels) and labels[i+1] is not None and conditions[i+1] is not None and input[i+1] is not None:
+                    if i + 1 < len(labels) and labels[i + 1] is not None and conditions[i + 1] is not None and input[
+                        i + 1] is not None:
                         query = query + ' & '
                 return query
             else:
