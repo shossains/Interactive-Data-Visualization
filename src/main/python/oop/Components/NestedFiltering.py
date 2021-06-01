@@ -1,20 +1,17 @@
 import dash
 import numpy as np
-import pandas as pd
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State, MATCH, ALL
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
-from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
-
 
 class NestedFiltering(DashComponent):
 
     def __init__(self, plot_factory, df, title="Nested Filtering"):
         """
-        Plot function of basic plot options with graph and subgraph
+        Nestedfiltering gives the ability to add and remove filters and use the filters on the current data.
         :param plot_factory: Factory with all plot functions
         :param df: Dataframe with all data
         :param title: Title of the page
@@ -48,7 +45,7 @@ class NestedFiltering(DashComponent):
 
     def layout(self, params=None):
         """
-               Shows the html layout of the Normal plot. Parameters are also passed through
+               Shows the html layout of the standard Nestedfiltering. REMARK: Parameters are not passed through
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
@@ -64,8 +61,7 @@ class NestedFiltering(DashComponent):
                                 style=self.buttonstyle)]))
             ])
             ,
-            html.P(id="test-dummy"),
-            html.P(id="test-dummy2")])
+            html.P(id="query-dummy")])
         return page
 
     def component_callbacks(self, app):
@@ -82,8 +78,15 @@ class NestedFiltering(DashComponent):
                       Input('file-name', 'data'),
                       State('filters', 'children')
                       )
-        def add_filter(add_filter_clicks, remove_filter_clicks, file_name, children):
-
+        def add_remove_filter(add_filter_clicks, remove_filter_clicks, file_name_dummy, children):
+            """
+            Can remove and add filters dynamically.
+            :param add_filter_clicks:  If add filter clicked, new filter is added
+            :param remove_filter_clicks:  If remove filter clicked, selected filter is removed
+            :param file_name_dummy: Called when file is selected
+            :param children: html code of the current filters in the file
+            :return: new children (filters).
+            """
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'add-filter-button' in changed_id:
                 page = html.Div([
@@ -124,7 +127,7 @@ class NestedFiltering(DashComponent):
                             html.Div([
                                 dbc.Row(html.H6("Query Filter")),
                                 dcc.Input(id={
-                                    'type': 'query-input',
+                                    'type': 'query-text_input',
                                     'index': add_filter_clicks},
                                     placeholder='Fill in your query',
                                     debounce=True),
@@ -161,9 +164,15 @@ class NestedFiltering(DashComponent):
             Output({'type': 'query-label', 'index': MATCH}, 'options'),
             [
                 Input('file-name', 'data'),
-                Input('data-process-dummy', 'children'),
+                Input('data-process-data_selection_dummy', 'children'),
             ])
-        def options_query(dummy, data_process_dummy):
+        def options_query(data_selection_dummy, data_process_dummy):
+            """
+            Places all column options in query-label. Both dummies are used to activate function. Their data is not used
+            :param data_selection_dummy: Called when file is selected
+            :param data_process_dummy: Called when data is processed
+            :return: Label options for query-label
+            """
             if self.df is not None:
                 if self.df.columns is not None:
                     labels = [{'label': '', 'value': 'select'}]
@@ -183,42 +192,44 @@ class NestedFiltering(DashComponent):
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
 
-        # @app.callback(
-        #     Output({'type': 'query-label'}, 'value'),
-        #     Output({'type': 'query-condition'}, 'value'),
-        #     Output({'type': 'query-input'}, 'value'),
-        #     Input('select-file', 'value')
-        # )
-        # def set_variables(q_label):
-        #     """
-        #     """
-        #     print("function called!")
-        #     return None, None, ""
-
-        @app.callback(Output('test-dummy', 'value'), [
-            Input({'type': 'query-label', 'index': ALL}, 'value'),
-            Input({'type': 'query-condition', 'index': ALL}, 'value'),
-            Input({'type': 'query-input', 'index': ALL}, 'value'),
-            Input('apply-filter-button', 'add_filter_clicks'),
-        ])
-        def apply_query(labels, conditions, input, apply):
+        @app.callback(Output('query-data_selection_dummy', 'value'),
+                      Input('apply-filter-button', 'add_filter_clicks'),
+                      Input({'type': 'query-label', 'index': ALL}, 'value'),
+                      Input({'type': 'query-condition', 'index': ALL}, 'value'),
+                      Input({'type': 'query-text_input', 'index': ALL}, 'value'),
+                      )
+        def apply_query(apply, labels, conditions, text_input):
+            """
+            Takes the value of all filters and combines them to one query. This query is applied on the data
+            :param labels: labels of the filters
+            :param conditions: condition of the filters
+            :param text_input: Text input of the filters
+            :param apply: Button that is pressed to apply filter
+            :return: No return value but data is adapted
+            """
             query = ""
 
-            if labels and conditions and input:
+            if labels and conditions and text_input:
 
                 amount = len(labels)
                 for i in range(amount):
 
-                    if labels[i] is not None and conditions[i] is not None and input[i] is not None:
-                        query = query + str(labels[i]) + str(conditions[i]) + str(input[i])
+                    if labels[i] is not None and conditions[i] is not None and text_input[i] is not None:
+                        query = query + str(labels[i]) + str(conditions[i]) + str(text_input[i])
 
-                    if i + 1 < len(labels) and labels[i + 1] is not None and conditions[i + 1] is not None and input[
-                        i + 1] is not None:
+                    if i + 1 < len(labels) and labels[i + 1] is not None and conditions[i + 1] is not None and \
+                            text_input[
+                                i + 1] is not None:
                         query = query + ' & '
                 return query
             else:
                 return query
 
     def set_data(self, data):
+        """
+        Sets data of the NestedFiltering class
+        :param data: New data set
+        :return: No return
+        """
         self.df = data
         self.original_data = data

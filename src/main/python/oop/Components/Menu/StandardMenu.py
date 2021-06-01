@@ -192,7 +192,7 @@ class StandardMenu(DashComponent):
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-plot-options-normal-plot', 'value'),
             Input('data-process-dummy', 'value'),
-        ], State('test-dummy', 'value'),)
+        ], State('query-dummy', 'value'),)
         def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
             """
             Updates a normal graph with different options how to plot.
