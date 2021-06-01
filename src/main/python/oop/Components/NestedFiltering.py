@@ -61,7 +61,7 @@ class NestedFiltering(DashComponent):
                                 style=self.buttonstyle)]))
             ])
             ,
-            html.P(id="query-dummy")])
+            html.P(id="query")])
         return page
 
     def component_callbacks(self, app):
@@ -164,7 +164,7 @@ class NestedFiltering(DashComponent):
             Output({'type': 'query-label', 'index': MATCH}, 'options'),
             [
                 Input('file-name', 'data'),
-                Input('data-process-data_selection_dummy', 'children'),
+                Input('data-process-dummy', 'children'),
             ])
         def options_query(data_selection_dummy, data_process_dummy):
             """
@@ -192,7 +192,7 @@ class NestedFiltering(DashComponent):
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
 
-        @app.callback(Output('query-data_selection_dummy', 'value'),
+        @app.callback(Output('query', 'value'),
                       Input('apply-filter-button', 'add_filter_clicks'),
                       Input({'type': 'query-label', 'index': ALL}, 'value'),
                       Input({'type': 'query-condition', 'index': ALL}, 'value'),
@@ -205,7 +205,7 @@ class NestedFiltering(DashComponent):
             :param conditions: condition of the filters
             :param text_input: Text input of the filters
             :param apply: Button that is pressed to apply filter
-            :return: No return value but data is adapted
+            :return: query string
             """
             query = ""
 
