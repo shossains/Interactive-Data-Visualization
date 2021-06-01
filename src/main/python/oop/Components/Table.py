@@ -58,24 +58,61 @@ class Table(DashComponent):
             points_selected = []
             print(graphPoints)
             if graphPoints is not None:
+                print(graphPoints)
                 for point in graphPoints['points']:
                     points_selected.append(point['customdata'][0])
             return points_selected
 
-        # # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button
-        # # click which will call this function
+        # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button click which will call this function
+        @app.callback(
+            Output('dummy2', 'children'),
+            Input('main_table', 'selected_rows')
+        )
+        def selected_to_dataframe(selectedRows):
+            pdf = pd.DataFrame(columns=self.df.columns)
+
+            for i in selectedRows:
+                pdf = pdf.append(self.df.iloc[i])
+
+            return None
+
         # @app.callback(
-        #     Output('dummy2', 'children'),
-        #     Input('main_table', 'selected_rows')
-        # )
-        # def selected_to_dataframe(selectedRows):
-        #     pdf = pd.DataFrame(columns=self.df.columns)
+        #     Output(component_id='output-data-upload', component_property='style'),
+        #     [Input(component_id='show-table', component_property='value')])
+        # def show_hide_table(visibility_state):
+        #     """
+        #     Shows or hides the table. Only loads in the data when checkbox selected.
+        #     :param visibility_state:
+        #     :return: visibility style
+        #     """
+        #     if visibility_state == ['show-table']:
+        #         return {'display': 'block'}
+        #     else:
+        #         return {'display': 'none'}
         #
-        #     for i in selectedRows:
-        #         pdf = pdf.append(self.df.iloc[i])
-        #
-        #     print(pdf)
-        #     return None
+        # @app.callback(Output('output-data-upload', 'children'),
+        #               [
+        #                   Input('show-table', 'value'),
+        #                   Input('select-file', 'value')
+        #               ])
+        # def update_table(showtable, select_file):
+        #     """
+        #     Updates table and calls plot_factory show table
+        #     :param showtable: Checkbox if marked shows table else it won't.
+        #     :return: Table
+        #     """
+        #     return self.show_table(self.df, showtable)
+
+    def selected_data_callbacks(self, app):
+        @app.callback(
+            Output('main_table', 'selected_rows'),
+            [Input('Mygraph-normal-plot', 'selectedData')])
+        def display_selected_data(selectedData):
+            points_selected = []
+            if selectedData is not None:
+                for point in selectedData['points']:
+                    points_selected.append(point['customdata'][0])
+            return points_selected
 
     def set_data(self, df):
         """
@@ -84,3 +121,26 @@ class Table(DashComponent):
         :return: Possible options for dropdown x-axis.
         """
         self.df = df
+
+    # def show_table(self, df, showtable):
+    #     """
+    #         Makes a table from the uploaded data.
+    #         :param df: dataframe
+    #         :param showtable: Boolean to show table or don't show table.
+    #         :return: Table
+    #     """
+    #     if df is None:
+    #         return None
+    #
+    #     if showtable is not None:
+    #         table = html.Div([
+    #             dash_table.DataTable(
+    #                 data=df.to_dict('rows'),
+    #                 columns=[{'name': i, 'id': i} for i in df.columns]
+    #             ),
+    #             html.Hr(),
+    #             html.Div('Raw Content'),
+    #         ], id='table-uploaded')
+    #         return table
+    #     else:
+    #         return html.Div()

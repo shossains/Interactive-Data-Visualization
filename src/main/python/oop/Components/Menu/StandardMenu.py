@@ -53,7 +53,8 @@ class StandardMenu(DashComponent):
             html.Div([
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
-                    placeholder='Select ...'
+                    placeholder='Select ...',
+                    multi = True
                 ),
                 dcc.Store(id='file-name')
             ]),
