@@ -203,7 +203,8 @@ class NormalPlot(DashComponent):
             Input('select-plot-options-normal-plot', 'value'),
             Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
-            Input('Mygraph-normal-plot', 'title')
+            Input('Mygraph-normal-plot', 'figure'),
+
         ])
         def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy, figure):
             """
@@ -217,20 +218,18 @@ class NormalPlot(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
-            print(figure)
-
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return figure
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
                 return figure
-
 
             if query:
                 dataframe = self.df.query(query)
             else:
                 dataframe = self.df.reset_index()
 
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
+            title = figure["layout"]["title"]["text"]
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),

@@ -50,6 +50,8 @@ class MainGraph(DashComponent):
                       Input('add-graph-button', 'n_clicks'),
                       State('add-graph', 'children'))
         def update_output(n_clicks, children):
+            print("bbb")
+
             if n_clicks != 0:
                 newGraph = self.buttonGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
                 self.graphList.append(newGraph)
