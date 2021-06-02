@@ -36,8 +36,6 @@ class MainGraph(DashComponent):
         self.Table = Table.Table(plot_factory, df, "Table" + self.title)
 
     def layout(self, params=None):
-        print("temp")
-
         page = html.Div([
             html.Div(self.temper.layout(params=["Mygraph-normal-plot", "Main Graph"])),
             html.Div(id="add-graph", children=[]),
@@ -65,6 +63,4 @@ class MainGraph(DashComponent):
                     ])
 
                 children.append(page)
-
-            print("graphlist length in callback: " + str(len(self.graphList)))
             return children

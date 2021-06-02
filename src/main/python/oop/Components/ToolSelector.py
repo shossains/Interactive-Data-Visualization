@@ -93,19 +93,6 @@ class ToolSelector(DashComponent):
 
             return labels
 
-        @app.callback(Output('select-graph', 'options'),
-                      Input('dummy3', 'children')
-                      )
-        def set_options_variable(dummy):
-
-            labels = [{'label': 'Select', 'value': 'Select'}]
-
-            length = len(self.dfList)
-            print(self.dfList)
-            # for i in range(length):
-            #     labels = labels + [{'label': self.dfList[i][1], 'value': self.dfList[i][1]}]
-
-            return labels
 
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])

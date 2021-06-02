@@ -203,8 +203,9 @@ class NormalPlot(DashComponent):
             Input('select-plot-options-normal-plot', 'value'),
             Input('query-normal-plot', 'value'),
             Input('data-process-dummy', 'children'),
+            Input('Mygraph-normal-plot', 'title')
         ])
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy):
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy, figure):
             """
             Updates a normal graph with different options how to plot.
 
@@ -216,10 +217,13 @@ class NormalPlot(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
+            print(figure)
+
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-                return {}
+                return figure
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-                return {}
+                return figure
+
 
             if query:
                 dataframe = self.df.query(query)

@@ -55,8 +55,8 @@ class Table(DashComponent):
             Output('main_table', 'selected_rows' + self.title),
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
+
             points_selected = []
-            print(graphPoints)
             if graphPoints is not None:
                 for point in graphPoints['points']:
                     points_selected.append(point['customdata'][0])
