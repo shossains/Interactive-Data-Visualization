@@ -25,19 +25,17 @@ class MainGraph(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
 
-        self.temper = GraphPlot.GraphPlot(plot_factory, df, "Main Graph")
-
-        self.buttonGraph = GraphPlot.GraphPlot(plot_factory, df, "New Graph")
+        self.mainGraphObject = GraphPlot.GraphPlot(plot_factory, df, "Main Graph")
 
         self.graphList = []
-        self.graphList.insert(0, self.temper)
+        self.graphList.insert(0, self.mainGraphObject)
 
         self.SubGraph = GraphPlot.GraphPlot(plot_factory, df, "Sub Graph")
         self.Table = Table.Table(plot_factory, df, "Table" + self.title)
 
     def layout(self, params=None):
         page = html.Div([
-            html.Div(self.temper.layout(params=["Mygraph-normal-plot", "Main Graph"])),
+            html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"])),
             html.Div(id="add-graph", children=[]),
             dbc.Row(
                 html.Button('Add Graph', id='add-graph-button', n_clicks=0),
@@ -52,12 +50,11 @@ class MainGraph(DashComponent):
         def update_output(n_clicks, children):
 
             if n_clicks != 0:
-                # newGraph =
                 newGraph = GraphPlot.GraphPlot(self.plot_factory, self.df, "Graph " + str(n_clicks))
+
+                newGraphHTML = newGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
                 self.graphList.append(newGraph)
 
-                newGraphHTML = self.buttonGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
-                # newGraphHTML["layout"]["title"]["text"]
                 page = html.Div([
                     html.Div(newGraphHTML),
                     # TODO Make subgraph invisinible till instantiated
@@ -75,6 +72,5 @@ class MainGraph(DashComponent):
             labels = []
             length = len(self.graphList)
             for i in range(length):
-                print(self.graphList[i].title)
-                labels = labels + [{'label': self.graphList[i].title, 'value': self.graphList[i].title}]
+                labels = labels + [{'label': self.graphList[i].IdTitlePair[0], 'value': self.graphList[i].IdTitlePair[1]}]
             return labels

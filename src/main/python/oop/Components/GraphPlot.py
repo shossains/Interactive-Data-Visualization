@@ -20,8 +20,10 @@ class GraphPlot(DashComponent):
         # self.Table = Table(plot_factory, df, "Show Table")
         self.plot_factory = plot_factory
         self.df = df
+        self.IdTitlePair = ["id", "title"]
 
     def layout(self, params=None):
+        self.set_data([params[0], params[1]])
         page = dbc.Row(
             dbc.Col(
                 dcc.Loading(
@@ -47,6 +49,5 @@ class GraphPlot(DashComponent):
 
     # def component_callbacks(self, app):
 
-    def set_data(self, data):
-        # self.Table.set_data(data)
-        self.df = data
+    def set_data(self, idTitlePair):
+        self.IdTitlePair = idTitlePair
