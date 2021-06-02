@@ -93,7 +93,6 @@ class ToolSelector(DashComponent):
 
             return labels
 
-
         @app.callback(Output('file-name', 'data'),
                       [Input('select-file', 'value')])
         def update_graph(value):

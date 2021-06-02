@@ -50,15 +50,16 @@ class MainGraph(DashComponent):
                       Input('add-graph-button', 'n_clicks'),
                       State('add-graph', 'children'))
         def update_output(n_clicks, children):
-            print("bbb")
 
             if n_clicks != 0:
-                newGraph = self.buttonGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
+                # newGraph =
+                newGraph = GraphPlot.GraphPlot(self.plot_factory, self.df, "Graph " + str(n_clicks))
                 self.graphList.append(newGraph)
 
+                newGraphHTML = self.buttonGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
+                # newGraphHTML["layout"]["title"]["text"]
                 page = html.Div([
-                    # html.Div("Graph " + str(n_clicks)),
-                    html.Div(newGraph),
+                    html.Div(newGraphHTML),
                     # TODO Make subgraph invisinible till instantiated
                     # html.Div(self.SubGraph.layout(params=["Subgraph-normal-plot"])),
                     html.Div(self.Table.layout(params)),
@@ -66,3 +67,14 @@ class MainGraph(DashComponent):
 
                 children.append(page)
             return children
+
+        @app.callback(Output('select-graph', 'options'),
+                      [Input('dummy3', 'children'),
+                      Input('add-graph-button', 'n_clicks')])
+        def set_options_variable(dummy, n_clicks):
+            labels = []
+            length = len(self.graphList)
+            for i in range(length):
+                print(self.graphList[i].title)
+                labels = labels + [{'label': self.graphList[i].title, 'value': self.graphList[i].title}]
+            return labels
