@@ -72,5 +72,5 @@ class MainGraph(DashComponent):
             labels = []
             length = len(self.graphList)
             for i in range(length):
-                labels = labels + [{'label': self.graphList[i].IdTitlePair[0], 'value': self.graphList[i].IdTitlePair[1]}]
+                labels = labels + [{'label': self.graphList[i].IdTitlePair[1], 'value': self.graphList[i].IdTitlePair[0]}]
             return labels

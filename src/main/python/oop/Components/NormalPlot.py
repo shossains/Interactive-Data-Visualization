@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, MATCH
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
@@ -38,7 +38,7 @@ class NormalPlot(DashComponent):
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
-            'background-color': '#5ebfff',
+            'background-color': '#2c3e50',
             'color': 'white',
             "margin-left": "15px",
             "margin-right": "15px"
@@ -57,12 +57,10 @@ class NormalPlot(DashComponent):
             ]),
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Select graph")),
+            dcc.Store(id='memory', storage_type='local'),
             html.Div([
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-graph',
-                    options=[
-                        {'label': 'Main Graph', 'value': 'Main Graph'}
-                    ],
                     placeholder='Select...',
                     value='Main Graph'
                 ),
@@ -120,6 +118,18 @@ class NormalPlot(DashComponent):
                     style={"padding-left": "5px", "padding-right": "5px"}
                 )
             ]),
+            dbc.Row(html.Br()),
+            dbc.Row(html.Button('Plot', id='plot-button', n_clicks=0, style={
+            'width': '100%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#18bc9d',
+            'color': 'white',
+            "margin-left": "15px",
+            "margin-right": "15px"
+        })),
+            dbc.Row(html.Br()),
             dbc.Row(
                 dbc.Col(
                     html.Div([
@@ -201,17 +211,28 @@ class NormalPlot(DashComponent):
             """
             return self.plot_factory.show_table(self.df, showtable)
 
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('query-normal-plot', 'value'),
-            Input('data-process-dummy', 'children'),
-            Input('Mygraph-normal-plot', 'figure'),
+        mem = 'temp'
+        @app.callback(Output('memory', 'data'),
+                      Input('select-graph', 'value'),
+                      State('memory', 'data'))
+        def temper(value, data):
+            print(value)
+            mem = value
+            return data
 
+
+        @app.callback(Output(mem, 'figure'), [
+            Input('plot-button', 'n_clicks'),
+            State('memory', 'data'),
+            State('select-variable-x-normal-plot', 'value'),
+            State('select-variable-y-normal-plot', 'value'),
+            State('select-characteristics-normal-plot', 'value'),
+            State('select-plot-options-normal-plot', 'value'),
+            State('query-normal-plot', 'value'),
+            State('data-process-dummy', 'children'),
+            State('Mygraph-normal-plot', 'figure'),
         ])
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy, figure):
+        def update_graph(clicks, graph_dropdown,xvalue, yvalue, color_based_characteristic, plot_type, query, data_process_dummy, figure):
             """
             Updates a normal graph with different options how to plot.
 
@@ -223,6 +244,8 @@ class NormalPlot(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
+            print(graph_dropdown)
+            print("entered")
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return figure
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
