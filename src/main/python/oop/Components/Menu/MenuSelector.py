@@ -1,5 +1,5 @@
 __all__ = ['Dashboard']
-
+import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -78,9 +78,13 @@ class MenuSelector(DashComponent):
                 return {'display': 'none'}, {'display': 'none'}
 
         @app.callback(Output('select-file', 'options'),
-                      Input('dummy', 'children')
+                      Input('dummy', 'children'),
+                      # Input('reset-everything', 'n_clicks')]
                       )
         def set_options_variable(dummy):
+            # changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+            # if 'reset-everything' in changed_id:
+            #     self.dfList = []
 
             labels = [{'label': 'Select', 'value': 'Select'}]
 
@@ -104,7 +108,6 @@ class MenuSelector(DashComponent):
                 return {}
             if value == "select":
                 return {}
-
 
             if len(value) == 1:
                 for i in self.dfList:

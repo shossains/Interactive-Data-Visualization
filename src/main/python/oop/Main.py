@@ -5,6 +5,7 @@ from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.Menu.MenuSelector import MenuSelector
 from src.main.python.oop.Figure_factories import VisualFactories
+import dash
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -136,6 +137,7 @@ class Dashboard(DashComponent):
         """
 
         @app.callback(Output('dummy', 'children'),
+                      # [Input('reset-everything', 'n_clicks'),
                       Input('upload-data', 'contents'),
                       State('upload-data', 'filename'),
                       State('upload-data', 'last_modified'))
@@ -147,6 +149,11 @@ class Dashboard(DashComponent):
             :param list_of_dates: Last modified date of the frames.
             :return: dummy, which is a placeholder because Dash requires a output.
             '''
+
+            # changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+            # if 'reset-everything' in changed_id:
+            #     return
+
             if list_of_contents is not None:
                 for name, content in zip(list_of_names, list_of_contents):
                     df_to_add = Dataframe(content, name).data

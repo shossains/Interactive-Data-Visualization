@@ -141,6 +141,14 @@ class StandardMenu(DashComponent):
                     ])
                     , style={"padding-left": "5px", "padding-right": "5px"}),
             ),
+            # dbc.Row(html.Br()),
+            # dbc.Row([
+            #     html.Div([
+            #         html.Button("Reset whole application", id="reset-everything", n_clicks=0,
+            #                     style=self.buttonstyle),
+            #     ]),
+            # ]),
+
             dbc.Row(
                 dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
             )
@@ -202,6 +210,8 @@ class StandardMenu(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
+            # if data_process_dummy == 'reset':
+            #     return {}
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return {}
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
@@ -250,6 +260,8 @@ class StandardMenu(DashComponent):
             :return: Possible options for dropdown x-axis.
             """
             labels = []
+            # if data_process_dummy == 'reset':
+            #     return None, None, None, None
 
             if self.df is not None:
                 if self.df.columns is not None:
@@ -302,6 +314,7 @@ class StandardMenu(DashComponent):
             Input('example-function-2-button', 'n_clicks'),
             Input('reset-button', 'n_clicks'),
             Input('apply-filter-button', 'n_clicks'),
+            # Input('reset-everything', 'n_clicks'),
         ])
         def update_processed_data(button1, button2, reset_button, apply):
             """
@@ -321,6 +334,8 @@ class StandardMenu(DashComponent):
                 self.df = self.original_data
             elif 'apply-filter-button' in changed_id:
                 return 'true'
+            # elif 'reset-everything' in changed_id:
+                # self.df = None
 
             return ''
 
