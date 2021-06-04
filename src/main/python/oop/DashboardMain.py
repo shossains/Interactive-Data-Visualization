@@ -75,7 +75,8 @@ class Dashboard(DashComponent):
 
                 html.P(id='dummy'),
                 html.P(id='dummy2'),
-                html.P(id='dummy3')
+                html.P(id='dummy3'),
+                html.P(id='dummy4')
             ]
         , style=self.SidebarHeaderStyle)
         sidebar = html.Div(
@@ -109,7 +110,7 @@ class Dashboard(DashComponent):
                         )
                     ),
 
-                    dbc.Collapse(dbc.Nav(
+                    dbc.Nav(
                         [
                             dbc.NavLink("Home", href="/", active="exact"),
                             dbc.NavLink("Instructions", href="/instructions", active="exact"),
@@ -118,7 +119,6 @@ class Dashboard(DashComponent):
                         vertical=True,
                         pills=True,
                     ),
-                        id="collapse"),
 
                     html.Div(id='sidebar-plot-menu'),
 

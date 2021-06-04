@@ -73,4 +73,44 @@ class MainGraph(DashComponent):
             length = len(self.graphList)
             for i in range(length):
                 labels = labels + [{'label': self.graphList[i].IdTitlePair[1], 'value': self.graphList[i].IdTitlePair[0]}]
+
+            # for i in range(length):
+            #     print(str(i) + " = " + str(self.graphList[i].IdTitlePair[0]))
+            #     @app.callback(Output(str(self.graphList[i].IdTitlePair[0]), 'figure'), [
+            #         Input('plot-button', 'n_clicks'),
+            #         State('select-variable-x-normal-plot', 'value'),
+            #         State('select-variable-y-normal-plot', 'value'),
+            #         State('select-characteristics-normal-plot', 'value'),
+            #         State('select-plot-options-normal-plot', 'value'),
+            #         State('query-normal-plot', 'value'),
+            #         State('data-process-dummy', 'children'),
+            #         State('Mygraph-normal-plot', 'figure'),
+            #     ])
+            #     def update_graph(clicks, xvalue, yvalue, color_based_characteristic, plot_type, query,
+            #                      data_process_dummy, figure):
+            #         """
+            #         Updates a normal graph with different options how to plot.
+            #
+            #         :param data_process_dummy:
+            #         :param xvalue: Selected x-axis value in the data
+            #         :param yvalue: Selected y-axis value in the data
+            #         :param color_based_characteristic: Selected characteristic of the data
+            #         :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+            #         :param query: Query for filtering data
+            #         :return: Graph object with the displayed plot
+            #         """
+            #         if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+            #             return figure
+            #         if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+            #             return figure
+            #
+            #         if query:
+            #             dataframe = self.df.query(query)
+            #         else:
+            #             dataframe = self.df.reset_index()
+            #
+            #         title = figure["layout"]["title"]["text"]
+            #         return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic,
+            #                                                plot_type, title)
+
             return labels
