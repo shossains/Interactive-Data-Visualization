@@ -32,12 +32,13 @@ class MainGraph(DashComponent):
 
         self.SubGraph = GraphPlot.GraphPlot(plot_factory, df, "Sub Graph")
         self.Table = Table.Table(plot_factory, df, "Table" + self.title)
+        # self.mainGraphObject = html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"]))
+        self.otherGraphs = []
 
     def layout(self, params=None):
         page = html.Div([
-            # self.graphList,
             html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"])),
-            html.Div(id="add-graph", children=[]),
+            html.Div(id="add-graph", children = self.otherGraphs),
             dbc.Row(
                 html.Button('Add Graph', id='add-graph-button', n_clicks=0),
             )])
@@ -64,13 +65,13 @@ class MainGraph(DashComponent):
                     ])
 
                 children.append(page)
+                self.otherGraphs = children
+
             return children
 
         @app.callback(Output('buttons', 'children'),
                       Input('add-graph-button', 'n_clicks'))
         def set_options_variable(n_clicks):
-            print("entered buttons callabck")
-            print(self.graphList)
             labels = []
             length = len(self.graphList)
             for i in range(length):

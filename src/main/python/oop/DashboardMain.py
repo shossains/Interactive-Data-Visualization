@@ -1,6 +1,6 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import Instructions, GraphPlot, MainGraph, dummy
+from src.main.python.oop.Components import Instructions, GraphPlot, MainGraph
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.ToolSelector import ToolSelector
@@ -25,8 +25,9 @@ class Dashboard(DashComponent):
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
         self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
+        self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
 
-        self.dummy = dummy.dummy(plotfactory, df, "Main Graphs")
+
         self.SidebarHeaderStyle = {'position': 'fixed', 'width': 'inherit', 'top': '0px', 'padding-top': '32px',
                                    'background-color': 'inherit', 'z-index': '99'}
         self.SidebarCollapsedStyle = {'padding-top': '61.3px', }
@@ -196,7 +197,7 @@ class Dashboard(DashComponent):
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
-                return html.Div([self.dummy.layout()]), html.Div([self.ToolSelector.layout()])
+                return html.Div([self.MainGraph.layout()]), html.Div([self.ToolSelector.layout()])
             # If the user tries to reach a different page, return a 404 message
             return dbc.Jumbotron(
                 [
