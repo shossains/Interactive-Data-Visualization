@@ -35,6 +35,7 @@ class MainGraph(DashComponent):
 
     def layout(self, params=None):
         page = html.Div([
+            # self.graphList,
             html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"])),
             html.Div(id="add-graph", children=[]),
             dbc.Row(
@@ -65,15 +66,18 @@ class MainGraph(DashComponent):
                 children.append(page)
             return children
 
-        @app.callback(Output('select-graph', 'options'),
-                      [Input('dummy3', 'children'),
-                      Input('add-graph-button', 'n_clicks')])
-        def set_options_variable(dummy, n_clicks):
+        @app.callback(Output('buttons', 'children'),
+                      Input('add-graph-button', 'n_clicks'))
+        def set_options_variable(n_clicks):
+            print("entered buttons callabck")
+            print(self.graphList)
             labels = []
             length = len(self.graphList)
             for i in range(length):
-                labels = labels + [{'label': self.graphList[i].IdTitlePair[1], 'value': self.graphList[i].IdTitlePair[0]}]
+                labels.append(html.Button('{}'.format(self.graphList[i].IdTitlePair[1]), value='{}'.format(self.graphList[i].IdTitlePair[0]), id='Button {}'.format(i)))
 
+            # children.append(labels)
+            return labels
             # for i in range(length):
             #     print(str(i) + " = " + str(self.graphList[i].IdTitlePair[0]))
             #     @app.callback(Output(str(self.graphList[i].IdTitlePair[0]), 'figure'), [
@@ -112,5 +116,3 @@ class MainGraph(DashComponent):
             #         title = figure["layout"]["title"]["text"]
             #         return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic,
             #                                                plot_type, title)
-
-            return labels

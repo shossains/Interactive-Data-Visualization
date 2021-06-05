@@ -2,6 +2,7 @@ __all__ = ['Dashboard']
 
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Figure_factories import FigureFactories
 
@@ -35,7 +36,7 @@ class Instructions(DashComponent):
                 html.H4("Philip Tempelman", style={'text-align': 'center'}),
                 html.H2("Instructions"),
                 html.H6("Explanation texts")
-            ], id='Instructions')
+            ], id='Instructions'),
         ], fluid=True)
         return page
 
