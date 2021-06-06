@@ -76,14 +76,6 @@ class MainGraph(DashComponent):
             labels = []
             length = len(self.graphList)
             for i in range(length):
-                labels.append(html.Button('{}'.format(self.graphList[i].IdTitlePair[1]), value='{}'.format(self.graphList[i].IdTitlePair[0]), id={"type": "button", "index": i}, n_clicks = 0))
-                # labels.append(html.Button('{}'.format(self.graphList[i].IdTitlePair[1]), value='{}'.format(self.graphList[i].IdTitlePair[0]), id='Button {}'.format(i)))
+                labels.append(html.Button('{}'.format(self.graphList[i].IdTitlePair[1]), value='{}'.format(self.graphList[i].IdTitlePair[0]),
+                                          id={"type": "button", "index": '{}'.format(self.graphList[i].IdTitlePair[0])}, n_clicks = 0))
             return labels
-
-        @app.callback(Output({"type": "graph", "index": MATCH}, "children"), [Input({"type": "button", "index": MATCH}, "n_clicks")])
-        # @app.callback(Output("dummy4", 'children'),
-        #               [Input({"type": "button", "index": MATCH}, "n_clicks")])
-        def update_output(n_clicks):
-
-            print("abc")
-            return n_clicks

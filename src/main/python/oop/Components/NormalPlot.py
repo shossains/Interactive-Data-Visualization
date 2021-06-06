@@ -206,49 +206,43 @@ class NormalPlot(DashComponent):
             """
             return self.plot_factory.show_table(self.df, showtable)
 
-        # @app.callback(Output('dummy3', 'children'),
-        #               Input('plot-button', 'n_clicks'))
+        @app.callback(Output({'type': 'page_content_graph', 'index': MATCH}, 'children'), [
+            Input({'type': 'button', 'index': MATCH}, 'n_clicks'),
+            Input('select-variable-x-normal-plot', 'value'),
+            Input('select-variable-y-normal-plot', 'value'),
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-plot-options-normal-plot', 'value'),
+            Input('query-normal-plot', 'value'),
+            Input('data-process-dummy', 'children'),
+            Input({'type': 'button', 'index': MATCH}, 'n_clicks')
+        ])
+        def update_graph(clicks, xvalue, yvalue, color_based_characteristic, plot_type, query,
+                         data_process_dummy, figure):
+            """
+            Updates a normal graph with different options how to plot.
 
-        # def create_callback(click):
-        #     print(value)
-        #
-        #     @app.callback(Output('{}'.format(value), 'figure'), [
-        #         Input('plot-button', 'n_clicks'),
-        #         Input('select-variable-x-normal-plot', 'value'),
-        #         Input('select-variable-y-normal-plot', 'value'),
-        #         Input('select-characteristics-normal-plot', 'value'),
-        #         Input('select-plot-options-normal-plot', 'value'),
-        #         Input('query-normal-plot', 'value'),
-        #         Input('data-process-dummy', 'children'),
-        #         Input('{}'.format(value), 'figure')
-        #     ])
-        #     def update_graph(clicks, xvalue, yvalue, color_based_characteristic, plot_type, query,
-        #                      data_process_dummy, figure):
-        #         """
-        #         Updates a normal graph with different options how to plot.
-        #
-        #         :param data_process_dummy:
-        #         :param xvalue: Selected x-axis value in the data
-        #         :param yvalue: Selected y-axis value in the data
-        #         :param color_based_characteristic: Selected characteristic of the data
-        #         :param plot_type: Selected kind of plot 'scatter', 'density' etc.
-        #         :param query: Query for filtering data
-        #         :return: Graph object with the displayed plot
-        #         """
-        #         print("entered print graph")
-        #         if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-        #             return figure
-        #         if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-        #             return figure
-        #
-        #         if query:
-        #             dataframe = self.df.query(query)
-        #         else:
-        #             dataframe = self.df.reset_index()
-        #
-        #         title = figure["layout"]["title"]["text"]
-        #         return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type,
-        #                                                title)
+            :param data_process_dummy:
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param color_based_characteristic: Selected characteristic of the data
+            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
+            :return: Graph object with the displayed plot
+            """
+            print("entered print graph")
+            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+                return figure
+            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+                return figure
+
+            if query:
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
+
+            title = figure["layout"]["title"]["text"]
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type,
+                                                   title)
 
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
