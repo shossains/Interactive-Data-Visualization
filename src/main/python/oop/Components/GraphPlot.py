@@ -23,6 +23,9 @@ class GraphPlot(DashComponent):
         self.IdTitlePair = ["id", "title"]
 
     def layout(self, params=None):
+        print("HIER")
+        print(params[1])
+        print("EINDE")
         self.set_data([params[0], params[1]])
         page = dbc.Row(
             dbc.Col(
@@ -31,7 +34,7 @@ class GraphPlot(DashComponent):
                     children=[html.Div(
                         dcc.Graph(
                             figure={'layout': {'title': params[1]}},
-                            id=params[0],
+                            id={"type": "graph", "index" : params[1]},
                             config={
                                 "displaylogo": False,
                                 "showTips": True,
