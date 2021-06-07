@@ -1,6 +1,7 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components import Instructions, GraphPlot, MainGraph
+from src.main.python.oop.Components import MainGraph
+from oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.ToolSelector import ToolSelector
@@ -11,7 +12,6 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash_oop_components import DashComponent, DashApp
 from src.main.python.oop.Dataframe import Dataframe
-import io
 
 
 class Dashboard(DashComponent):
@@ -24,7 +24,7 @@ class Dashboard(DashComponent):
         df = None
         self.dfList = []
         self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
-        self.Instructions = Instructions.Instructions(plotfactory, df, "Instruction page")
+        self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
         self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
 
 
