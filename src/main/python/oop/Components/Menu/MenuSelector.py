@@ -6,9 +6,8 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 from dash_oop_components import DashComponent
 
-from src.main.python.oop.Components.GraphPlot import GraphPlot
-from src.main.python.oop.Components.OtherToolExample import ExampleML2
-from src.main.python.oop.Components.NormalPlot import NormalPlot
+from oop.Components.Menu.OtherMenu.OtherMenu import ExampleML2
+from oop.Components.Menu.StandardMenu.StandardMenu import NormalPlot
 
 
 class ToolSelector(DashComponent):

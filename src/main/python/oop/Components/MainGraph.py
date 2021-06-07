@@ -1,15 +1,12 @@
 __all__ = ['Dashboard']
 
-import dash_html_components as html
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
-import dash
 import dash_html_components as html
-import dash_core_components as dcc
-from dash.dependencies import Input, Output, State, MATCH
+from dash.dependencies import Input, Output, State
 
-from src.main.python.oop.Components import Table, GraphPlot, ToolSelector
+from src.main.python.oop.Components import Table
+from oop.Components.Content import PlotContent
 
 
 class MainGraph(DashComponent):
@@ -25,12 +22,12 @@ class MainGraph(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
 
-        self.mainGraphObject = GraphPlot.GraphPlot(plot_factory, df, "Main Graph")
+        self.mainGraphObject = PlotContent.GraphPlot(plot_factory, df, "Main Graph")
 
         self.graphList = []
         self.graphList.insert(0, self.mainGraphObject)
 
-        self.SubGraph = GraphPlot.GraphPlot(plot_factory, df, "Sub Graph")
+        self.SubGraph = PlotContent.GraphPlot(plot_factory, df, "Sub Graph")
         self.Table = Table.Table(plot_factory, df, "Table" + self.title)
         # self.mainGraphObject = html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"]))
         self.otherGraphs = []
@@ -52,7 +49,7 @@ class MainGraph(DashComponent):
         def update_output(n_clicks, children):
 
             if n_clicks != 0:
-                newGraph = GraphPlot.GraphPlot(self.plot_factory, self.df, "Graph " + str(n_clicks))
+                newGraph = PlotContent.GraphPlot(self.plot_factory, self.df, "Graph " + str(n_clicks))
                 # newGraphHTML = newGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
                 newGraphHTML = newGraph.layout(params=["Graph " + str(n_clicks), str(n_clicks)])
                 self.graphList.append(newGraph)

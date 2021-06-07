@@ -4,7 +4,7 @@ from src.main.python.oop.Components import MainGraph
 from oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
 
-from src.main.python.oop.Components.ToolSelector import ToolSelector
+from oop.Components.Menu.MenuSelector import ToolSelector
 from src.main.python.oop.Figure_factories import FigureFactories
 import dash_html_components as html
 import dash_core_components as dcc
