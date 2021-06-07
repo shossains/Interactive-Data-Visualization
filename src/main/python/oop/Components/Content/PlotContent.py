@@ -22,28 +22,73 @@ class PlotContent(DashComponent):
         self.IdTitlePair = ["id", "title"]
 
     def layout(self, params=None):
-        self.set_data([params[0], params[1]])
-        page = dbc.Row(
-            dbc.Col(
-                dcc.Loading(
-                    id="loading-icon-normal-plot",
-                    children=[html.Div(
-                        dcc.Graph(
-                            figure={'layout': {'title': params[1]}},
-                            id={'type': 'page_content_graph', 'index': params[0]},
-                            config={
-                                "displaylogo": False,
-                                "showTips": True,
-                                "showAxisDragHandles": True,
-                                "scrollZoom": True,
-                                "edits": {"titleText": True}
-                            },
-                        ),
-                    )],
-                    type="graph"
+        page = dbc.Container([
+                dbc.Row(
+                    dbc.Col(
+                        dcc.Loading(
+                            id="loading-icon-normal-plot",
+                            children=[html.Div(
+                                dcc.Graph(
+                                    id='Mygraph-normal-plot',
+                                    config={
+                                        "displaylogo": False,
+                                        "showTips": True,
+                                        "showAxisDragHandles": True,
+                                        "scrollZoom": True
+                                    }
+                                ),
+                            )],
+                        )
+                    )
+                ),
+                # dbc.Row(
+                #     dbc.Col(
+                #         dcc.Loading(
+                #             id="loading-icon2-normal-plot",
+                #             children=[html.Div(
+                #                 dcc.Graph(
+                #                     id='Subgraph-normal-plot',
+                #                     config={
+                #                         "displaylogo": False,
+                #                         "showTips": True,
+                #                         "showAxisDragHandles": True,
+                #                         "scrollZoom": True
+                #                     }
+                #                 )
+                #             )],
+                #             type="graph"
+                #         )
+                #     )
+                # ),
+                # dbc.Row(
+                #     dbc.Col(
+                #         html.Div(self.Table.layout(params))
+                #     )
+                # ),
+
+            dbc.Row(
+                dbc.Col(
+                    dcc.Loading(
+                        id="loading-icon-normal-plot",
+                        children=[html.Div(
+                            dcc.Graph(
+                                id='GraphTest',
+                                config={
+                                    "displaylogo": False,
+                                    "showTips": True,
+                                    "showAxisDragHandles": True,
+                                    "scrollZoom": True
+                                }
+                            ),
+                        )],
+                    )
                 )
-            )
-        )
+            ),
+
+
+
+
+        ], fluid=True)
         return page
 
     # def component_callbacks(self, app):
