@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State, MATCH
 from dash_oop_components import DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
-from src.main.python.oop.Figure_factories import FigureFactories
+from src.main.python.oop.Figure_factories import VisualFactories
 from src.main.python.oop.Components.Table import Table
 
 
