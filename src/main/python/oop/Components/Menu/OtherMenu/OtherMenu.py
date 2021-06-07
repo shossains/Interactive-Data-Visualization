@@ -6,10 +6,10 @@ from dash_oop_components import DashComponent
 from src.main.python.oop.Figure_factories import VisualFactories
 
 
-class ExampleML2(DashComponent):
+class OtherMenu(DashComponent):
     def __init__(self, plot_factory, df, title="Example ML"):
         """
-        NO Pydocs not in use code TODO: make second class
+        This only serves as a demo as to where and how another menu could be made.
         :param plot_factory:
         :param df:
         :param title:
@@ -20,10 +20,11 @@ class ExampleML2(DashComponent):
 
     def layout(self, params=None):
         page = dbc.Container([
+            html.Br(),
             html.Div([
-                html.H3("This is another tool "),
+                html.H3("This would be another menu, only serves as a demo"),
             ],
-                id='OtherToolExample', style={'display': 'block'}),
+                id='other-menu-selection', style={'display': 'block'}),
         ], fluid=True)
         return page
 

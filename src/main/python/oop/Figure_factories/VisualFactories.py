@@ -15,7 +15,7 @@ class FigureFactories(DashFigureFactory):
         super().__init__()
 
     @staticmethod
-    def graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title):
+    def graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type):
         """
         Plots a normal graph with different options how to plot.
         :param dataframe:  Dataframe with all data
@@ -31,27 +31,46 @@ class FigureFactories(DashFigureFactory):
             color_based_characteristic = None
 
         if 'scatter' in plot_type:
-            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.scatter(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                             hover_data=dataframe, )
 
         elif 'density' in plot_type:
-            fig = px.density_contour(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.density_contour(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                                     hover_data=dataframe)
 
         elif 'line' in plot_type:
-            fig = px.line(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.line(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                          hover_data=dataframe)
 
         elif 'histogram' in plot_type:
-            fig = px.histogram(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.histogram(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                               hover_data=dataframe)
 
         elif 'box' in plot_type:
-            fig = px.box(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.box(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                         hover_data=dataframe)
 
         elif 'bar' in plot_type:
-            fig = px.bar(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.bar(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                         hover_data=dataframe)
 
         elif 'area' in plot_type:
-            fig = px.area(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic, hover_data=dataframe, title=title)
+            fig = px.area(data_frame=dataframe, x=xvalue, y=yvalue, color=color_based_characteristic,
+                          hover_data=dataframe)
 
-        fig.update_layout(title_x=0.5)
+        fig.update_layout(
+            xaxis=dict(
+                rangeselector=dict(
+                    buttons=list([
+                        dict(step="all")
+                    ])
+                ),
+                rangeslider=dict(
+                    visible=True,
+                    thickness=0.05,
+                )
+            )
+        )
 
         return fig
 
@@ -90,8 +109,6 @@ class FigureFactories(DashFigureFactory):
                     sort_mode='multi',
                     row_selectable='multi',
                     hidden_columns=['row_index_label'],
-                    page_size=50,
-                    css=[{"selector":".show-hide", "rule":"display: none"}]
                 ),
                 html.Hr(),
                 html.Div('Raw Content'),
