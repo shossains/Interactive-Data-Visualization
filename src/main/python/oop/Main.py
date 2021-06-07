@@ -220,7 +220,7 @@ else:
     '''
     This code exists to be able to run test_application.py
     When running test_application, the __name__ is not equal to __main__
-    Dash testing api is looking for a Dash app instance in the DashboardMain.py, which is created here.
+    Dash testing api is looking for a Dash app instance in the Main.py, which is created here.
     '''
     plot_factory = FigureFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
