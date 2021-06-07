@@ -22,12 +22,12 @@ class MainGraph(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
 
-        self.mainGraphObject = PlotContent.GraphPlot(plot_factory, df, "Main Graph")
+        self.mainGraphObject = PlotContent.PlotContent(plot_factory, df, "Main Graph")
 
         self.graphList = []
         self.graphList.insert(0, self.mainGraphObject)
 
-        self.SubGraph = PlotContent.GraphPlot(plot_factory, df, "Sub Graph")
+        self.SubGraph = PlotContent.PlotContent(plot_factory, df, "Sub Graph")
         self.Table = Table.Table(plot_factory, df, "Table" + self.title)
         # self.mainGraphObject = html.Div(self.mainGraphObject.layout(params=["Mygraph-normal-plot", "Main Graph"]))
         self.otherGraphs = []
@@ -49,7 +49,7 @@ class MainGraph(DashComponent):
         def update_output(n_clicks, children):
 
             if n_clicks != 0:
-                newGraph = PlotContent.GraphPlot(self.plot_factory, self.df, "Graph " + str(n_clicks))
+                newGraph = PlotContent.PlotContent(self.plot_factory, self.df, "Graph " + str(n_clicks))
                 # newGraphHTML = newGraph.layout(params=["Graph " + str(n_clicks), "Graph " + str(n_clicks)])
                 newGraphHTML = newGraph.layout(params=["Graph " + str(n_clicks), str(n_clicks)])
                 self.graphList.append(newGraph)

@@ -4,7 +4,7 @@ from src.main.python.oop.Components import MainGraph
 from oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
 
-from oop.Components.Menu.MenuSelector import ToolSelector
+from oop.Components.Menu.MenuSelector import MenuSelector
 from src.main.python.oop.Figure_factories import VisualFactories
 import dash_html_components as html
 import dash_core_components as dcc
@@ -23,7 +23,7 @@ class Dashboard(DashComponent):
         super().__init__(title="Interactive data visualiser")
         df = None
         self.dfList = []
-        self.ToolSelector = ToolSelector(plotfactory, df, "Tool selector")
+        self.MenuSelector = MenuSelector(plotfactory, df, "Tool selector")
         self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
         self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
 
@@ -164,7 +164,7 @@ class Dashboard(DashComponent):
                         self.dfList.insert(0, [df_to_add, name])
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
-                self.ToolSelector.set_data(self.dfList)
+                self.MenuSelector.set_data(self.dfList)
                 # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
@@ -197,7 +197,7 @@ class Dashboard(DashComponent):
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
-                return html.Div([self.MainGraph.layout()]), html.Div([self.ToolSelector.layout()])
+                return html.Div([self.MainGraph.layout()]), html.Div([self.MenuSelector.layout()])
             # If the user tries to reach a different page, return a 404 message
             return dbc.Jumbotron(
                 [
