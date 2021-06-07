@@ -38,34 +38,56 @@ class PlotContent(DashComponent):
                                     }
                                 ),
                             )],
-                            type="graph"
                         )
                     )
                 ),
-                dbc.Row(
-                    dbc.Col(
-                        dcc.Loading(
-                            id="loading-icon2-normal-plot",
-                            children=[html.Div(
-                                dcc.Graph(
-                                    id='Subgraph-normal-plot',
-                                    config={
-                                        "displaylogo": False,
-                                        "showTips": True,
-                                        "showAxisDragHandles": True,
-                                        "scrollZoom": True
-                                    }
-                                )
-                            )],
-                            type="graph"
-                        )
-                    )
-                ),
-                dbc.Row(
-                    dbc.Col(
-                        html.Div(self.Table.layout(params))
+                # dbc.Row(
+                #     dbc.Col(
+                #         dcc.Loading(
+                #             id="loading-icon2-normal-plot",
+                #             children=[html.Div(
+                #                 dcc.Graph(
+                #                     id='Subgraph-normal-plot',
+                #                     config={
+                #                         "displaylogo": False,
+                #                         "showTips": True,
+                #                         "showAxisDragHandles": True,
+                #                         "scrollZoom": True
+                #                     }
+                #                 )
+                #             )],
+                #             type="graph"
+                #         )
+                #     )
+                # ),
+                # dbc.Row(
+                #     dbc.Col(
+                #         html.Div(self.Table.layout(params))
+                #     )
+                # ),
+
+            dbc.Row(
+                dbc.Col(
+                    dcc.Loading(
+                        id="loading-icon-normal-plot",
+                        children=[html.Div(
+                            dcc.Graph(
+                                id='GraphTest',
+                                config={
+                                    "displaylogo": False,
+                                    "showTips": True,
+                                    "showAxisDragHandles": True,
+                                    "scrollZoom": True
+                                }
+                            ),
+                        )],
                     )
                 )
+            ),
+
+
+
+
         ], fluid=True)
         return page
 

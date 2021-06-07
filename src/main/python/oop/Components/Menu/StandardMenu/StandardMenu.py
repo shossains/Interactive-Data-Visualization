@@ -54,6 +54,17 @@ class StandardMenu(DashComponent):
                 ),
                 dcc.Store(id='file-name')
             ]),
+            dbc.Row(html.H5("Show graphs")),
+            dcc.Checklist(
+                options=[
+                    {'label': 'Graph 1', 'value': 'Graph 1'},
+                    {'label': 'Graph 2', 'value': 'Graph 2'},
+                    {'label': 'Graph 3', 'value': 'Graph 3'}
+                ],
+                value=['NYC', 'MTL'],
+                labelStyle={'display': 'inline-block'}
+            ),
+
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([
@@ -184,6 +195,37 @@ class StandardMenu(DashComponent):
             return self.plot_factory.show_table(self.df, showtable)
 
         @app.callback(Output('Mygraph-normal-plot', 'figure'), [
+            Input('select-variable-x-normal-plot', 'value'),
+            Input('select-variable-y-normal-plot', 'value'),
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-plot-options-normal-plot', 'value'),
+            Input('data-process-dummy', 'value'),
+        ], State('query', 'value'))
+        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
+            """
+            Updates a normal graph with different options how to plot.
+
+            :param data_process_dummy:
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param color_based_characteristic: Selected characteristic of the data
+            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
+            :return: Graph object with the displayed plot
+            """
+            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+                return {}
+            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+                return {}
+
+            if query and data_process_dummy == 'true':
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
+
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
+
+        @app.callback(Output('GraphTest', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
             Input('select-variable-y-normal-plot', 'value'),
             Input('select-characteristics-normal-plot', 'value'),
