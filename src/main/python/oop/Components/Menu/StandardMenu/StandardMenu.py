@@ -8,6 +8,7 @@ from dash_oop_components import DashComponent, DashFigureFactory, DashComponent,
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Components.Menu.StandardMenu.NestedFiltering import NestedFiltering
 
+
 class StandardMenu(DashComponent):
 
     def __init__(self, plot_factory, df, title="Standard menu"):
@@ -50,7 +51,7 @@ class StandardMenu(DashComponent):
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
                     placeholder='Select ...',
-                    multi = True
+                    multi=True
                 ),
                 dcc.Store(id='file-name')
             ]),
@@ -107,7 +108,7 @@ class StandardMenu(DashComponent):
                 ),
             ]),
 
-            #Empty space between main menu and filter menu
+            # Empty space between main menu and filter menu
             dbc.Row(html.Br()),
 
             # Nested filtering
@@ -217,9 +218,9 @@ class StandardMenu(DashComponent):
         @app.callback(Output('Subgraph-normal-plot', 'figure'), [
             Input('select-characteristics-normal-plot', 'value'),
             Input('select-dimensions-normal-plot', 'value'),
-            Input('data-process-dummy', 'children'),
-        ])
-        def update_subgraph(options_char, dims, data_process_dummy):
+            Input('data-process-dummy', 'value'),
+        ], State('query', 'value'))
+        def update_subgraph(options_char, dims, data_process_dummy, query):
             """
             Updates subgraphs based on new options.
             :param data_process_dummy: just there as a dummy to trigger callback.
@@ -230,7 +231,11 @@ class StandardMenu(DashComponent):
             if dims is None or dims == 'select' or self.df is None:
                 return {}
 
-            dataframe = self.df.reset_index()
+            if query and data_process_dummy == 'true':
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
+
             return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
@@ -240,7 +245,7 @@ class StandardMenu(DashComponent):
                        ],
                       [
                           Input('file-name', 'data'),
-                          Input('data-process-dummy', 'children'),
+                          Input('data-process-dummy', 'value'),
                       ])
         def set_options_variable(file_name, data_process_dummy):
             """
@@ -278,14 +283,18 @@ class StandardMenu(DashComponent):
                        Output('select-dimensions-normal-plot', 'value'),
                        ],
                       [
-                          Input('select-variable-x-normal-plot', 'options'),
-                          Input('select-variable-y-normal-plot', 'options'),
-                          Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options')
+                          Input('file-name', 'data'),
+                        ],
+                      [
+                          State('select-variable-x-normal-plot', 'options'),
+                          State('select-variable-y-normal-plot', 'options'),
+                          State('select-characteristics-normal-plot', 'options'),
+                          State('select-dimensions-normal-plot', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims):
+        def set_variables(file_dummy, options_x, options_y, options_char, dims):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            :param file_dummy:
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
@@ -312,20 +321,26 @@ class StandardMenu(DashComponent):
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
+            if self.df is None:
+                return ''
+
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
                 self.df = example_function1(self.df)
+                self.NestedFiltering.set_data(self.df)
             elif 'example-function-2-button' in changed_id:
                 self.df = example_function2(self.df)
+                self.NestedFiltering.set_data(self.df)
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
+                self.NestedFiltering.set_data(self.df)
             elif 'apply-filter-button' in changed_id:
                 return 'true'
 
             return ''
 
-    def get_data(self, data):
-        self
+    def get_data(self):
+        return self.df
 
     def set_data(self, data):
         self.df = data
