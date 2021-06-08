@@ -22,7 +22,7 @@ class StandardMenu(DashComponent):
         self.df = df
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
-        self.totalButtons = 8
+        self.totalButtons = 10
         self.buttonStyle = {
             'borderWidth': '1px',
             'borderRadius': '10px',
@@ -37,23 +37,43 @@ class StandardMenu(DashComponent):
             'padding-right': '5px'
         }
         self.graphButtonStyle = {
+            'width': '32%',
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
             'background-color': '#5ebfff',
+            'color': 'white',
+            'margin': '0px 1px 1px 1px',
+        }
+        self.graphHiddenButtonStyle = {
+            'width': '32%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin': '0px 1px 1px 1px',
+            'display': 'none'
+        }
+        self.addGraphButtonStyle = {
+            'width': '49%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#18bc9d',
             'color': 'white',
             'margin-left': '1px',
             'margin-right': '1px'
         }
-        self.graphHiddenButtonStyle = {
+        self.removeGraphButtonStyle = {
+            'width': '49%',
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
-            'background-color': '#5ebfff',
+            'background-color': '#e74c3c',
             'color': 'white',
             'margin-left': '1px',
-            'margin-right' : '1px',
-            'display': 'none'
+            'margin-right': '1px'
         }
 
     def layout(self, params=None):
@@ -66,7 +86,6 @@ class StandardMenu(DashComponent):
         for i in range(1, self.totalButtons+1):
             if i <= 3:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type':'graph-button', 'index':i}, n_clicks=0, style=self.graphButtonStyle))
-
             else:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
 
@@ -84,9 +103,6 @@ class StandardMenu(DashComponent):
                 dcc.Store(id='file-name')
             ]),
             dbc.Row(html.H5("Show graphs")),
-
-            buttons,
-            html.Button('Graph++', id='add-graph2', n_clicks=3, style=self.graphButtonStyle),
 
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
@@ -141,7 +157,21 @@ class StandardMenu(DashComponent):
                 ),
             ]),
 
-            #Empty space between main menu and filter menu
+            # Empty space between main menu and filter menu
+            dbc.Row(html.Br()),
+
+            # Plot buttons
+            dbc.Row(buttons),
+
+            # Empty spcae between plot buttons and add/remove buttons
+            dbc.Row(html.Br()),
+
+            dbc.Row(dbc.Col([
+                html.Button('Graph++', id='add-graph', n_clicks=3, style=self.addGraphButtonStyle),
+                html.Button('Graph--', id='remove-graph', n_clicks=3, style=self.removeGraphButtonStyle),
+            ])),
+
+            # Empty space between main menu and filter menu
             dbc.Row(html.Br()),
 
             # Nested filtering
@@ -389,27 +419,50 @@ class StandardMenu(DashComponent):
 
             return ''
 
-        for i in range(1, 8):
+        for i in range(1, self.totalButtons):
             @app.callback(Output({'type': 'graph-button', 'index': i}, 'style'),
                           Output({'type': 'graph-content', 'index': i}, 'style'),
-                          Input('add-graph2', 'n_clicks'),
+                          Input('add-graph', 'n_clicks'),
+                          Input('remove-graph', 'n_clicks'),
                           State({'type': 'graph-button', 'index': i}, 'style'),
-                          State({'type': 'graph-content', 'index': i}, 'style'),)
-            def addButton(n_clicks, buttonstyle, graphstyle, c=i):
-                print("entered" + str(n_clicks))
+                          State({'type': 'graph-content', 'index': i}, 'style'))
+            def addGraph(n_clicks_add, n_clicks_remove, buttonstyle, graphstyle, c=i):
+                """
+                Make one more button and graph appear after Graph++ has been clicked
+                """
+                ctx = dash.callback_context
+                print("entered addGraph with n_click: " + str(n_clicks_add))
 
-                if n_clicks == c:
-                    buttonstyle['display'] = 'initial'
-                    graphstyle['display'] = 'initial'
+                if not ctx.triggered:
+                    print("entered but no trigger")
 
+                if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
+                    if n_clicks_add == c:
+                        buttonstyle['display'] = 'initial'
+                        graphstyle['display'] = 'initial'
+
+                elif ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
+                    if n_clicks_add == c:
+                        buttonstyle['display'] = 'none'
+                        graphstyle['display'] = 'none'
                 return buttonstyle, graphstyle
 
-        @app.callback(Output('add-graph2', 'n_clicks'),
-                      Input('add-graph2', 'n_clicks'))
-        def buttoncap(n_clicks):
-            if n_clicks >= self.totalButtons:
-                n_clicks = self.totalButtons
-            return n_clicks
+        @app.callback(Output('add-graph', 'n_clicks'),
+                      Input('add-graph', 'n_clicks'),
+                      Input('remove-graph', 'n_clicks'))
+        def buttonCap(n_clicks_add, n_clicks_remove):
+            ctx = dash.callback_context
+
+            if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
+                if n_clicks_add >= self.totalButtons:
+                    n_clicks_add = self.totalButtons-1
+
+            if ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
+                n_clicks_add = n_clicks_add - 1
+                if n_clicks_add <= 1:
+                    n_clicks_add = 2
+
+            return n_clicks_add
 
     def get_data(self, data):
         self

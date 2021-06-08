@@ -18,7 +18,7 @@ class PlotContent(DashComponent):
                 """
         super().__init__(title=title)
         # self.Table = Table(plot_factory, df, "Show Table")
-        self.totalButtons = 8
+        self.totalButtons = 10
         self.plot_factory = plot_factory
         self.df = df
         self.IdTitlePair = ["id", "title"]
