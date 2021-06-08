@@ -1,6 +1,6 @@
 <h1>TA Meeting</h1>
 
-*Datum: 31 mei 2021 - 16:00
+* Datum: 31 mei 2021 - 16:00
 
 <h4>Algemene Mededelingen</h4>
 
