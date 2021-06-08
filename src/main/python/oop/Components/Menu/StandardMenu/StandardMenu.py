@@ -22,18 +22,38 @@ class StandardMenu(DashComponent):
         self.df = df
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
-        self.buttonstyle = {
+        self.totalButtons = 8
+        self.buttonStyle = {
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
             'background-color': '#5ebfff',
             'color': 'white',
-            "margin-left": "15px",
-            "margin-right": "15px"
+            'margin-left': '15px',
+            'margin-right' : '15px'
         }
-        self.dropdownstyle = {
+        self.dropdownStyle = {
             'padding-left': '5px',
             'padding-right': '5px'
+        }
+        self.graphButtonStyle = {
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin-left': '1px',
+            'margin-right': '1px'
+        }
+        self.graphHiddenButtonStyle = {
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin-left': '1px',
+            'margin-right' : '1px',
+            'display': 'none'
         }
 
     def layout(self, params=None):
@@ -42,6 +62,15 @@ class StandardMenu(DashComponent):
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
+        buttons = html.Div([])
+        for i in range(1, self.totalButtons+1):
+            if i <= 3:
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type':'graph-button', 'index':i}, n_clicks=0, style=self.graphButtonStyle))
+
+            else:
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
+
+
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -50,20 +79,14 @@ class StandardMenu(DashComponent):
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
                     placeholder='Select ...',
-                    multi = True
+                    multi=True
                 ),
                 dcc.Store(id='file-name')
             ]),
             dbc.Row(html.H5("Show graphs")),
-            dcc.Checklist(
-                options=[
-                    {'label': 'Graph 1', 'value': 'Graph 1'},
-                    {'label': 'Graph 2', 'value': 'Graph 2'},
-                    {'label': 'Graph 3', 'value': 'Graph 3'}
-                ],
-                value=['NYC', 'MTL'],
-                labelStyle={'display': 'inline-block'}
-            ),
+
+            buttons,
+            html.Button('Graph++', id='add-graph2', n_clicks=3, style=self.graphButtonStyle),
 
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
@@ -76,7 +99,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style=self.dropdownstyle),
+                    , style=self.dropdownStyle),
                 dbc.Col(
                     html.Div([
                         html.H6("y-axis"),
@@ -85,7 +108,7 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style=self.dropdownstyle)]),
+                    , style=self.dropdownStyle)]),
             dbc.Row(html.Br()),
             dbc.Row([
                 dbc.Col(
@@ -97,7 +120,7 @@ class StandardMenu(DashComponent):
                             clearable=False)
                         # multi=True
                     ])
-                    , style=self.dropdownstyle),
+                    , style=self.dropdownStyle),
                 dbc.Col(
                     html.Div([
                         html.H6("plot method"),
@@ -114,7 +137,7 @@ class StandardMenu(DashComponent):
                                                                value='scatter', clearable=False,
                                                                persistence_type='memory')
                     ]),
-                    style=self.dropdownstyle
+                    style=self.dropdownStyle
                 ),
             ]),
 
@@ -129,10 +152,10 @@ class StandardMenu(DashComponent):
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
-                                style=self.buttonstyle),
+                                style=self.buttonStyle),
                     html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
-                                style=self.buttonstyle),
-                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=self.buttonstyle)
+                                style=self.buttonStyle),
+                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=self.buttonStyle)
                 ]),
                 html.P(id="data-process-dummy"),
             ]),
@@ -365,6 +388,28 @@ class StandardMenu(DashComponent):
                 return 'true'
 
             return ''
+
+        for i in range(1, 8):
+            @app.callback(Output({'type': 'graph-button', 'index': i}, 'style'),
+                          Output({'type': 'graph-content', 'index': i}, 'style'),
+                          Input('add-graph2', 'n_clicks'),
+                          State({'type': 'graph-button', 'index': i}, 'style'),
+                          State({'type': 'graph-content', 'index': i}, 'style'),)
+            def addButton(n_clicks, buttonstyle, graphstyle, c=i):
+                print("entered" + str(n_clicks))
+
+                if n_clicks == c:
+                    buttonstyle['display'] = 'initial'
+                    graphstyle['display'] = 'initial'
+
+                return buttonstyle, graphstyle
+
+        @app.callback(Output('add-graph2', 'n_clicks'),
+                      Input('add-graph2', 'n_clicks'))
+        def buttoncap(n_clicks):
+            if n_clicks >= self.totalButtons:
+                n_clicks = self.totalButtons
+            return n_clicks
 
     def get_data(self, data):
         self

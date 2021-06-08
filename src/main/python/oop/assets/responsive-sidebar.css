@@ -2,6 +2,15 @@ h5 {
   font-weight: bold;
 }
 
+#titleLink{
+  color: black;
+}
+
+#titleLink:hover{
+  color: #18bc9d;
+  text-decoration: none;
+}
+
 #sidebar {
   text-align: center;
   padding: 2rem 1rem;

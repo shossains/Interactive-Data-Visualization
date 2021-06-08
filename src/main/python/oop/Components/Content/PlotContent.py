@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
 
+from oop.Components.Menu.StandardMenu.StandardMenu import StandardMenu
 from src.main.python.oop.Components.Table import Table
 
 class PlotContent(DashComponent):
@@ -17,76 +18,104 @@ class PlotContent(DashComponent):
                 """
         super().__init__(title=title)
         # self.Table = Table(plot_factory, df, "Show Table")
+        self.totalButtons = 8
         self.plot_factory = plot_factory
         self.df = df
         self.IdTitlePair = ["id", "title"]
+        self.hiddenStyle = {'display': 'none'}
 
     def layout(self, params=None):
-        page = dbc.Container([
-                dbc.Row(
+        graphs = html.Div([])
+
+        for i in range(1, self.totalButtons+1):
+            if i <= 3:
+                graphs.children.append(dbc.Row(
                     dbc.Col(
                         dcc.Loading(
                             id="loading-icon-normal-plot",
-                            children=[html.Div(
-                                dcc.Graph(
-                                    id='Mygraph-normal-plot',
-                                    config={
-                                        "displaylogo": False,
-                                        "showTips": True,
-                                        "showAxisDragHandles": True,
-                                        "scrollZoom": True
-                                    }
-                                ),
-                            )],
-                        )
-                    )
-                ),
-                # dbc.Row(
-                #     dbc.Col(
-                #         dcc.Loading(
-                #             id="loading-icon2-normal-plot",
-                #             children=[html.Div(
-                #                 dcc.Graph(
-                #                     id='Subgraph-normal-plot',
-                #                     config={
-                #                         "displaylogo": False,
-                #                         "showTips": True,
-                #                         "showAxisDragHandles": True,
-                #                         "scrollZoom": True
-                #                     }
-                #                 )
-                #             )],
-                #             type="graph"
-                #         )
-                #     )
-                # ),
-                # dbc.Row(
-                #     dbc.Col(
-                #         html.Div(self.Table.layout(params))
-                #     )
-                # ),
-
-            dbc.Row(
-                dbc.Col(
-                    dcc.Loading(
-                        id="loading-icon-normal-plot",
-                        children=[html.Div(
-                            dcc.Graph(
-                                id='GraphTest',
+                            children=[dcc.Graph(
+                                figure={'layout': { 'title': 'Graph {}'.format(i)}},
+                                id={'type': 'graph-content', 'index': i},
                                 config={
                                     "displaylogo": False,
                                     "showTips": True,
                                     "showAxisDragHandles": True,
                                     "scrollZoom": True
+                                },
+                                style={
+                                    'display': 'initial'
                                 }
-                            ),
-                        )],
+                            )],
+                        )
                     )
-                )
-            ),
+                ))
+            else:
+                graphs.children.append(dbc.Row(
+                    dbc.Col(
+                        dcc.Loading(
+                            id="loading-icon-normal-plot",
+                            children=[
+                                dcc.Graph(
+                                    figure={'layout': { 'title': 'Graph {}'.format(i)}},
+                                    id={'type': 'graph-content', 'index': i},
+                                    config={
+                                        "displaylogo": False,
+                                        "showTips": True,
+                                        "showAxisDragHandles": True,
+                                        "scrollZoom": True
+                                    },
+                                    style={
+                                        'display': 'none'
+                                    }
+                                )],
+                        )
+                    )
+                ))
 
-
-
+        page = dbc.Container([
+            # dbc.Row(
+            #     dbc.Col(
+            #         dcc.Loading(
+            #             id="loading-icon-normal-plot",
+            #             children=[html.Div(
+            #                 dcc.Graph(
+            #                     id='Mygraph-normal-plot',
+            #                     config={
+            #                         "displaylogo": False,
+            #                         "showTips": True,
+            #                         "showAxisDragHandles": True,
+            #                         "scrollZoom": True
+            #                     },
+            #                 ),
+            #             )],
+            #         )
+            #     )
+            # ),
+            # dbc.Row(
+            #     dbc.Col(
+            #         dcc.Loading(
+            #             id="loading-icon2-normal-plot",
+            #             children=[html.Div(
+            #                 dcc.Graph(
+            #                     id='Subgraph-normal-plot',
+            #                     config={
+            #                         "displaylogo": False,
+            #                         "showTips": True,
+            #                         "showAxisDragHandles": True,
+            #                         "scrollZoom": True
+            #                     }
+            #                 )
+            #             )],
+            #             type="graph"
+            #         )
+            #     )
+            # ),
+            # dbc.Row(
+            #     dbc.Col(
+            #         html.Div(self.Table.layout(params))
+            #     )
+            # ),
+            graphs
 
         ], fluid=True)
         return page

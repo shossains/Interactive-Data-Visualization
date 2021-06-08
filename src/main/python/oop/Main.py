@@ -28,9 +28,14 @@ class Dashboard(DashComponent):
         self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
 
 
-        self.SidebarHeaderStyle = {'position': 'fixed', 'width': 'inherit', 'top': '0px', 'padding-top': '32px',
-                                   'background-color': 'inherit', 'z-index': '99'}
-        self.SidebarCollapsedStyle = {'padding-top': '61.3px', }
+        self.SidebarHeaderStyle = {'position': 'fixed',
+                                   'width': 'inherit',
+                                   'top': '0px',
+                                   'padding-top': '32px',
+                                   'background-color': 'inherit',
+                                   'z-index': '99'}
+        self.SidebarCollapsedStyle = {'padding-top': '62px'}
+
 
     def layout(self, params=None):
         """
@@ -41,7 +46,7 @@ class Dashboard(DashComponent):
         """
         sidebar_header = dbc.Row(
             [
-                dbc.Col(html.H4("Interactive data visualizer")),
+                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink' ,href='/'))),
                 dbc.Col(
                     [
                         html.Button(
@@ -95,8 +100,6 @@ class Dashboard(DashComponent):
                                     html.A('Select Files')
                                 ]),
                                 style={
-                                    # 'width': '20%',
-                                    'height': '60px',
                                     'lineHeight': '60px',
                                     'borderWidth': '1px',
                                     'borderStyle': 'dashed',
