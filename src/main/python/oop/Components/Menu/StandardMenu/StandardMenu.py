@@ -247,43 +247,13 @@ class StandardMenu(DashComponent):
             """
             return self.plot_factory.show_table(self.df, showtable)
 
-        @app.callback(Output('GraphTest', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('data-process-dummy', 'value'),
-        ], State('query', 'value'))
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
-            """
-            Updates a normal graph with different options how to plot.
-
-            :param data_process_dummy:
-            :param xvalue: Selected x-axis value in the data
-            :param yvalue: Selected y-axis value in the data
-            :param color_based_characteristic: Selected characteristic of the data
-            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
-            :param query: Query for filtering data
-            :return: Graph object with the displayed plot
-            """
-            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-                return {}
-            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-                return {}
-
-            if query and data_process_dummy == 'true':
-                dataframe = self.df.query(query)
-            else:
-                dataframe = self.df.reset_index()
-
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
-
-        @app.callback(Output('Subgraph-normal-plot', 'figure'), [
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-dimensions-normal-plot', 'value'),
-            Input('data-process-dummy', 'children'),
-        ])
-        def update_subgraph(options_char, dims, data_process_dummy):
+        @app.callback(Output('Subgraph-normal-plot', 'figure'),
+                      Output('Subgraph-normal-plot', 'style'),
+                      Input('Subgraph-normal-plot', 'style'),
+                      Input('select-characteristics-normal-plot', 'value'),
+                      Input('select-dimensions-normal-plot', 'value'),
+                      Input('data-process-dummy', 'children'))
+        def update_subgraph(style, options_char, dims, data_process_dummy):
             """
             Updates subgraphs based on new options.
             :param data_process_dummy: just there as a dummy to trigger callback.
@@ -295,7 +265,8 @@ class StandardMenu(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
-            return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
+            styleUpdate = style['display']= 'block'
+            return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
@@ -484,9 +455,6 @@ class StandardMenu(DashComponent):
 
             title = figure['layout']['title']['text']
             return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
-
-
-
 
     def get_data(self, data):
         self

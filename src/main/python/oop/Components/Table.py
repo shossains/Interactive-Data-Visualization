@@ -1,5 +1,3 @@
-__all__ = ['Dashboard']
-
 import dash_table
 import pandas as pd
 import dash_html_components as html

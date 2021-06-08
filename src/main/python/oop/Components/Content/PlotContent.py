@@ -1,12 +1,7 @@
-__all__ = ['Dashboard']
-
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
-
-from oop.Components.Menu.StandardMenu.StandardMenu import StandardMenu
-from src.main.python.oop.Components.Table import Table
 
 class PlotContent(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
