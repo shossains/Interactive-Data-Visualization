@@ -22,7 +22,6 @@ class PlotContent(DashComponent):
         self.plot_factory = plot_factory
         self.df = df
         self.IdTitlePair = ["id", "title"]
-        self.hiddenStyle = {'display': 'none'}
 
     def layout(self, params=None):
         graphs = html.Div([])
@@ -37,16 +36,19 @@ class PlotContent(DashComponent):
                                 figure={'layout': { 'title': 'Graph {}'.format(i)}},
                                 id={'type': 'graph-content', 'index': i},
                                 config={
+                                    'autosizable': True,
                                     "displaylogo": False,
                                     "showTips": True,
                                     "showAxisDragHandles": True,
-                                    "scrollZoom": True
+                                    "scrollZoom": True,
+                                    'edits': {'titleText': True}
                                 },
                                 style={
-                                    'display': 'initial'
+                                    'display': 'block',
+                                    'width': '100%'
                                 }
                             )],
-                        )
+                        type='graph')
                     )
                 ))
             else:
@@ -56,19 +58,22 @@ class PlotContent(DashComponent):
                             id="loading-icon-normal-plot",
                             children=[
                                 dcc.Graph(
-                                    figure={'layout': { 'title': 'Graph {}'.format(i)}},
+                                    figure={'layout': {'title': 'Graph {}'.format(i)}},
                                     id={'type': 'graph-content', 'index': i},
                                     config={
+                                        'autosizable': True,
                                         "displaylogo": False,
                                         "showTips": True,
                                         "showAxisDragHandles": True,
-                                        "scrollZoom": True
+                                        "scrollZoom": True,
+                                        'edits': {'titleText': True}
                                     },
                                     style={
-                                        'display': 'none'
+                                        'display': 'none',
+                                        'width': '100%'
                                     }
                                 )],
-                        )
+                        type='graph')
                     )
                 ))
 

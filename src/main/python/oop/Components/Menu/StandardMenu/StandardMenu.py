@@ -37,7 +37,7 @@ class StandardMenu(DashComponent):
             'padding-right': '5px'
         }
         self.graphButtonStyle = {
-            'width': '32%',
+            'min-width': '32%',
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
@@ -46,7 +46,7 @@ class StandardMenu(DashComponent):
             'margin': '0px 1px 1px 1px',
         }
         self.graphHiddenButtonStyle = {
-            'width': '32%',
+            'min-width': '32%',
             'borderWidth': '1px',
             'borderRadius': '10px',
             'textAlign': 'center',
@@ -85,7 +85,7 @@ class StandardMenu(DashComponent):
         buttons = html.Div([])
         for i in range(1, self.totalButtons+1):
             if i <= 3:
-                buttons.children.append(html.Button('Graph {}'.format(i), id={'type':'graph-button', 'index':i}, n_clicks=0, style=self.graphButtonStyle))
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphButtonStyle))
             else:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
 
@@ -168,7 +168,7 @@ class StandardMenu(DashComponent):
 
             dbc.Row(dbc.Col([
                 html.Button('Graph++', id='add-graph', n_clicks=3, style=self.addGraphButtonStyle),
-                html.Button('Graph--', id='remove-graph', n_clicks=3, style=self.removeGraphButtonStyle),
+                html.Button('Graph--', id='remove-graph', n_clicks=4, style=self.removeGraphButtonStyle),
             ])),
 
             # Empty space between main menu and filter menu
@@ -246,37 +246,6 @@ class StandardMenu(DashComponent):
             :return: Table
             """
             return self.plot_factory.show_table(self.df, showtable)
-
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('data-process-dummy', 'value'),
-        ], State('query', 'value'))
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
-            """
-            Updates a normal graph with different options how to plot.
-
-            :param data_process_dummy:
-            :param xvalue: Selected x-axis value in the data
-            :param yvalue: Selected y-axis value in the data
-            :param color_based_characteristic: Selected characteristic of the data
-            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
-            :param query: Query for filtering data
-            :return: Graph object with the displayed plot
-            """
-            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-                return {}
-            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-                return {}
-
-            if query and data_process_dummy == 'true':
-                dataframe = self.df.query(query)
-            else:
-                dataframe = self.df.reset_index()
-
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
 
         @app.callback(Output('GraphTest', 'figure'), [
             Input('select-variable-x-normal-plot', 'value'),
@@ -426,43 +395,98 @@ class StandardMenu(DashComponent):
                           Input('remove-graph', 'n_clicks'),
                           State({'type': 'graph-button', 'index': i}, 'style'),
                           State({'type': 'graph-content', 'index': i}, 'style'))
-            def addGraph(n_clicks_add, n_clicks_remove, buttonstyle, graphstyle, c=i):
+            def add_graph(n_clicks_add, n_clicks_remove, buttonstyle, graphstyle, c=i):
                 """
                 Make one more button and graph appear after Graph++ has been clicked
                 """
                 ctx = dash.callback_context
-                print("entered addGraph with n_click: " + str(n_clicks_add))
 
                 if not ctx.triggered:
                     print("entered but no trigger")
 
                 if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
-                    if n_clicks_add == c:
+                    if n_clicks_add >= c:
                         buttonstyle['display'] = 'initial'
-                        graphstyle['display'] = 'initial'
+                        graphstyle['display'] = 'block'
 
                 elif ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
-                    if n_clicks_add == c:
+                    if n_clicks_remove <= c:
                         buttonstyle['display'] = 'none'
                         graphstyle['display'] = 'none'
+
                 return buttonstyle, graphstyle
 
         @app.callback(Output('add-graph', 'n_clicks'),
+                      Output('remove-graph', 'n_clicks'),
                       Input('add-graph', 'n_clicks'),
                       Input('remove-graph', 'n_clicks'))
-        def buttonCap(n_clicks_add, n_clicks_remove):
+        def button_cap(n_clicks_add, n_clicks_remove):
             ctx = dash.callback_context
 
             if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
+                n_clicks_remove = n_clicks_add + 1
                 if n_clicks_add >= self.totalButtons:
                     n_clicks_add = self.totalButtons-1
+                    n_clicks_remove = self.totalButtons
 
             if ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
                 n_clicks_add = n_clicks_add - 1
-                if n_clicks_add <= 1:
-                    n_clicks_add = 2
+                n_clicks_remove = n_clicks_add + 1
 
-            return n_clicks_add
+                if n_clicks_remove <= 2:
+                    n_clicks_remove = 2
+                if n_clicks_add <= 1:
+                    n_clicks_add = 1
+
+            return n_clicks_add, n_clicks_remove
+
+        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
+            Input('select-variable-x-normal-plot', 'value'),
+            Input('select-variable-y-normal-plot', 'value'),
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-plot-options-normal-plot', 'value'),
+            Input('data-process-dummy', 'value'),
+        ], State('query', 'value'))
+
+
+        @app.callback(Output({'type': 'graph-content', 'index': MATCH}, 'figure'),
+                      Input({'type': 'graph-button', 'index': MATCH}, 'n_clicks'),
+                      State('select-variable-x-normal-plot', 'value'),
+                      State('select-variable-y-normal-plot', 'value'),
+                      State('select-characteristics-normal-plot', 'value'),
+                      State('select-plot-options-normal-plot', 'value'),
+                      State('data-process-dummy', 'value'),
+                      State('query', 'value'),
+                      State({'type': 'graph-content', 'index': MATCH}, 'figure')
+                      )
+        def plot_graph(n_clicks, xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query, figure):
+            """
+            Updates a normal graph with different options how to plot.
+
+            :param data_process_dummy:
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param color_based_characteristic: Selected characteristic of the data
+            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
+            :return: Graph object with the displayed plot
+            """
+            print("plot graph entered")
+            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+                return figure
+            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+                return figure
+
+            if query and data_process_dummy == 'true':
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
+
+            title = figure['layout']['title']['text']
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
+
+
+
 
     def get_data(self, data):
         self
