@@ -11,7 +11,7 @@
 * Testen is belangrijk, software quality is groot onderdeel van project
   * 20% aan code coverage zal voldoende zijn vóór een voldoende/sufficient (voor software quality)
   * User-testing is goede alternatieve manier van testen
-* nog een kijkje nemen naar de rubrics ([software project](/doc/Rubric/Rubric Software Project), [report](/doc/Rubric/Rubric Final report)); eindcijfer is een combinatie van report + presentatie + code
+* nog een kijkje nemen naar de rubrics ([software project](/doc/Rubric/Rubric Software Project.pdf), [report](/doc/Rubric/Rubric Final report.pdf)); eindcijfer is een combinatie van report + presentatie + code
 
 <h4>Report</h4>
 
