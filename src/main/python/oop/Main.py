@@ -1,6 +1,7 @@
 __all__ = ['Dashboard']
 
-from src.main.python.oop.Components.Content import InstructionsContent, PlotContent
+from src.main.python.oop.Components.Content.PlotContent import PlotContent
+from src.main.python.oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
 
 from src.main.python.oop.Components.Menu.MenuSelector import MenuSelector
@@ -16,26 +17,36 @@ from src.main.python.oop.Dataframe import Dataframe
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
         """
-        Initializes the main component of the dashboard. Makes the subclasses MenuSelector, Table and Instructions
+        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table and Instructions
         @rtype: object
         """
-        super().__init__(title="Interactive data visualizer")
+        super().__init__(title="Interactive data visualiser")
         df = None
         self.dfList = []
-        self.MenuSelector = MenuSelector(plotfactory, df, "Menu selector")
+        self.MenuSelector = MenuSelector(plotfactory, df, "Tool selector")
         self.Instructions = InstructionsContent.Instructions(plotfactory, df, "Instruction page")
-        self.PlotContent = PlotContent.PlotContent(plotfactory, df, "Graph")
+        # self.MainGraph = MainGraph.MainGraph(plotfactory, df, "Main Graphs")
+        self.PlotContent = PlotContent(plotfactory, df, "Graphs")
+
+        self.SidebarHeaderStyle = {'position': 'fixed',
+                                   'width': 'inherit',
+                                   'top': '0px',
+                                   'padding-top': '32px',
+                                   'background-color': 'inherit',
+                                   'z-index': '99'}
+        self.SidebarCollapsedStyle = {'padding-top': '62px'}
+
 
     def layout(self, params=None):
         """
-        Shows the html layout of the main dashboard. MenuSelector, table and instructions are integrated within the
+        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the
         layout. Parameters are also passed through.
         :param params: Parameters selected at the current level of the dashboard.
         :return: Html layout of the program.
         """
         sidebar_header = dbc.Row(
             [
-                dbc.Col(html.H4("Interactive data visualizer")),
+                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink' ,href='/'))),
                 dbc.Col(
                     [
                         html.Button(
@@ -61,9 +72,11 @@ class Dashboard(DashComponent):
                 ),
 
                 html.P(id='dummy'),
-                html.Pre(id='dummy2')
+                html.P(id='dummy2'),
+                html.P(id='dummy3'),
+                html.P(id='dummy4')
             ]
-        )
+        , style=self.SidebarHeaderStyle)
         sidebar = html.Div(
             [
                 sidebar_header,
@@ -84,7 +97,7 @@ class Dashboard(DashComponent):
                         )
                     ),
 
-                    dbc.Collapse(dbc.Nav(
+                    dbc.Nav(
                         [
                             dbc.NavLink("Home", href="/", active="exact"),
                             dbc.NavLink("Instructions", href="/instructions", active="exact"),
@@ -93,11 +106,10 @@ class Dashboard(DashComponent):
                         vertical=True,
                         pills=True,
                     ),
-                        id="collapse"),
 
                     html.Div(id='sidebar-plot-menu'),
 
-                ], id="collapse"),
+                ], id="collapse", style=self.SidebarCollapsedStyle),
             ],
             id="sidebar",
         )
@@ -139,6 +151,7 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.MenuSelector.set_data(self.dfList)
+                # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
         @app.callback(

@@ -8,6 +8,7 @@ from dash_oop_components import DashComponent, DashFigureFactory, DashComponent,
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
 from src.main.python.oop.Components.Menu.StandardMenu.NestedFiltering import NestedFiltering
 
+
 class StandardMenu(DashComponent):
 
     def __init__(self, plot_factory, df, title="Standard menu"):
@@ -22,6 +23,59 @@ class StandardMenu(DashComponent):
         self.df = df
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
+        self.totalButtons = 10
+        self.buttonStyle = {
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin-left': '15px',
+            'margin-right' : '15px'
+        }
+        self.dropdownStyle = {
+            'padding-left': '5px',
+            'padding-right': '5px'
+        }
+        self.graphButtonStyle = {
+            'min-width': '32%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin': '0px 1px 1px 1px',
+        }
+        self.graphHiddenButtonStyle = {
+            'min-width': '32%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#5ebfff',
+            'color': 'white',
+            'margin': '0px 1px 1px 1px',
+            'display': 'none'
+        }
+        self.addGraphButtonStyle = {
+            'width': '49%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#18bc9d',
+            'color': 'white',
+            'margin-left': '1px',
+            'margin-right': '1px'
+        }
+        self.removeGraphButtonStyle = {
+            'width': '49%',
+            'borderWidth': '1px',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'background-color': '#e74c3c',
+            'color': 'white',
+            'margin-left': '1px',
+            'margin-right': '1px'
+        }
 
     def layout(self, params=None):
         """
@@ -29,6 +83,14 @@ class StandardMenu(DashComponent):
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
+        buttons = html.Div([])
+        for i in range(1, self.totalButtons+1):
+            if i <= 3:
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphButtonStyle))
+            else:
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
+
+
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -41,6 +103,8 @@ class StandardMenu(DashComponent):
                 ),
                 dcc.Store(id='file-name')
             ]),
+            dbc.Row(html.H5("Show graphs")),
+
             dbc.Row(html.Br()),
             dbc.Row(html.H5("Main Graph")),
             dbc.Row([
@@ -97,7 +161,21 @@ class StandardMenu(DashComponent):
                 ),
             ]),
 
-            #Empty space between main menu and filter menu
+            # Empty space between main menu and filter menu
+            dbc.Row(html.Br()),
+
+            # Plot buttons
+            dbc.Row(buttons),
+
+            # Empty spcae between plot buttons and add/remove buttons
+            dbc.Row(html.Br()),
+
+            dbc.Row(dbc.Col([
+                html.Button('Graph++', id='add-graph', n_clicks=3, style=self.addGraphButtonStyle),
+                html.Button('Graph--', id='remove-graph', n_clicks=4, style=self.removeGraphButtonStyle),
+            ])),
+
+            # Empty space between main menu and filter menu
             dbc.Row(html.Br()),
 
             # Nested filtering
@@ -173,43 +251,13 @@ class StandardMenu(DashComponent):
             """
             return self.plot_factory.show_table(self.df, showtable)
 
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('data-process-dummy', 'value'),
-        ], State('query', 'value'))
-        def update_graph(xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query):
-            """
-            Updates a normal graph with different options how to plot.
-
-            :param data_process_dummy:
-            :param xvalue: Selected x-axis value in the data
-            :param yvalue: Selected y-axis value in the data
-            :param color_based_characteristic: Selected characteristic of the data
-            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
-            :param query: Query for filtering data
-            :return: Graph object with the displayed plot
-            """
-            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-                return {}
-            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-                return {}
-
-            if query and data_process_dummy == 'true':
-                dataframe = self.df.query(query)
-            else:
-                dataframe = self.df.reset_index()
-
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type)
-
-        @app.callback(Output('Subgraph-normal-plot', 'figure'), [
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-dimensions-normal-plot', 'value'),
-            Input('data-process-dummy', 'children'),
-        ])
-        def update_subgraph(options_char, dims, data_process_dummy):
+        @app.callback(Output('Subgraph-normal-plot', 'figure'),
+                      Output('Subgraph-normal-plot', 'style'),
+                      Input('Subgraph-normal-plot', 'style'),
+                      Input('select-characteristics-normal-plot', 'value'),
+                      Input('select-dimensions-normal-plot', 'value'),
+                      Input('data-process-dummy', 'children'))
+        def update_subgraph(style, options_char, dims, data_process_dummy):
             """
             Updates subgraphs based on new options.
             :param data_process_dummy: just there as a dummy to trigger callback.
@@ -221,7 +269,8 @@ class StandardMenu(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
-            return self.plot_factory.subgraph_methods(dataframe, options_char, dims)
+            styleUpdate = style['display']= 'block'
+            return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
@@ -230,7 +279,7 @@ class StandardMenu(DashComponent):
                        ],
                       [
                           Input('file-name', 'data'),
-                          Input('data-process-dummy', 'children'),
+                          Input('data-process-dummy', 'value'),
                       ])
         def set_options_variable(file_name, data_process_dummy):
             """
@@ -268,14 +317,18 @@ class StandardMenu(DashComponent):
                        Output('select-dimensions-normal-plot', 'value'),
                        ],
                       [
-                          Input('select-variable-x-normal-plot', 'options'),
-                          Input('select-variable-y-normal-plot', 'options'),
-                          Input('select-characteristics-normal-plot', 'options'),
-                          Input('select-dimensions-normal-plot', 'options')
+                          Input('file-name', 'data'),
+                        ],
+                      [
+                          State('select-variable-x-normal-plot', 'options'),
+                          State('select-variable-y-normal-plot', 'options'),
+                          State('select-characteristics-normal-plot', 'options'),
+                          State('select-dimensions-normal-plot', 'options')
                       ])
-        def set_variables(options_x, options_y, options_char, dims):
+        def set_variables(file_dummy, options_x, options_y, options_char, dims):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            :param file_dummy:
             :param options_x: All possible x-axis options
             :param options_y: All possible x-axis options
             :param options_char: All possible characteristic options
@@ -302,17 +355,120 @@ class StandardMenu(DashComponent):
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
+            if self.df is None:
+                return ''
+
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
                 self.df = example_function1(self.df)
+                self.NestedFiltering.set_data(self.df)
             elif 'example-function-2-button' in changed_id:
                 self.df = example_function2(self.df)
+                self.NestedFiltering.set_data(self.df)
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
+                self.NestedFiltering.set_data(self.df)
             elif 'apply-filter-button' in changed_id:
                 return 'true'
 
             return ''
+
+        for i in range(1, self.totalButtons):
+            @app.callback(Output({'type': 'graph-button', 'index': i}, 'style'),
+                          Output({'type': 'graph-content', 'index': i}, 'style'),
+                          Input('add-graph', 'n_clicks'),
+                          Input('remove-graph', 'n_clicks'),
+                          State({'type': 'graph-button', 'index': i}, 'style'),
+                          State({'type': 'graph-content', 'index': i}, 'style'))
+            def add_graph(n_clicks_add, n_clicks_remove, buttonstyle, graphstyle, c=i):
+                """
+                Make one more button and graph appear after Graph++ has been clicked
+                """
+                ctx = dash.callback_context
+
+                if not ctx.triggered:
+                    print("entered but no trigger")
+
+                if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
+                    if n_clicks_add >= c:
+                        buttonstyle['display'] = 'initial'
+                        graphstyle['display'] = 'block'
+
+                elif ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
+                    if n_clicks_remove <= c:
+                        buttonstyle['display'] = 'none'
+                        graphstyle['display'] = 'none'
+
+                return buttonstyle, graphstyle
+
+        @app.callback(Output('add-graph', 'n_clicks'),
+                      Output('remove-graph', 'n_clicks'),
+                      Input('add-graph', 'n_clicks'),
+                      Input('remove-graph', 'n_clicks'))
+        def button_cap(n_clicks_add, n_clicks_remove):
+            ctx = dash.callback_context
+
+            if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
+                n_clicks_remove = n_clicks_add + 1
+                if n_clicks_add >= self.totalButtons:
+                    n_clicks_add = self.totalButtons-1
+                    n_clicks_remove = self.totalButtons
+
+            if ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
+                n_clicks_add = n_clicks_add - 1
+                n_clicks_remove = n_clicks_add + 1
+
+                if n_clicks_remove <= 2:
+                    n_clicks_remove = 2
+                if n_clicks_add <= 1:
+                    n_clicks_add = 1
+
+            return n_clicks_add, n_clicks_remove
+
+        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
+            Input('select-variable-x-normal-plot', 'value'),
+            Input('select-variable-y-normal-plot', 'value'),
+            Input('select-characteristics-normal-plot', 'value'),
+            Input('select-plot-options-normal-plot', 'value'),
+            Input('data-process-dummy', 'value'),
+        ], State('query', 'value'))
+
+
+        @app.callback(Output({'type': 'graph-content', 'index': MATCH}, 'figure'),
+                      Input({'type': 'graph-button', 'index': MATCH}, 'n_clicks'),
+                      State('select-variable-x-normal-plot', 'value'),
+                      State('select-variable-y-normal-plot', 'value'),
+                      State('select-characteristics-normal-plot', 'value'),
+                      State('select-plot-options-normal-plot', 'value'),
+                      State('data-process-dummy', 'value'),
+                      State('query', 'value'),
+                      State({'type': 'graph-content', 'index': MATCH}, 'figure')
+                      )
+        def plot_graph(n_clicks, xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query, figure):
+            """
+            Updates a normal graph with different options how to plot.
+
+            :param data_process_dummy:
+            :param xvalue: Selected x-axis value in the data
+            :param yvalue: Selected y-axis value in the data
+            :param color_based_characteristic: Selected characteristic of the data
+            :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+            :param query: Query for filtering data
+            :return: Graph object with the displayed plot
+            """
+            print("plot graph entered")
+            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+                return figure
+            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+                return figure
+
+            if query and data_process_dummy == 'true':
+                dataframe = self.df.query(query)
+            else:
+                dataframe = self.df.reset_index()
+
+            title = figure['layout']['title']['text']
+            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
 
     def get_data(self, data):
         self

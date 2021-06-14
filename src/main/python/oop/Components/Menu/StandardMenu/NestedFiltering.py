@@ -145,7 +145,7 @@ class NestedFiltering(DashComponent):
             Output({'type': 'query-label', 'index': MATCH}, 'options'),
             [
                 Input('file-name', 'data'),
-                Input('data-process-dummy', 'children'),
+                Input('data-process-dummy', 'value'),
             ])
         def options_query(data_selection_dummy, data_process_dummy):
             """
@@ -172,6 +172,28 @@ class NestedFiltering(DashComponent):
                 return labels
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
+
+        @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
+                       ],
+                      [
+                          Input('file-name', 'data'),
+                      ],
+                      [State({'type': 'query-label', 'index': MATCH}, 'options')])
+        def set_variables(file_dummy, options):
+            """
+            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
+            :param options:
+            :param file_dummy:
+            :param options_x: All possible x-axis options
+            :param options_y: All possible x-axis options
+            :param options_char: All possible characteristic options
+            :return: The chosen x-axis and y-axis and characteristic
+            """
+            if options is None:
+                return [None]
+            if len(options) <= 0:
+                return [None]
+            return options[0]['value']
 
         @app.callback(Output('query', 'value'),
                       Input('apply-filter-button', 'add_filter_clicks'),

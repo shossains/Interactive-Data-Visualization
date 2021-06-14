@@ -1,6 +1,16 @@
 h5 {
   font-weight: bold;
 }
+
+#titleLink{
+  color: black;
+}
+
+#titleLink:hover{
+  color: #18bc9d;
+  text-decoration: none;
+}
+
 /* css for Main Class */
 #sidebar {
   text-align: center;
@@ -100,6 +110,8 @@ h5 {
   #sidebar.collapsed {
     margin-left: -15.5rem;
     padding-right: 0.5rem;
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
   }
 
   /* move the sidebar toggle up to the top left corner */
