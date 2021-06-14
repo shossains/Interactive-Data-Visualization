@@ -60,8 +60,8 @@ class NestedFiltering(DashComponent):
                 dbc.Col(html.Div([
                     html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
                                 style=self.buttonstyle)]))
-            ])
-            ,
+            ]),
+            dbc.Row([dbc.Col(html.Div(id='filter-message'))]),
             html.P(id="query")])
         return page
 
@@ -178,15 +178,7 @@ class NestedFiltering(DashComponent):
                 if self.df.columns is not None:
                     labels = [{'label': '', 'value': 'select'}]
 
-                if 'row_index_label' in self.df.columns:
-                    del self.df['row_index_label']
-
-                row_labels = np.arange(0, self.df.shape[0], 1)
-                self.df.insert(0, 'row_index_label', row_labels)
-
-                dataFrame = self.df
-
-                for i in dataFrame.columns[1::]:
+                for i in self.df.columns[1::]:
                     labels = labels + [{'label': i, 'value': i}]
 
                 return labels
@@ -213,7 +205,7 @@ class NestedFiltering(DashComponent):
                 return [None]
             if len(options) <= 0:
                 return [None]
-            return options[0]['value']
+            return [options[0]['value']]
 
         @app.callback(Output('query', 'value'),
                       Input('apply-filter-button', 'add_filter_clicks'),
@@ -244,9 +236,8 @@ class NestedFiltering(DashComponent):
                             text_input[
                                 i + 1] is not None:
                         query = query + ' & '
-                return query
-            else:
-                return query
+
+            return query
 
     def set_data(self, data):
         """
