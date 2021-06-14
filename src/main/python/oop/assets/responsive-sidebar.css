@@ -56,6 +56,49 @@ h5 {
   margin-right: 15px;
 }
 
+.graph-visible{
+  min-width: 32%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  margin: 0px 1px 1px 1px;
+}
+
+.graph-hidden{
+  min-width: 32%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  margin: 0px 1px 1px 1px;
+  display: none;
+}
+
+.add-graph {
+  width: 49%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #18bc9d;
+  color: white;
+  margin-left: 1px;
+  margin-right: 1px
+}
+
+.remove-graph {
+  width: 49%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #e74c3c;
+  color: white;
+  margin-left: 1px;
+  margin-right: 1px
+}
+
 /*css NestedFiltering */
 .filter-button {
   border-width: 1px;

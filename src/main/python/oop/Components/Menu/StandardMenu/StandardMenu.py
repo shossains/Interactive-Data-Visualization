@@ -24,58 +24,6 @@ class StandardMenu(DashComponent):
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
         self.totalButtons = 10
-        self.buttonStyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            'margin-left': '15px',
-            'margin-right' : '15px'
-        }
-        self.dropdownStyle = {
-            'padding-left': '5px',
-            'padding-right': '5px'
-        }
-        self.graphButtonStyle = {
-            'min-width': '32%',
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            'margin': '0px 1px 1px 1px',
-        }
-        self.graphHiddenButtonStyle = {
-            'min-width': '32%',
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            'margin': '0px 1px 1px 1px',
-            'display': 'none'
-        }
-        self.addGraphButtonStyle = {
-            'width': '49%',
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#18bc9d',
-            'color': 'white',
-            'margin-left': '1px',
-            'margin-right': '1px'
-        }
-        self.removeGraphButtonStyle = {
-            'width': '49%',
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#e74c3c',
-            'color': 'white',
-            'margin-left': '1px',
-            'margin-right': '1px'
-        }
 
     def layout(self, params=None):
         """
@@ -86,9 +34,11 @@ class StandardMenu(DashComponent):
         buttons = html.Div([])
         for i in range(1, self.totalButtons+1):
             if i <= 3:
-                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphButtonStyle))
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, className='graph-visible',
+                                                    style={}))
             else:
-                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
+                buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, className='graph-hidden',
+                                                    style={}))
 
 
         page = dbc.Container([
@@ -171,8 +121,8 @@ class StandardMenu(DashComponent):
             dbc.Row(html.Br()),
 
             dbc.Row(dbc.Col([
-                html.Button('Graph++', id='add-graph', n_clicks=3, style=self.addGraphButtonStyle),
-                html.Button('Graph--', id='remove-graph', n_clicks=4, style=self.removeGraphButtonStyle),
+                html.Button('Graph++', id='add-graph', n_clicks=3, className='add-graph', style={}),
+                html.Button('Graph--', id='remove-graph', n_clicks=4, className='remove-graph', style={}),
             ])),
 
             # Empty space between main menu and filter menu
