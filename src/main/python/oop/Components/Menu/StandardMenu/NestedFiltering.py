@@ -35,7 +35,8 @@ class NestedFiltering(DashComponent):
             'textAlign': 'center',
             'background-color': '#e74c3c',
             'color': 'white',
-            "margin-right": "15px",
+            'margin-top': '1px',
+            'margin-right': '15px',
         }
         self.filters = []
         self.dropdownstyle = {
