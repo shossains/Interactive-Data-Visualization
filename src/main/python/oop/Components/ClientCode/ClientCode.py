@@ -10,7 +10,6 @@ def example_function1(dataframe: pd.DataFrame):
     altered_dataframe = dataframe.copy()
     columns = altered_dataframe.columns
     altered_dataframe.insert(1, "new column", dataframe[columns[0]], True)
-
     return altered_dataframe
 
 
