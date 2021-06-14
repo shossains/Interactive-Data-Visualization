@@ -43,10 +43,6 @@ class Dashboard(DashComponent):
                             html.Span(className="navbar-toggler-icon"),
                             className="navbar-toggler",
                             # the navbar-toggler classes don't set color
-                            style={
-                                "color": "rgba(0,0,0,.5)",
-                                "border-color": "rgba(0,0,0,.1)",
-                            },
                             id="navbar-toggle",
                         ),
                         html.Button(
@@ -54,10 +50,6 @@ class Dashboard(DashComponent):
                             html.Span(className="navbar-toggler-icon"),
                             className="navbar-toggler",
                             # the navbar-toggler classes don't set color
-                            style={
-                                "color": "rgba(0,0,0,.5)",
-                                "border-color": "rgba(0,0,0,.1)",
-                            },
                             id="sidebar-toggle",
                         ),
                     ],
@@ -86,17 +78,6 @@ class Dashboard(DashComponent):
                                     'Drag and Drop or ',
                                     html.A('Select Files')
                                 ]),
-                                style={
-                                    # 'width': '20%',
-                                    'height': '60px',
-                                    'lineHeight': '60px',
-                                    'borderWidth': '1px',
-                                    'borderStyle': 'dashed',
-                                    'borderRadius': '10px',
-                                    'textAlign': 'center',
-                                    'background-color': '#18bc9d',
-                                    'color': 'white'
-                                },
                                 # Allow multiple files to be uploaded
                                 multiple=True
                             ),
@@ -119,10 +100,6 @@ class Dashboard(DashComponent):
                 ], id="collapse"),
             ],
             id="sidebar",
-            style={
-                # 'height':'90vh',
-                'overflow-y':'auto'
-            }
         )
 
         content = html.Div(id="page-content")
@@ -209,6 +186,7 @@ if __name__ == '__main__':
     Main function to be run
     """
     plot_factory = VisualFactories.FigureFactories()
+
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
     DashApp.run(debug=True)

@@ -22,19 +22,6 @@ class StandardMenu(DashComponent):
         self.df = df
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
-        self.buttonstyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            "margin-left": "15px",
-            "margin-right": "15px"
-        }
-        self.dropdownstyle = {
-            'padding-left': '5px',
-            'padding-right': '5px'
-        }
 
     def layout(self, params=None):
         """
@@ -50,7 +37,7 @@ class StandardMenu(DashComponent):
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
                     placeholder='Select ...',
-                    multi = True
+                    multi=True,
                 ),
                 dcc.Store(id='file-name')
             ]),
@@ -65,7 +52,8 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style=self.dropdownstyle),
+                    , className='dropdrown-graph'
+                ),
                 dbc.Col(
                     html.Div([
                         html.H6("y-axis"),
@@ -74,7 +62,8 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             clearable=False)
                     ])
-                    , style=self.dropdownstyle)]),
+                    , className='dropdrown-graph'
+                )]),
             dbc.Row(html.Br()),
             dbc.Row([
                 dbc.Col(
@@ -86,7 +75,8 @@ class StandardMenu(DashComponent):
                             clearable=False)
                         # multi=True
                     ])
-                    , style=self.dropdownstyle),
+                    , className='dropdrown-graph'
+                ),
                 dbc.Col(
                     html.Div([
                         html.H6("plot method"),
@@ -102,8 +92,8 @@ class StandardMenu(DashComponent):
                                                                ],
                                                                value='scatter', clearable=False,
                                                                persistence_type='memory')
-                    ]),
-                    style=self.dropdownstyle
+                    ])
+                    , className='dropdrown-graph'
                 ),
             ]),
 
@@ -118,10 +108,10 @@ class StandardMenu(DashComponent):
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
-                                style=self.buttonstyle),
+                                className='clientcode'),
                     html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
-                                style=self.buttonstyle),
-                    html.Button("reset to original data", id="reset-button", n_clicks=0, style=self.buttonstyle)
+                                className='clientcode'),
+                    html.Button("reset to original data", id="reset-button", n_clicks=0, className='clientcode')
                 ]),
                 html.P(id="data-process-dummy"),
             ]),
@@ -138,8 +128,8 @@ class StandardMenu(DashComponent):
                             placeholder='Select ...',
                             multi=True
                         )
-                    ])
-                    , style={"padding-left": "5px", "padding-right": "5px"}),
+                    ])),
+                id='features-subgraph'
             ),
             dbc.Row(
                 dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),

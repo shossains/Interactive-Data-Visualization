@@ -51,7 +51,7 @@ class MenuSelector(DashComponent):
             ]),
             html.Div([self.StandardMenu.layout(params)], id='view-standard-menu'),
             html.Div([self.OtherMenu.layout(params)], id='view-other-menu')
-        ], fluid=True, style={"padding-left": "0px", "padding-right": "0px"})
+        ], fluid=True)
         return page
 
     def component_callbacks(self, app):

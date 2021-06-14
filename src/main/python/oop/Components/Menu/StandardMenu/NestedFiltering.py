@@ -21,27 +21,7 @@ class NestedFiltering(DashComponent):
         self.df = df
         self.original_data = df
         self.amount_filters = 0
-        self.buttonstyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            'width': '100%'
-        }
-        self.removebuttonstyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#e74c3c',
-            'color': 'white',
-            "margin-right": "15px",
-        }
         self.filters = []
-        self.dropdownstyle = {
-            'padding-left': '5px',
-            'padding-right': '5px'
-        }
 
     def layout(self, params=None):
         """
@@ -55,10 +35,10 @@ class NestedFiltering(DashComponent):
             dbc.Row([
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
-                                style=self.buttonstyle)])),
+                                className='filter-button')])),
                 dbc.Col(html.Div([
                     html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
-                                style=self.buttonstyle)]))
+                                className='filter-button')]))
             ])
             ,
             html.P(id="query")])
@@ -101,7 +81,7 @@ class NestedFiltering(DashComponent):
                                     placeholder='Select ...',
                                     clearable=False)
                             ])
-                            , style=self.dropdownstyle),
+                            , id='dropdrown-graph'),
                         dbc.Col(
                             html.Div([
                                 dcc.Dropdown(
@@ -120,7 +100,7 @@ class NestedFiltering(DashComponent):
                                     ],
                                     clearable=False)
                             ])
-                            , style=self.dropdownstyle),
+                            , id='dropdown-graph'),
                     ]),
                     dbc.Row([
                         dbc.Col(
@@ -140,7 +120,8 @@ class NestedFiltering(DashComponent):
                                                 'type': "remove-filter-button",
                                                 'index': add_filter_clicks},
                                             n_clicks=0,
-                                            style=self.removebuttonstyle)
+                                            className='remove-filter'
+                                            )
                             ])
                         ),
                     ]),
