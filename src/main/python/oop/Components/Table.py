@@ -1,5 +1,3 @@
-__all__ = ['Dashboard']
-
 import dash_table
 import pandas as pd
 import dash_html_components as html
@@ -52,11 +50,11 @@ class Table(DashComponent):
         :return: Output of the callback functions.
         """
         @app.callback(
-            Output('main_table', 'selected_rows'),
+            Output('main_table', 'selected_rows' + self.title),
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
+
             points_selected = []
-            print(graphPoints)
             if graphPoints is not None:
                 print(graphPoints)
                 for point in graphPoints['points']:
@@ -64,17 +62,17 @@ class Table(DashComponent):
             return points_selected
 
         # This function returns the selected rows in the table. This will most likely go hand-in-hand with a button click which will call this function
-        @app.callback(
-            Output('dummy2', 'children'),
-            Input('main_table', 'selected_rows')
-        )
-        def selected_to_dataframe(selectedRows):
-            pdf = pd.DataFrame(columns=self.df.columns)
-
-            for i in selectedRows:
-                pdf = pdf.append(self.df.iloc[i])
-
-            return None
+        # @app.callback(
+        #     Output('dummy2', 'children'),
+        #     Input('main_table', 'selected_rows')
+        # )
+        # def selected_to_dataframe(selectedRows):
+        #     pdf = pd.DataFrame(columns=self.df.columns)
+        #
+        #     for i in selectedRows:
+        #         pdf = pdf.append(self.df.iloc[i])
+        #
+        #     return None
 
         # @app.callback(
         #     Output(component_id='output-data-upload', component_property='style'),
