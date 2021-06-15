@@ -24,6 +24,9 @@ class StandardMenu(DashComponent):
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
         self.totalButtons = 10
+        self.ErrorMessageStyle = {
+            'color': 'red'
+        }
 
     def layout(self, params=None):
         """
@@ -32,15 +35,13 @@ class StandardMenu(DashComponent):
                :return: Html layout of the program.
         """
         buttons = html.Div([])
-        for i in range(1, self.totalButtons+1):
+        for i in range(1, self.totalButtons + 1):
             if i <= 3:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, className='graph-visible',
                                                     style={}))
             else:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, className='graph-hidden',
                                                     style={}))
-
-
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -219,7 +220,7 @@ class StandardMenu(DashComponent):
                 return {}
 
             dataframe = self.df.reset_index()
-            styleUpdate = style['display']= 'block'
+            styleUpdate = style['display'] = 'block'
             return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
@@ -268,7 +269,7 @@ class StandardMenu(DashComponent):
                        ],
                       [
                           Input('file-name', 'data'),
-                        ],
+                      ],
                       [
                           State('select-variable-x-normal-plot', 'options'),
                           State('select-variable-y-normal-plot', 'options'),
@@ -290,38 +291,68 @@ class StandardMenu(DashComponent):
                 return None, None, None, None
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
-        @app.callback(Output('data-process-dummy', 'value'), [
-            Input('example-function-1-button', 'n_clicks'),
-            Input('example-function-2-button', 'n_clicks'),
-            Input('reset-button', 'n_clicks'),
-            Input('apply-filter-button', 'n_clicks'),
-        ])
-        def update_processed_data(button1, button2, reset_button, apply):
+        @app.callback([Output('data-process-dummy', 'value'),
+                      Output('filter-message', 'children')],
+                      [
+                          Input('example-function-1-button', 'n_clicks'),
+                          Input('example-function-2-button', 'n_clicks'),
+                          Input('reset-button', 'n_clicks'),
+                          Input('apply-filter-button', 'n_clicks'),
+                          Input('query', 'value')
+                      ])
+        def update_processed_data(button1, button2, reset_button, apply, query):
             """
                 When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
-                original data and alters this data in return.
+                original data and alters this data in return. Data is filtered or altered by client code
                 :param button1: Activates example 1
                 :param button2: Activates example 2
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
+            query_message = ''
             if self.df is None:
-                return ''
+                return '', query_message
 
             changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
             if 'example-function-1-button' in changed_id:
-                self.df = example_function1(self.df)
-                self.NestedFiltering.set_data(self.df)
+                try:
+                    self.df = example_function1(self.df)
+                    self.NestedFiltering.set_data(self.df)
+
+                except Exception as e:
+                    query_message = html.Div(
+                        [html.Div('Error with client code: {}.'.format(query), style=self.ErrorMessageStyle),
+                         html.Div('Error: {}.'.format(e), style=self.ErrorMessageStyle),
+                         html.Div('Data reset to original data.')])
+
             elif 'example-function-2-button' in changed_id:
-                self.df = example_function2(self.df)
-                self.NestedFiltering.set_data(self.df)
+                try:
+                    self.df = example_function2(self.df)
+                    self.NestedFiltering.set_data(self.df)
+
+                except Exception as e:
+                    query_message = html.Div(
+                        [html.Div('Error with client code: {}.'.format(query), style=self.ErrorMessageStyle),
+                         html.Div('Error: {}.'.format(e), style=self.ErrorMessageStyle),
+                         html.Div('Data reset to original data.')])
+                    self.df = self.original_data
+
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
                 self.NestedFiltering.set_data(self.df)
-            elif 'apply-filter-button' in changed_id:
-                return 'true'
 
-            return ''
+            elif 'apply-filter-button' in changed_id:
+                try:
+                    self.df = self.df.query(query)
+                except Exception as e:
+                    query_message = html.Div(
+                        [html.Div('Error with query: {}.'.format(query), style=self.ErrorMessageStyle),
+                         html.Div('Error: {}.'.format(e), style=self.ErrorMessageStyle),
+                         html.Div('Data reset to original data.')])
+                    self.df = self.original_data
+                return 'true', query_message
+
+            return '', query_message
 
         for i in range(1, self.totalButtons):
             @app.callback(Output({'type': 'graph-button', 'index': i}, 'style'),
@@ -361,7 +392,7 @@ class StandardMenu(DashComponent):
             if ctx.triggered[0]['prop_id'].split('.')[0] == 'add-graph':
                 n_clicks_remove = n_clicks_add + 1
                 if n_clicks_add >= self.totalButtons:
-                    n_clicks_add = self.totalButtons-1
+                    n_clicks_add = self.totalButtons - 1
                     n_clicks_remove = self.totalButtons
 
             if ctx.triggered[0]['prop_id'].split('.')[0] == 'remove-graph':
@@ -375,15 +406,6 @@ class StandardMenu(DashComponent):
 
             return n_clicks_add, n_clicks_remove
 
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('data-process-dummy', 'value'),
-        ], State('query', 'value'))
-
-
         @app.callback(Output({'type': 'graph-content', 'index': MATCH}, 'figure'),
                       Input({'type': 'graph-button', 'index': MATCH}, 'n_clicks'),
                       State('select-variable-x-normal-plot', 'value'),
@@ -394,7 +416,8 @@ class StandardMenu(DashComponent):
                       State('query', 'value'),
                       State({'type': 'graph-content', 'index': MATCH}, 'figure')
                       )
-        def plot_graph(n_clicks, xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query, figure):
+        def plot_graph(n_clicks, xvalue, yvalue, color_based_characteristic, plot_type, data_process_dummy, query,
+                       figure):
             """
             Updates a normal graph with different options how to plot.
 
@@ -406,19 +429,14 @@ class StandardMenu(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
-            print("plot graph entered")
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return figure
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
                 return figure
 
-            if query and data_process_dummy == 'true':
-                dataframe = self.df.query(query)
-            else:
-                dataframe = self.df.reset_index()
-
             title = figure['layout']['title']['text']
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
+            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, color_based_characteristic, plot_type,
+                                                   title)
 
     def get_data(self, data):
         self
