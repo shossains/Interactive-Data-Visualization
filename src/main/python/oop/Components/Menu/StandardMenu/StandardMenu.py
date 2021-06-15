@@ -13,7 +13,7 @@ class StandardMenu(DashComponent):
 
     def __init__(self, plot_factory, df, title="Standard menu"):
         """
-        Plot function of basic plot options with graph and subgraph
+        Plot function of basic plot options for graphs
         :param plot_factory: Factory with all plot functions
         :param df: Dataframe with all data
         :param title: Title of the page
@@ -157,6 +157,7 @@ class StandardMenu(DashComponent):
             #         ])),
             #     id='features-subgraph'
             # ),
+            dbc.Row(html.Div(id='select-dimensions-normal-plot')),
             dbc.Row(
                 dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
             )
@@ -197,28 +198,31 @@ class StandardMenu(DashComponent):
             :param showtable: Checkbox if marked shows table else it won't.
             :return: Table
             """
+            # if select_file is None:
+            #     return "No file uploaded"
+            # else:
             return self.plot_factory.show_table(self.df, showtable)
 
-        @app.callback(Output('Subgraph-normal-plot', 'figure'),
-                      Output('Subgraph-normal-plot', 'style'),
-                      Input('Subgraph-normal-plot', 'style'),
-                      Input('select-characteristics-normal-plot', 'value'),
-                      Input('select-dimensions-normal-plot', 'value'),
-                      Input('data-process-dummy', 'children'))
-        def update_subgraph(style, options_char, dims, data_process_dummy):
-            """
-            Updates subgraphs based on new options.
-            :param data_process_dummy: just there as a dummy to trigger callback.
-            :param options_char: Selected characteristic of the data
-            :param dims: Multiple dimensions that are chosen
-            :return: subgraph
-            """
-            if dims is None or dims == 'select' or self.df is None:
-                return {}
-
-            dataframe = self.df.reset_index()
-            styleUpdate = style['display'] = 'block'
-            return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
+        # @app.callback(Output('Subgraph-normal-plot', 'figure'),
+        #               Output('Subgraph-normal-plot', 'style'),
+        #               Input('Subgraph-normal-plot', 'style'),
+        #               Input('select-characteristics-normal-plot', 'value'),
+        #               Input('select-dimensions-normal-plot', 'value'),
+        #               Input('data-process-dummy', 'children'))
+        # def update_subgraph(style, options_char, dims, data_process_dummy):
+        #     """
+        #     Updates subgraphs based on new options.
+        #     :param data_process_dummy: just there as a dummy to trigger callback.
+        #     :param options_char: Selected characteristic of the data
+        #     :param dims: Multiple dimensions that are chosen
+        #     :return: subgraph
+        #     """
+        #     if dims is None or dims == 'select' or self.df is None:
+        #         return {}
+        #
+        #     dataframe = self.df.reset_index()
+        #     styleUpdate = style['display'] = 'block'
+        #     return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
@@ -292,17 +296,15 @@ class StandardMenu(DashComponent):
                       Output('filter-message', 'children')],
                       [
                           Input('example-function-1-button', 'n_clicks'),
-                          Input('example-function-2-button', 'n_clicks'),
                           Input('reset-button', 'n_clicks'),
                           Input('apply-filter-button', 'n_clicks'),
                           Input('query', 'value')
                       ])
-        def update_processed_data(button1, button2, reset_button, apply, query):
+        def update_processed_data(button1, reset_button, apply, query):
             """
                 When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
                 original data and alters this data in return. Data is filtered or altered by client code
                 :param button1: Activates example 1
-                :param button2: Activates example 2
                 :param reset_button: Reset to original data
                 :return: Nothing.
             """
@@ -321,18 +323,6 @@ class StandardMenu(DashComponent):
                         [html.Div('Error with client code: {}.'.format(query), style=self.ErrorMessageStyle),
                          html.Div('Error: {}.'.format(e), style=self.ErrorMessageStyle),
                          html.Div('Data reset to original data.')])
-
-            elif 'example-function-2-button' in changed_id:
-                try:
-                    self.df = example_function2(self.df)
-                    self.NestedFiltering.set_data(self.df)
-
-                except Exception as e:
-                    query_message = html.Div(
-                        [html.Div('Error with client code: {}.'.format(query), style=self.ErrorMessageStyle),
-                         html.Div('Error: {}.'.format(e), style=self.ErrorMessageStyle),
-                         html.Div('Data reset to original data.')])
-                    self.df = self.original_data
 
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
