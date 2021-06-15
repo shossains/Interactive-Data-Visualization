@@ -45,7 +45,9 @@ class StandardMenu(DashComponent):
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
-            dbc.Row(html.H5("File(s)")),
+            dbc.Row(className="line-above"),
+            dbc.Row(html.H5("Select")),
+            dbc.Row(html.H6("File(s)")),
             html.Div([
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
@@ -111,27 +113,15 @@ class StandardMenu(DashComponent):
             # Empty space between main menu and filter menu
             dbc.Row(html.Br()),
 
-            # Plot buttons
-            dbc.Row(buttons),
-
-            # Empty spcae between plot buttons and add/remove buttons
-            dbc.Row(html.Br()),
-
-            dbc.Row(dbc.Col([
-                html.Button('Graph++', id='add-graph', n_clicks=3, className='add-graph', style={}),
-                html.Button('Graph--', id='remove-graph', n_clicks=4, className='remove-graph', style={}),
-            ])),
-
-            # Empty space between main menu and filter menu
-            dbc.Row(html.Br()),
-
             # Nested filtering
-            self.NestedFiltering.layout(params),
+            dbc.Row(dbc.Col(
+                self.NestedFiltering.layout(params),
+            )),
 
             # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend
             # code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row(html.Br()),
-            dbc.Row(html.H5("Data manipulation methods")),
+            dbc.Row(html.H6("Manipulate data")),
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
@@ -139,6 +129,23 @@ class StandardMenu(DashComponent):
                     html.Button("Reset to original data", id="reset-button", n_clicks=0, className='clientcode')
                 ]),
                 html.P(id="data-process-dummy"),
+            ]),
+            dbc.Row(className="line-above"),
+            dbc.Row(html.H5("Plot on")),
+
+            # Plot buttons
+            dbc.Row(dbc.Col(buttons)),
+
+            # Empty space for styling
+            dbc.Row(html.Br()),
+
+            dbc.Row([
+                dbc.Col(
+                    html.Button('Graph++', id='add-graph', n_clicks=3, className='add-graph', style={})
+                ),
+                dbc.Col(
+                    html.Button('Graph--', id='remove-graph', n_clicks=4, className='remove-graph', style={}),
+                )
             ]),
 
             #  WHEN DELETING, ASSOCIATED CALLBACKS AND VISUAL FACTORY SHOULD ALSO BE DELETED
@@ -158,8 +165,10 @@ class StandardMenu(DashComponent):
             #     id='features-subgraph'
             # ),
             dbc.Row(html.Div(id='select-dimensions-normal-plot')),
+            # Empty space for styling
+            dbc.Row(html.Br()),
             dbc.Row(
-                dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
+                dcc.Checklist(id='show-table', options=[{'label': ' Show table', 'value': 'show-table'}]),
             )
 
         ], fluid=True)

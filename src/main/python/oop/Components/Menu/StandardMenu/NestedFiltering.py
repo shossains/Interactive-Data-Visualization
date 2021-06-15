@@ -30,7 +30,7 @@ class NestedFiltering(DashComponent):
                :return: Html layout of the program.
         """
         page = html.Div([
-            dbc.Row(html.H5("Filter(s)")),
+            dbc.Row(html.H6("Filter(s)")),
             html.Div(id="filters", children=[]),
             dbc.Row([
                 dbc.Col(html.Div([
