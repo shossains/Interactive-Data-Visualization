@@ -3,6 +3,7 @@ import numpy as np
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
+import lenspy as DynanmicPlot
 from dash.dependencies import Input, Output, State, ALL, MATCH
 from dash_oop_components import DashComponent, DashFigureFactory, DashComponent, DashComponentTabs, DashApp
 from src.main.python.oop.Components.ClientCode.ClientCode import example_function2, example_function1
@@ -455,7 +456,9 @@ class StandardMenu(DashComponent):
                 dataframe = self.df.reset_index()
 
             title = figure['layout']['title']['text']
-            return self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
+            plot = self.plot_factory.graph_methods(dataframe, xvalue, yvalue, color_based_characteristic, plot_type, title)
+            temp = DynanmicPlot.DynamicPlot(plot)
+            return temp.fig
 
     def get_data(self, data):
         self
