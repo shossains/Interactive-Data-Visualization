@@ -3,6 +3,9 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
 
+from src.main.python.oop.Components.Table import Table
+
+
 class PlotContent(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
         """
@@ -12,7 +15,7 @@ class PlotContent(DashComponent):
                 :param title: Title of the page
                 """
         super().__init__(title=title)
-        # self.Table = Table(plot_factory, df, "Show Table")
+        self.Table = Table(plot_factory, df, "Show Table")
         self.totalButtons = 10
         self.plot_factory = plot_factory
         self.df = df
@@ -110,12 +113,12 @@ class PlotContent(DashComponent):
             #         )
             #     )
             # ),
-            # dbc.Row(
-            #     dbc.Col(
-            #         html.Div(self.Table.layout(params))
-            #     )
-            # ),
-            graphs
+            graphs,
+            dbc.Row(
+                dbc.Col(
+                    html.Div(self.Table.layout(params))
+                )
+            )
 
         ], fluid=True)
         return page
