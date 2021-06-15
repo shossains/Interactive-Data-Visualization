@@ -351,7 +351,7 @@ class StandardMenu(DashComponent):
                           Input('example-function-2-button', 'n_clicks'),
                           Input('reset-button', 'n_clicks'),
                           Input('apply-filter-button', 'n_clicks'),
-                          State('query', 'value')
+                          Input('query', 'value')
                       ])
         def update_processed_data(button1, button2, reset_button, apply, query):
             """
@@ -482,8 +482,6 @@ class StandardMenu(DashComponent):
             :param query: Query for filtering data
             :return: Graph object with the displayed plot
             """
-            print("plot graph entered")
-            query_message = ''
             if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
                 return figure
             if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
