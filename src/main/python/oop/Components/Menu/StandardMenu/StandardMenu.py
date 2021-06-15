@@ -54,10 +54,6 @@ class StandardMenu(DashComponent):
                 ),
                 dcc.Store(id='file-name')
             ]),
-            dbc.Row(html.H5("Show graphs")),
-
-            dbc.Row(html.Br()),
-            dbc.Row(html.H5("Main Graph")),
             dbc.Row([
                 dbc.Col(
                     html.Div([
