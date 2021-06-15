@@ -127,35 +127,36 @@ class StandardMenu(DashComponent):
 
             # Nested filtering
             self.NestedFiltering.layout(params),
-            # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend code. Look at update_processed_data to add functionality of the new buttons
+
+            # Buttons for client code. Client can change name and texts of these buttons and add new buttons to extend
+            # code. Look at update_processed_data to add functionality of the new buttons
             dbc.Row(html.Br()),
-            dbc.Row(html.H5("Process data with client code")),
+            dbc.Row(html.H5("Data manipulation methods")),
             dbc.Row([
                 html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
                                 className='clientcode'),
-                    html.Button("add two new columns (example)", id="example-function-2-button", n_clicks=0,
-                                className='clientcode'),
-                    html.Button("reset to original data", id="reset-button", n_clicks=0, className='clientcode')
+                    html.Button("Reset to original data", id="reset-button", n_clicks=0, className='clientcode')
                 ]),
                 html.P(id="data-process-dummy"),
             ]),
 
-            # Only for styling, spaces out selectors
-            dbc.Row(html.Br()),
-            dbc.Row(html.H5("Subgraph")),
-            dbc.Row(
-                dbc.Col(
-                    html.Div([
-                        html.H6("features"),
-                        self.querystring(params)(dcc.Dropdown)(
-                            id='select-dimensions-normal-plot',
-                            placeholder='Select ...',
-                            multi=True
-                        )
-                    ])),
-                id='features-subgraph'
-            ),
+            #  WHEN DELETING, ASSOCIATED CALLBACKS AND VISUAL FACTORY SHOULD ALSO BE DELETED
+            # # Only for styling, spaces out selectors
+            # dbc.Row(html.Br()),
+            # dbc.Row(html.H5("Subgraph")),
+            # dbc.Row(
+            #     dbc.Col(
+            #         html.Div([
+            #             html.H6("features"),
+            #             self.querystring(params)(dcc.Dropdown)(
+            #                 id='select-dimensions-normal-plot',
+            #                 placeholder='Select ...',
+            #                 multi=True
+            #             )
+            #         ])),
+            #     id='features-subgraph'
+            # ),
             dbc.Row(
                 dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
             )
