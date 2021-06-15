@@ -105,12 +105,12 @@ class NestedFiltering(DashComponent):
                     dbc.Row([
                         dbc.Col(
                             html.Div([
-                                dbc.Row(html.H6("Query Filter")),
                                 dcc.Input(id={
                                     'type': 'query-text_input',
                                     'index': add_filter_clicks},
-                                    placeholder='Fill in your query',
-                                    debounce=True),
+                                    placeholder='Input value',
+                                    debounce=True
+                                )
                             ])
                         ),
                         dbc.Col(
