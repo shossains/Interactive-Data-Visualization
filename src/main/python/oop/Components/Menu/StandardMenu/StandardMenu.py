@@ -45,7 +45,7 @@ class StandardMenu(DashComponent):
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
-            dbc.Row(html.H5("Select files to project")),
+            dbc.Row(html.H5("File(s)")),
             html.Div([
                 self.querystring(params)(dcc.Dropdown)(
                     id='select-file',
@@ -198,31 +198,10 @@ class StandardMenu(DashComponent):
             :param showtable: Checkbox if marked shows table else it won't.
             :return: Table
             """
-            # if select_file is None:
-            #     return "No file uploaded"
-            # else:
-            return self.plot_factory.show_table(self.df, showtable)
-
-        # @app.callback(Output('Subgraph-normal-plot', 'figure'),
-        #               Output('Subgraph-normal-plot', 'style'),
-        #               Input('Subgraph-normal-plot', 'style'),
-        #               Input('select-characteristics-normal-plot', 'value'),
-        #               Input('select-dimensions-normal-plot', 'value'),
-        #               Input('data-process-dummy', 'children'))
-        # def update_subgraph(style, options_char, dims, data_process_dummy):
-        #     """
-        #     Updates subgraphs based on new options.
-        #     :param data_process_dummy: just there as a dummy to trigger callback.
-        #     :param options_char: Selected characteristic of the data
-        #     :param dims: Multiple dimensions that are chosen
-        #     :return: subgraph
-        #     """
-        #     if dims is None or dims == 'select' or self.df is None:
-        #         return {}
-        #
-        #     dataframe = self.df.reset_index()
-        #     styleUpdate = style['display'] = 'block'
-        #     return self.plot_factory.subgraph_methods(dataframe, options_char, dims), styleUpdate
+            if select_file is None:
+                return "No file selected"
+            else:
+                return self.plot_factory.show_table(self.df, showtable)
 
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),

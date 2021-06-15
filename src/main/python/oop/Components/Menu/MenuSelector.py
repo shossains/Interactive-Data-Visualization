@@ -35,7 +35,7 @@ class MenuSelector(DashComponent):
             dbc.Row(html.Br()),  # Only for styling, spacing out
             # Selector for menu
             html.Div([
-                html.H5("Select a menu"),
+                html.H5("Menu"),
                 self.querystring(params)(
                     dcc.Dropdown)(
                     id='select-menu',
