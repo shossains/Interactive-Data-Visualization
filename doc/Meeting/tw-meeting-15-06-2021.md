@@ -1,6 +1,6 @@
 <h1>TW Meeting</h1>
 
-* Datum: 15 juli - 9:45
+*Datum: 15 juli - 09:45*
 
 **Feedback Draft Report**
 
@@ -11,7 +11,7 @@
 * Nieuwe/Belangrijke info aan het begin van de zinnen (front-loading); 
 * Witregel is grote gedachtsprong; inspring (alineagroep) is kleine gedachtsprong
   * Pagina 13 goed voorbeeld van alineagroepering
-    * Na 'Firstly', 'Secondly' enz. gelijk zin afmaken niet twee-woord-zinnen
+    * Na 'Firstly', 'Secondly' enz. gelijk zin afmaken; geen twee-woord-zinnen
 * Chapter nummer en titel liever op 1 regel
 * 2 alineas per subsectie 
 * Pas de moscow lijst aan (see slides)
