@@ -76,6 +76,7 @@ class FigureFactories(DashFigureFactory):
 
         return fig
 
+
     @staticmethod
     def subgraph_methods(dataframe, options_char, dims):
         """

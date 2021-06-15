@@ -90,7 +90,6 @@ class StandardMenu(DashComponent):
             else:
                 buttons.children.append(html.Button('Graph {}'.format(i), id={'type': 'graph-button', 'index': i}, n_clicks=0, style=self.graphHiddenButtonStyle))
 
-
         page = dbc.Container([
             # Only for styling, spaces out selectors
             dbc.Row(html.Br()),
@@ -421,15 +420,6 @@ class StandardMenu(DashComponent):
                     n_clicks_add = 1
 
             return n_clicks_add, n_clicks_remove
-
-        @app.callback(Output('Mygraph-normal-plot', 'figure'), [
-            Input('select-variable-x-normal-plot', 'value'),
-            Input('select-variable-y-normal-plot', 'value'),
-            Input('select-characteristics-normal-plot', 'value'),
-            Input('select-plot-options-normal-plot', 'value'),
-            Input('data-process-dummy', 'value'),
-        ], State('query', 'value'))
-
 
         @app.callback(Output({'type': 'graph-content', 'index': MATCH}, 'figure'),
                       Input({'type': 'graph-button', 'index': MATCH}, 'n_clicks'),
