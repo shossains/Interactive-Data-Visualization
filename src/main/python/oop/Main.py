@@ -116,9 +116,9 @@ class Dashboard(DashComponent):
 
                     dbc.Nav(
                         [
-                            dbc.NavLink("Home", href="/", active="exact"),
-                            dbc.NavLink("Instructions", href="/instructions", active="exact"),
-                            dbc.NavLink("Plot", href="/plotting", active="exact"),
+                            dbc.NavLink("Home", href="/", active="exact", id="navlink-home"),
+                            dbc.NavLink("Instructions", href="/instructions", active="exact", id="navlink-instructions"),
+                            dbc.NavLink("Plot", href="/plotting", active="exact", id="navlink-plotting"),
                         ],
                         vertical=True,
                         pills=True,
