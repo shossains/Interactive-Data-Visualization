@@ -148,22 +148,6 @@ class StandardMenu(DashComponent):
                 )
             ]),
 
-            #  WHEN DELETING, ASSOCIATED CALLBACKS AND VISUAL FACTORY SHOULD ALSO BE DELETED
-            # # Only for styling, spaces out selectors
-            # dbc.Row(html.Br()),
-            # dbc.Row(html.H5("Subgraph")),
-            # dbc.Row(
-            #     dbc.Col(
-            #         html.Div([
-            #             html.H6("features"),
-            #             self.querystring(params)(dcc.Dropdown)(
-            #                 id='select-dimensions-normal-plot',
-            #                 placeholder='Select ...',
-            #                 multi=True
-            #             )
-            #         ])),
-            #     id='features-subgraph'
-            # ),
             dbc.Row(html.Div(id='select-dimensions-normal-plot')),
             # Empty space for styling
             dbc.Row(html.Br()),
@@ -215,7 +199,6 @@ class StandardMenu(DashComponent):
         @app.callback([Output('select-variable-x-normal-plot', 'options'),
                        Output('select-variable-y-normal-plot', 'options'),
                        Output('select-characteristics-normal-plot', 'options'),
-                       Output('select-dimensions-normal-plot', 'options'),
                        ],
                       [
                           Input('file-name', 'data'),
@@ -247,14 +230,13 @@ class StandardMenu(DashComponent):
                     labels = labels + [{'label': i, 'value': i}]
                     colorLabel = colorLabel + [{'label': i, 'value': i}]
 
-                return labels, labels, colorLabel, labels
+                return labels, labels, colorLabel
             else:
-                return labels, labels, labels, labels
+                return labels, labels, labels
 
         @app.callback([Output('select-variable-x-normal-plot', 'value'),
                        Output('select-variable-y-normal-plot', 'value'),
                        Output('select-characteristics-normal-plot', 'value'),
-                       Output('select-dimensions-normal-plot', 'value'),
                        ],
                       [
                           Input('file-name', 'data'),
@@ -263,9 +245,8 @@ class StandardMenu(DashComponent):
                           State('select-variable-x-normal-plot', 'options'),
                           State('select-variable-y-normal-plot', 'options'),
                           State('select-characteristics-normal-plot', 'options'),
-                          State('select-dimensions-normal-plot', 'options')
                       ])
-        def set_variables(file_dummy, options_x, options_y, options_char, dims):
+        def set_variables(file_dummy, options_x, options_y, options_char):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param file_dummy:
@@ -274,11 +255,11 @@ class StandardMenu(DashComponent):
             :param options_char: All possible characteristic options
             :return: The chosen x-axis and y-axis and characteristic
             """
-            if options_y is None or options_x is None or options_char is None or dims is None:
-                return None, None, None, None
-            if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
-                return None, None, None, None
-            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
+            if options_y is None or options_x is None or options_char is None :
+                return None, None, None
+            if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0):
+                return None, None, None
+            return options_x[0]['value'], options_y[0]['value'], options_char[0]['value']
 
         @app.callback([Output('data-process-dummy', 'value'),
                       Output('filter-message', 'children')],
@@ -292,6 +273,8 @@ class StandardMenu(DashComponent):
             """
                 When one of the buttons is clicked, the client code is executed for that example. Makes a deep copy of
                 original data and alters this data in return. Data is filtered or altered by client code
+                :param query:
+                :param apply:
                 :param button1: Activates example 1
                 :param reset_button: Reset to original data
                 :return: Nothing.
@@ -338,7 +321,7 @@ class StandardMenu(DashComponent):
                           State({'type': 'graph-content', 'index': i}, 'style'))
             def add_graph(n_clicks_add, n_clicks_remove, buttonstyle, graphstyle, c=i):
                 """
-                Make one more button and graph appear after Graph++ has been clicked
+                    Make one more button and graph appear after Graph++ has been clicked
                 """
                 ctx = dash.callback_context
 

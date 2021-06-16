@@ -77,20 +77,6 @@ class FigureFactories(DashFigureFactory):
         return fig
 
     @staticmethod
-    def subgraph_methods(dataframe, options_char, dims):
-        """
-            Displays subgraphs based on all combinations of labels.
-            :param dataframe:  Dataframe with all data
-            :param options_char: Selected characteristic of the data
-            :param dims: Multiple dimensions that are chosen
-            :return: graph
-        """
-        if options_char == 'no-value' or options_char == 'select':
-            options_char = None
-
-        return px.scatter_matrix(dataframe, dimensions=dims, color=options_char)
-
-    @staticmethod
     def show_table(df, show_table_boolean):
         """
             Makes a table from the uploaded data.
