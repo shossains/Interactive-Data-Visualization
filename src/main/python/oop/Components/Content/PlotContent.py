@@ -3,6 +3,9 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
 
+from src.main.python.oop.Components.Table import Table
+
+
 class PlotContent(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
         """
@@ -12,7 +15,7 @@ class PlotContent(DashComponent):
                 :param title: Title of the page
                 """
         super().__init__(title=title)
-        # self.Table = Table(plot_factory, df, "Show Table")
+        self.Table = Table(plot_factory, df, "Show Table")
         self.totalButtons = 10
         self.plot_factory = plot_factory
         self.df = df
@@ -73,49 +76,12 @@ class PlotContent(DashComponent):
                 ))
 
         page = dbc.Container([
-            # dbc.Row(
-            #     dbc.Col(
-            #         dcc.Loading(
-            #             id="loading-icon-normal-plot",
-            #             children=[html.Div(
-            #                 dcc.Graph(
-            #                     id='Mygraph-normal-plot',
-            #                     config={
-            #                         "displaylogo": False,
-            #                         "showTips": True,
-            #                         "showAxisDragHandles": True,
-            #                         "scrollZoom": True
-            #                     },
-            #                 ),
-            #             )],
-            #         )
-            #     )
-            # ),
-            # dbc.Row(
-            #     dbc.Col(
-            #         dcc.Loading(
-            #             id="loading-icon2-normal-plot",
-            #             children=[html.Div(
-            #                 dcc.Graph(
-            #                     id='Subgraph-normal-plot',
-            #                     config={
-            #                         "displaylogo": False,
-            #                         "showTips": True,
-            #                         "showAxisDragHandles": True,
-            #                         "scrollZoom": True
-            #                     }
-            #                 )
-            #             )],
-            #             type="graph"
-            #         )
-            #     )
-            # ),
-            # dbc.Row(
-            #     dbc.Col(
-            #         html.Div(self.Table.layout(params))
-            #     )
-            # ),
-            graphs
+            graphs,
+            dbc.Row(
+                dbc.Col(
+                    html.Div(self.Table.layout(params))
+                )
+            )
 
         ], fluid=True)
         return page

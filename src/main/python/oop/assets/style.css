@@ -78,29 +78,41 @@ h5 {
 }
 
 .add-graph {
-  width: 49%;
   border-width: 1px;
   border-radius: 10px;
   text-align: center;
   background-color: #18bc9d;
   color: white;
-  margin-left: 1px;
-  margin-right: 1px
+  margin: auto;
+  width: 100%;
 }
 
 .remove-graph {
-  width: 49%;
   border-width: 1px;
   border-radius: 10px;
   text-align: center;
   background-color: #e74c3c;
   color: white;
-  margin-left: 1px;
-  margin-right: 1px
+  margin: auto;
+  width: 100%;
+}
+
+.line-above {
+  border-top:2px solid #2c3e50;
+  height: 10px;
 }
 
 /*css NestedFiltering */
-.filter-button {
+.add-filter {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #18bc9d;
+  color: white;
+  width: 100%;
+}
+
+.apply-filter {
   border-width: 1px;
   border-radius: 10px;
   text-align: center;
@@ -115,12 +127,8 @@ h5 {
   text-align: center;
   background-color: #e74c3c;
   color: white;
+  margin-top: 2px;
   margin-right: 15px;
-}
-
-#features-subgraph, #dropdown-graph {
-  padding-left: 5px;
-  padding-right: 5px;
 }
 
 #select-file {

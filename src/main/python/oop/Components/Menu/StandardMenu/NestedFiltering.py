@@ -30,15 +30,15 @@ class NestedFiltering(DashComponent):
                :return: Html layout of the program.
         """
         page = html.Div([
-            dbc.Row(html.H5("Filtering")),
+            dbc.Row(html.H6("Filter(s)")),
             html.Div(id="filters", children=[]),
             dbc.Row([
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
-                                className='filter-button')])),
+                                className='add-filter')])),
                 dbc.Col(html.Div([
-                    html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
-                                className='filter-button')]))
+                    html.Button("Apply", id="apply-filter-button", n_clicks=0,
+                                className='apply-filter')]))
             ]),
             dbc.Row([dbc.Col(html.Div(id='filter-message'))]),
             html.P(id="query")])
@@ -105,12 +105,12 @@ class NestedFiltering(DashComponent):
                     dbc.Row([
                         dbc.Col(
                             html.Div([
-                                dbc.Row(html.H6("Query Filter")),
                                 dcc.Input(id={
                                     'type': 'query-text_input',
                                     'index': add_filter_clicks},
-                                    placeholder='Fill in your query',
-                                    debounce=True),
+                                    placeholder='Input value',
+                                    debounce=True
+                                )
                             ])
                         ),
                         dbc.Col(
