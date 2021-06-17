@@ -1,5 +1,10 @@
 __all__ = ['Dashboard']
 
+from unittest import mock
+import pandas as pd
+
+
+
 from src.main.python.oop.Components.Content.PlotContent import PlotContent
 from src.main.python.oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
@@ -95,11 +100,12 @@ class Dashboard(DashComponent):
                         html.Div(
                             dcc.Upload(
                                 id='upload-data',
-                                children=html.Div([
-                                    'Drag and Drop or ',
+                                children=html.Div(
+                                    ['Drag and Drop or ',
                                     html.A('Select Files')
                                 ]),
                                 style={
+                                    'name': "abc",
                                     'lineHeight': '60px',
                                     'borderWidth': '1px',
                                     'borderStyle': 'dashed',
@@ -215,16 +221,27 @@ if __name__ == '__main__':
     """"
     Main function to be run
     """
+
     plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
     DashApp.run(debug=True)
+
 else:
     '''
     This code exists to be able to run test_application.py
     When running test_application, the __name__ is not equal to __main__
     Dash testing api is looking for a Dash app instance in the Main.py, which is created here.
     '''
+    # plot_factory = VisualFactories.FigureFactories()
+    # dashboard = Dashboard(plot_factory)
+    # DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
+    # app = DashApp.app
+    # # app.run(debug=True)
+
+
     plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
-    app = DashApp(dashboard, querystrings=True, bootstrap=FLATLY).app
+    DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
+    app = DashApp.app
+
