@@ -115,7 +115,7 @@ class Dashboard(DashComponent):
         )
 
         content = html.Div(id="page-content")
-        return html.Div([sidebar, content])
+        return html.Div([dcc.Store(id='memory'), sidebar, content])
 
     def component_callbacks(self, app):
         """

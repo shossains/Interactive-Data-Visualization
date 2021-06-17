@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_oop_components import DashComponent
 
+
 class PlotContent(DashComponent):
     def __init__(self, plot_factory, df, title="Graph"):
         """
@@ -21,14 +22,14 @@ class PlotContent(DashComponent):
     def layout(self, params=None):
         graphs = html.Div([])
 
-        for i in range(1, self.totalButtons+1):
+        for i in range(1, self.totalButtons + 1):
             if i <= 3:
                 graphs.children.append(dbc.Row(
                     dbc.Col(
                         dcc.Loading(
                             id="loading-icon-normal-plot",
                             children=[dcc.Graph(
-                                figure={'layout': { 'title': 'Graph {}'.format(i)}},
+                                figure={'layout': {'title': 'Graph {}'.format(i)}},
                                 id={'type': 'graph-content', 'index': i},
                                 config={
                                     'autosizable': True,
@@ -43,7 +44,7 @@ class PlotContent(DashComponent):
                                     'width': '100%'
                                 }
                             )],
-                        type='graph')
+                            type='graph')
                     )
                 ))
             else:
@@ -68,9 +69,9 @@ class PlotContent(DashComponent):
                                         'width': '100%'
                                     }
                                 )],
-                        type='graph')
+                            type='graph')
                     )
-                ))
+                    ))
 
         page = dbc.Container([
             # dbc.Row(

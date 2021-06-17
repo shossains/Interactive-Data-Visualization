@@ -51,6 +51,8 @@ class StandardMenu(DashComponent):
                     id='select-file',
                     placeholder='Select ...',
                     multi=True,
+                    persistence=True,
+                    persistence_type='memory'
                 ),
                 dcc.Store(id='file-name')
             ]),
@@ -65,7 +67,10 @@ class StandardMenu(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
                             placeholder='Select ...',
-                            clearable=False)
+                            clearable=False,
+                            persistence=True,
+                            persistence_type='memory'
+                        )
                     ])
                     , className='dropdrown-graph'
                 ),
@@ -155,13 +160,13 @@ class StandardMenu(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-dimensions-normal-plot',
                             placeholder='Select ...',
-                            multi=True
+                            multi=True,
                         )
                     ])),
                 id='features-subgraph'
             ),
             dbc.Row(
-                dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}]),
+                dcc.Checklist(id='show-table', options=[{'label': 'Show table', 'value': 'show-table'}], persistence=True, persistence_type='memory'),
             )
 
         ], fluid=True)
@@ -174,6 +179,18 @@ class StandardMenu(DashComponent):
                :param app: Dash app that uses the code
                :return: Output of the callback functions.
         """
+        @app.callback(Output('memory', 'data'),
+                      Input('select-variable-x-normal-plot', 'value'),
+                      Input('select-file', 'value'),
+                      State('memory', 'data'))
+        def store_data(value_x, file, store):
+            if value_x is not None:
+                store = {'select-variable-x-normal-plot': value_x}
+                print('store data called:')
+                print(store)
+
+            return store
+
 
         @app.callback(
             Output(component_id='output-data-upload', component_property='style'),
@@ -274,9 +291,10 @@ class StandardMenu(DashComponent):
                           State('select-variable-x-normal-plot', 'options'),
                           State('select-variable-y-normal-plot', 'options'),
                           State('select-characteristics-normal-plot', 'options'),
-                          State('select-dimensions-normal-plot', 'options')
+                          State('select-dimensions-normal-plot', 'options'),
+                          State('memory', 'data'),
                       ])
-        def set_variables(file_dummy, options_x, options_y, options_char, dims):
+        def set_variables(file_dummy, options_x, options_y, options_char, dims, store):
             """
             Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
             :param file_dummy:
@@ -289,6 +307,11 @@ class StandardMenu(DashComponent):
                 return None, None, None, None
             if len(options_y) <= 0 or (len(options_x) <= 0) or (len(options_char) <= 0) or (len(dims) <= 0):
                 return None, None, None, None
+            store = store or {'select-variable-x-normal-plot': None}
+            print("set called:")
+            print(store)
+            if store['select-variable-x-normal-plot'] is not None:
+                return store['select-variable-x-normal-plot'], options_y[0]['value'], options_char[0]['value'], None
             return options_x[0]['value'], options_y[0]['value'], options_char[0]['value'], None
 
         @app.callback([Output('data-process-dummy', 'value'),

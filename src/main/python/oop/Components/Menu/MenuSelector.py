@@ -44,7 +44,9 @@ class MenuSelector(DashComponent):
                         {'label': 'Other menu  (not implemented)', 'value': 'other-menu'}
                     ],
                     value='standard-menu',
-                    clearable=False
+                    clearable=False,
+                    persistence=True,
+                    persistence_type='memory'
                 ),
             ]),
             html.Div([self.StandardMenu.layout(params)], id='view-standard-menu'),
@@ -102,7 +104,6 @@ class MenuSelector(DashComponent):
                 return {}
             if value == "select":
                 return {}
-
 
             if len(value) == 1:
                 for i in self.dfList:
