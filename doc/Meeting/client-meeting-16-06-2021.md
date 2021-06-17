@@ -5,6 +5,7 @@
 **Demo**
 
 <h4>Algemene Mededelingen</h4>
+
 - Instructions page is in de app en wordt nog bijgewerkt
 - Multiple files is mogelijk
 - Eerst filteren is superhandig vanwege memory
@@ -13,6 +14,7 @@
 
 
 <h4>TODO</h4>
+
 - Remove filter reset niet de dataframe, user moet zelf is resetten naar orginele
   - Mogelijk bij removen alle filters over orginele data toepassen
 - Op een of andere manier de workspace saven, zelfs als het in de url moet; Desnoods een lijst met alle filters en assen die zijn toegepast
