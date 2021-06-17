@@ -35,7 +35,7 @@ class MenuSelector(DashComponent):
             dbc.Row(html.Br()),  # Only for styling, spacing out
             # Selector for menu
             html.Div([
-                html.H5("Select a menu"),
+                html.H5("Menu"),
                 self.querystring(params)(
                     dcc.Dropdown)(
                     id='select-menu',
@@ -49,7 +49,7 @@ class MenuSelector(DashComponent):
             ]),
             html.Div([self.StandardMenu.layout(params)], id='view-standard-menu'),
             html.Div([self.OtherMenu.layout(params)], id='view-other-menu')
-        ], fluid=True, style={"padding-left": "0px", "padding-right": "0px"})
+        ], fluid=True)
         return page
 
     def component_callbacks(self, app):
@@ -79,7 +79,11 @@ class MenuSelector(DashComponent):
                       Input('dummy', 'children')
                       )
         def set_options_variable(dummy):
-
+            """
+            Sets the options of all uploaded files in the dropdown of the select-file menu.
+            :param dummy: Dummy is the output of the uploaded files callback. Therefore this is the sign to read in the uploaded files of the self.dfList
+            :return: returns the options for selected files
+            """
             labels = [{'label': 'Select', 'value': 'Select'}]
 
             length = len(self.dfList)

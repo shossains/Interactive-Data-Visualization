@@ -11,10 +11,12 @@ h5 {
   text-decoration: none;
 }
 
+/* css for Main Class */
 #sidebar {
   text-align: center;
   padding: 2rem 1rem;
   background-color: #f8f9fa;
+  overflow-y: auto;
 }
 
 #sidebar h2 {
@@ -27,8 +29,118 @@ h5 {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
+.navbar-toggler {
+  color: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+#upload-data {
+  height: 60px;
+  line-height: 60px;
+  border-width: 1px;
+  border-style: dashed;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #18bc9d;
+  color: white
+}
+
+/*css for StandardMenu class*/
+.clientcode {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.graph-visible{
+  min-width: 32%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  margin: 0px 1px 1px 1px;
+}
+
+.graph-hidden{
+  min-width: 32%;
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  margin: 0px 1px 1px 1px;
+  display: none;
+}
+
+.add-graph {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #18bc9d;
+  color: white;
+  margin: auto;
+  width: 100%;
+}
+
+.remove-graph {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #e74c3c;
+  color: white;
+  margin: auto;
+  width: 100%;
+}
+
+.line-above {
+  border-top:2px solid #2c3e50;
+  height: 10px;
+}
+
+/*css NestedFiltering */
+.add-filter {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #18bc9d;
+  color: white;
+  width: 100%;
+}
+
+.apply-filter {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #5ebfff;
+  color: white;
+  width: 100%;
+}
+
+.remove-filter {
+  border-width: 1px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #e74c3c;
+  color: white;
+  margin-top: 2px;
+  margin-right: 15px;
+}
+
+#select-file {
+  width: 100%;
+}
+
 #page-content {
   padding: 2rem 1rem;
+}
+
+.error-message {
+   color: red
 }
 
 @media (min-width: 48em) {

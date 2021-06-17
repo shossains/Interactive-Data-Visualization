@@ -2,7 +2,6 @@ import dash_table
 import plotly.graph_objs as go
 import plotly.express as px
 from dash_oop_components import DashFigureFactory
-
 import dash_html_components as html
 
 
@@ -23,6 +22,7 @@ class FigureFactories(DashFigureFactory):
         :param yvalue: Selected y-axis value in the data
         :param color_based_characteristic: Selected characteristic of the data
         :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+        :param title: Selected title of the plot.
         :return: Graph object with the displayed plot
         """
 
@@ -75,20 +75,6 @@ class FigureFactories(DashFigureFactory):
         fig.update_layout(title_text=title, title_x=0.5)
 
         return fig
-
-    @staticmethod
-    def subgraph_methods(dataframe, options_char, dims):
-        """
-            Displays subgraphs based on all combinations of labels.
-            :param dataframe:  Dataframe with all data
-            :param options_char: Selected characteristic of the data
-            :param dims: Multiple dimensions that are chosen
-            :return: graph
-        """
-        if options_char == 'no-value' or options_char == 'select':
-            options_char = None
-
-        return px.scatter_matrix(dataframe, dimensions=dims, color=options_char)
 
     @staticmethod
     def show_table(df, show_table_boolean):

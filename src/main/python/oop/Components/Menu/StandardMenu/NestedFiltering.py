@@ -21,47 +21,25 @@ class NestedFiltering(DashComponent):
         self.df = df
         self.original_data = df
         self.amount_filters = 0
-        self.buttonstyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#5ebfff',
-            'color': 'white',
-            'width': '100%'
-        }
-        self.removebuttonstyle = {
-            'borderWidth': '1px',
-            'borderRadius': '10px',
-            'textAlign': 'center',
-            'background-color': '#e74c3c',
-            'color': 'white',
-            'margin-top': '1px',
-            'margin-right': '15px',
-        }
         self.filters = []
-        self.dropdownstyle = {
-            'padding-left': '5px',
-            'padding-right': '5px'
-        }
 
     def layout(self, params=None):
         """
-               Shows the html layout of the standard Nestedfiltering. REMARK: Parameters are not passed through
+               Shows the html layout of the NestedFiltering class. REMARK: Parameters are not passed through
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
         page = html.Div([
-            dbc.Row(html.H5("Filtering")),
+            dbc.Row(html.H6("Filter(s)")),
             html.Div(id="filters", children=[]),
             dbc.Row([
                 dbc.Col(html.Div([
                     html.Button("Add filter", id="add-filter-button", n_clicks=0,
-                                style=self.buttonstyle)])),
+                                className='add-filter')])),
                 dbc.Col(html.Div([
-                    html.Button("Apply filter(s)", id="apply-filter-button", n_clicks=0,
-                                style=self.buttonstyle)]))
-            ])
-            ,
+                    html.Button("Apply", id="apply-filter-button", n_clicks=0,
+                                className='apply-filter')]))
+            ]),
             html.P(id="query")])
         return page
 
@@ -84,7 +62,7 @@ class NestedFiltering(DashComponent):
             Can remove and add filters dynamically.
             :param add_filter_clicks:  If add filter clicked, new filter is added
             :param remove_filter_clicks:  If remove filter clicked, selected filter is removed
-            :param file_name_dummy: Called when file is selected
+            :param file_name_dummy: Makes this method called when file is selected
             :param children: html code of the current filters in the file
             :return: new children (filters).
             """
@@ -102,7 +80,7 @@ class NestedFiltering(DashComponent):
                                     placeholder='Select ...',
                                     clearable=False)
                             ])
-                            , style=self.dropdownstyle),
+                            , id='dropdrown-graph'),
                         dbc.Col(
                             html.Div([
                                 dcc.Dropdown(
@@ -121,17 +99,17 @@ class NestedFiltering(DashComponent):
                                     ],
                                     clearable=False)
                             ])
-                            , style=self.dropdownstyle),
+                            , id='dropdown-graph'),
                     ]),
                     dbc.Row([
                         dbc.Col(
                             html.Div([
-                                dbc.Row(html.H6("Query Filter")),
                                 dcc.Input(id={
                                     'type': 'query-text_input',
                                     'index': add_filter_clicks},
-                                    placeholder='Fill in your query',
-                                    debounce=True),
+                                    placeholder='Input value',
+                                    debounce=True
+                                )
                             ])
                         ),
                         dbc.Col(
@@ -141,7 +119,8 @@ class NestedFiltering(DashComponent):
                                                 'type': "remove-filter-button",
                                                 'index': add_filter_clicks},
                                             n_clicks=0,
-                                            style=self.removebuttonstyle)
+                                            className='remove-filter'
+                                            )
                             ])
                         ),
                     ]),
@@ -178,42 +157,12 @@ class NestedFiltering(DashComponent):
                 if self.df.columns is not None:
                     labels = [{'label': '', 'value': 'select'}]
 
-                if 'row_index_label' in self.df.columns:
-                    del self.df['row_index_label']
-
-                row_labels = np.arange(0, self.df.shape[0], 1)
-                self.df.insert(0, 'row_index_label', row_labels)
-
-                dataFrame = self.df
-
-                for i in dataFrame.columns[1::]:
+                for i in self.df.columns[1::]:
                     labels = labels + [{'label': i, 'value': i}]
 
                 return labels
             else:
                 return [{'label': 'no-label', 'value': 'no-label'}]
-
-        @app.callback([Output({'type': 'query-label', 'index': MATCH}, 'value'),
-                       ],
-                      [
-                          Input('file-name', 'data'),
-                      ],
-                      [State({'type': 'query-label', 'index': MATCH}, 'options')])
-        def set_variables(file_dummy, options):
-            """
-            Gets the first option and displays it as the dropdown of the 'select-variable-x' and 'select-variable-y'.
-            :param options:
-            :param file_dummy:
-            :param options_x: All possible x-axis options
-            :param options_y: All possible x-axis options
-            :param options_char: All possible characteristic options
-            :return: The chosen x-axis and y-axis and characteristic
-            """
-            if options is None:
-                return [None]
-            if len(options) <= 0:
-                return [None]
-            return options[0]['value']
 
         @app.callback(Output('query', 'value'),
                       Input('apply-filter-button', 'add_filter_clicks'),
@@ -244,9 +193,8 @@ class NestedFiltering(DashComponent):
                             text_input[
                                 i + 1] is not None:
                         query = query + ' & '
-                return query
-            else:
-                return query
+
+            return query
 
     def set_data(self, data):
         """
