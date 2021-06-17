@@ -49,22 +49,15 @@ class Table(DashComponent):
             Output('main_table', 'selected_rows' + self.title),
             Input('Mygraph-normal-plot', 'selectedData'))
         def display_selected_data(graphPoints):
-
+            """
+            Display the selected data i the table.
+            :param graphPoints:  Data that is currently displayed
+            :return:  Table
+            """
             points_selected = []
             if graphPoints is not None:
                 print(graphPoints)
                 for point in graphPoints['points']:
-                    points_selected.append(point['customdata'][0])
-            return points_selected
-
-    def selected_data_callbacks(self, app):
-        @app.callback(
-            Output('main_table', 'selected_rows'),
-            [Input('Mygraph-normal-plot', 'selectedData')])
-        def display_selected_data(selectedData):
-            points_selected = []
-            if selectedData is not None:
-                for point in selectedData['points']:
                     points_selected.append(point['customdata'][0])
             return points_selected
 
@@ -75,26 +68,3 @@ class Table(DashComponent):
         :return: Possible options for dropdown x-axis.
         """
         self.df = df
-
-    # def show_table(self, df, showtable):
-    #     """
-    #         Makes a table from the uploaded data.
-    #         :param df: dataframe
-    #         :param showtable: Boolean to show table or don't show table.
-    #         :return: Table
-    #     """
-    #     if df is None:
-    #         return None
-    #
-    #     if showtable is not None:
-    #         table = html.Div([
-    #             dash_table.DataTable(
-    #                 data=df.to_dict('rows'),
-    #                 columns=[{'name': i, 'id': i} for i in df.columns]
-    #             ),
-    #             html.Hr(),
-    #             html.Div('Raw Content'),
-    #         ], id='table-uploaded')
-    #         return table
-    #     else:
-    #         return html.Div()

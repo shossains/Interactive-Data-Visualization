@@ -17,7 +17,7 @@ from src.main.python.oop.Dataframe import Dataframe
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
         """
-        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table and Instructions
+        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table, PlotContent and InstructionsContent
         @rtype: object
         """
         super().__init__(title="Interactive data visualiser")
@@ -39,7 +39,7 @@ class Dashboard(DashComponent):
 
     def layout(self, params=None):
         """
-        Shows the html layout of the main dashboard. Toolselector, table and instructions are integrated within the
+        Shows the html layout of the main dashboard. Toolselector, Table, PlotContent and InstructionsContent  are integrated within the
         layout. Parameters are also passed through.
         :param params: Parameters selected at the current level of the dashboard.
         :return: Html layout of the program.
@@ -129,13 +129,13 @@ class Dashboard(DashComponent):
                       State('upload-data', 'filename'),
                       State('upload-data', 'last_modified'))
         def update_output(list_of_contents, list_of_names, list_of_dates):
-            '''
+            """
             Initialises and/or updates the list containing data frames when a new file is uploaded.
             :param list_of_contents: Content of the data frames.
             :param list_of_names: Names of the data frames.
             :param list_of_dates: Last modified date of the frames.
             :return: dummy, which is a placeholder because Dash requires a output.
-            '''
+            """
             if list_of_contents is not None:
                 for name, content in zip(list_of_names, list_of_contents):
                     df_to_add = Dataframe(content, name).data
@@ -160,6 +160,12 @@ class Dashboard(DashComponent):
             [State("sidebar", "className")],
         )
         def toggle_classname(n, classname):
+            """
+            Toggles between a collapsed or non collapsed menu window.
+            :param n: clicks of sidebar
+            :param classname: selected part
+            :return: Collapsed if bar is collapsed else "" when not collapsed
+            """
             if n and classname == "":
                 return "collapsed"
             return ""
@@ -170,6 +176,12 @@ class Dashboard(DashComponent):
             [State("collapse", "is_open")],
         )
         def toggle_collapse(n, is_open):
+            """
+            Closes menu when pressed
+            :param n: clicks of Close menu button
+            :param is_open:
+            :return: State of navigation bar
+            """
             if n:
                 return not is_open
             return is_open
@@ -178,6 +190,11 @@ class Dashboard(DashComponent):
                        Output("sidebar-plot-menu", "children")],
                       [Input("url", "pathname")])
         def render_page_content(pathname):
+            """
+            Renders the content of the page. Can choose between instructions and plotting. When plotting is selected the MenuSelector is also displayed in the sidebar.
+            :param pathname: Pathname of selected page in the sidebar
+            :return: displays selected content
+            """
             if pathname == "/":
                 return html.P("This is the content of the home page!"), None
             elif pathname == "/instructions":

@@ -25,7 +25,7 @@ class NestedFiltering(DashComponent):
 
     def layout(self, params=None):
         """
-               Shows the html layout of the standard Nestedfiltering. REMARK: Parameters are not passed through
+               Shows the html layout of the NestedFiltering class. REMARK: Parameters are not passed through
                :param params: Parameters selected at the current level of the dashboard.
                :return: Html layout of the program.
         """
@@ -40,7 +40,6 @@ class NestedFiltering(DashComponent):
                     html.Button("Apply", id="apply-filter-button", n_clicks=0,
                                 className='apply-filter')]))
             ]),
-            dbc.Row([dbc.Col(html.Div(id='filter-message'))]),
             html.P(id="query")])
         return page
 
@@ -63,7 +62,7 @@ class NestedFiltering(DashComponent):
             Can remove and add filters dynamically.
             :param add_filter_clicks:  If add filter clicked, new filter is added
             :param remove_filter_clicks:  If remove filter clicked, selected filter is removed
-            :param file_name_dummy: Called when file is selected
+            :param file_name_dummy: Makes this method called when file is selected
             :param children: html code of the current filters in the file
             :return: new children (filters).
             """

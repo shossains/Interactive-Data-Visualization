@@ -139,6 +139,10 @@ h5 {
   padding: 2rem 1rem;
 }
 
+.error-message {
+   color: red
+}
+
 @media (min-width: 48em) {
   #sidebar {
     position: fixed;

@@ -2,7 +2,6 @@ import dash_table
 import plotly.graph_objs as go
 import plotly.express as px
 from dash_oop_components import DashFigureFactory
-
 import dash_html_components as html
 
 
@@ -23,6 +22,7 @@ class FigureFactories(DashFigureFactory):
         :param yvalue: Selected y-axis value in the data
         :param color_based_characteristic: Selected characteristic of the data
         :param plot_type: Selected kind of plot 'scatter', 'density' etc.
+        :param title: Selected title of the plot.
         :return: Graph object with the displayed plot
         """
 
