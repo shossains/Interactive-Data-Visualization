@@ -17,6 +17,11 @@ class OtherMenu(DashComponent):
         self.df = df
 
     def layout(self, params=None):
+        """
+        Shows the html layout of the OtherMenu.
+        :param params: Parameters selected at the current level of the dashboard.
+        :return: Html layout of the program.
+        """
         page = dbc.Container([
             html.Br(),
             html.Div([

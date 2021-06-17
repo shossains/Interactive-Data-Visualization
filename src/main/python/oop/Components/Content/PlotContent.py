@@ -22,6 +22,11 @@ class PlotContent(DashComponent):
         self.IdTitlePair = ["id", "title"]
 
     def layout(self, params=None):
+        """
+                Shows the html layout of the PlotContent component.
+                :param params: Parameters selected at the current level of the dashboard.
+                :return: Html layout of the program.
+        """
         graphs = html.Div([])
 
         for i in range(1, self.totalButtons+1):
@@ -85,8 +90,3 @@ class PlotContent(DashComponent):
 
         ], fluid=True)
         return page
-
-    # def component_callbacks(self, app):
-
-    def set_data(self, idTitlePair):
-        self.IdTitlePair = idTitlePair

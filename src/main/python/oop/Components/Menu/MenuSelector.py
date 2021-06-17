@@ -79,7 +79,11 @@ class MenuSelector(DashComponent):
                       Input('dummy', 'children')
                       )
         def set_options_variable(dummy):
-
+            """
+            Sets the options of all uploaded files in the dropdown of the select-file menu.
+            :param dummy: Dummy is the output of the uploaded files callback. Therefore this is the sign to read in the uploaded files of the self.dfList
+            :return: returns the options for selected files
+            """
             labels = [{'label': 'Select', 'value': 'Select'}]
 
             length = len(self.dfList)

@@ -81,7 +81,14 @@ In the map python/oop/Components/ClientCode The client can add code. This code s
 
 *Requirements:*
   * Input and output need to be Pandas dataframe. 
-  * A button need to be added to the layout method and the GUI logic needs to be added to update_processed_data method. Both these methods are to be found in python/oop/Components/Menu/StandardMenu.py 
+  * A button needs to be added to the layout method and the GUI logic needs to be added to update_processed_data method. Both these methods are to be found in python/oop/Components/Menu/StandardMenu.py
+
+*Steps*
+  * Make a new method in client code
+  * Requirement: The method input and output is required to be a Pandas dataframe.
+  * Make a new button in StandardMenu.py in the layout method.
+  * Search in the layout method for the comment CLIENT CODE BUTTON HTML LAYOUT and follow the required steps
+  * Add the back-end of the GUI to the update_processed_data method in StandardMenu.py and follow the required steps
 
 2.  **Extend Graphical User Interface (GUI)** 
 

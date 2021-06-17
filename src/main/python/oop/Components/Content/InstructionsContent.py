@@ -74,5 +74,3 @@ class Instructions(DashComponent):
             ], id='Instructions')
         ], fluid=True)
         return page
-
-    # def component_callbacks(self, app):
