@@ -1,4 +1,3 @@
-
 Interactive Data Visualization 
 ------------------------------
 -----------------------------------------------------------
@@ -30,9 +29,6 @@ This program is specifically designed to Visualize data in an interactive manner
  * For the status of the pipeline visit:
     
     [![pipeline status](https://gitlab.ewi.tudelft.nl/cse2000-software-project/2020-2021-q4/cluster-00/interactive-data-visualization/interactive-data-visualization/badges/dev/pipeline.svg)](https://gitlab.ewi.tudelft.nl/cse2000-software-project/2020-2021-q4/cluster-00/interactive-data-visualization/interactive-data-visualization/-/commits/dev)
- * For the coverage report visit:
-   
-    [![coverage report]()](https://gitlab.ewi.tudelft.nl/cse2000-software-project/2020-2021-q4/cluster-00/interactive-data-visualization/interactive-data-visualization/-/commits/dev)
 
 -----------------------------------------------------------
 REQUIREMENTS
