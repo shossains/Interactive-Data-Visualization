@@ -54,6 +54,7 @@ class StandardMenu(DashComponent):
                     id='select-file',
                     placeholder='Select ...',
                     multi=True,
+                    className='multi-dropdown',
                 ),
                 dcc.Store(id='file-name')
             ]),
@@ -64,7 +65,9 @@ class StandardMenu(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-x-normal-plot',
                             placeholder='Select ...',
-                            clearable=False)
+                            clearable=False,
+                            className='dropdown',
+                        )
                     ])
                     , className='dropdrown-graph'
                 ),
@@ -74,7 +77,9 @@ class StandardMenu(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-variable-y-normal-plot',
                             placeholder='Select ...',
-                            clearable=False)
+                            clearable=False,
+                            className='dropdown',
+                        )
                     ])
                     , className='dropdrown-graph'
                 )]),
@@ -86,7 +91,9 @@ class StandardMenu(DashComponent):
                         self.querystring(params)(dcc.Dropdown)(
                             id='select-characteristics-normal-plot',
                             placeholder='Select ...',
-                            clearable=False)
+                            clearable=False,
+                            className='dropdown',
+                        )
                         # multi=True
                     ])
                     , className='dropdrown-graph'
@@ -105,7 +112,9 @@ class StandardMenu(DashComponent):
                                                                    {'label': 'Scatter', 'value': 'scatter'},
                                                                ],
                                                                value='scatter', clearable=False,
-                                                               persistence_type='memory')
+                                                               persistence_type='memory',
+                                                               className='dropdown',
+                                                               )
                     ])
                     , className='dropdrown-graph'
                 ),
@@ -130,13 +139,10 @@ class StandardMenu(DashComponent):
             dbc.Row(html.Br()),
             dbc.Row(html.H6("Manipulate data with client code")),
             dbc.Row([
-                html.Div([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
                                 className='clientcode'),
                     #  Add new button here:
-
-                ]),
-                html.P(id="data-process-dummy"),
+                    html.P(id="data-process-dummy"),
             ]),
             # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -169,7 +175,7 @@ class StandardMenu(DashComponent):
             # Empty space for styling
             dbc.Row(html.Br()),
             dbc.Row(
-                dcc.Checklist(id='show-table', options=[{'label': ' Show table', 'value': 'show-table'}]),
+                dcc.Checklist(id='show-table', options=[{'label': ' Show table', 'value': 'show-table'}], className='show-table'),
             )
 
         ], fluid=True)
@@ -232,29 +238,29 @@ class StandardMenu(DashComponent):
                 try:
                     self.df = example_function1(self.df)
                     self.NestedFiltering.set_data(self.df)
-                    query_message = html.Div('Client function successfully applied to data.')
+                    query_message = html.Div('Client function successfully applied to data.', className='message')
 
                 except Exception as e:
                     query_message = html.Div(
                         [html.Div('Error with client code: {}.'.format(query), className='error-message'),
                          html.Div('Error: {}.'.format(e), className='error-message'),
-                         html.Div('Data reset to original data.')])
+                         html.Div('Data reset to original data.', className='message')])
 
             elif 'reset-button' in changed_id:
                 self.df = self.original_data
                 self.NestedFiltering.set_data(self.df)
-                query_message = html.Div('Data reset to original data.')
+                query_message = html.Div('Data reset to original data.', className='message')
 
             elif 'apply-filter-button' in changed_id:
                 try:
                     self.df = self.df.query(query)
-                    query_message = html.Div('filters successfully applied to data.')
+                    query_message = html.Div('filters successfully applied to data.', className='message')
 
                 except Exception as e:
                     query_message = html.Div(
                         [html.Div('Error with query: {}.'.format(query), className='error-message'),
                          html.Div('Error: {}.'.format(e), className='error-message'),
-                         html.Div('Data reset to original data.')])
+                         html.Div('Data reset to original data.', className='message')])
                     self.df = self.original_data
                 return 'true', query_message
 

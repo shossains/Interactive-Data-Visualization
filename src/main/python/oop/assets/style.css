@@ -1,13 +1,18 @@
+h6{
+   color: #FFFFFF;
+}
 h5 {
   font-weight: bold;
+  color: #FFFFFF;
 }
 
+
 #titleLink{
-  color: black;
+  color: #FFFFFF;
 }
 
 #titleLink:hover{
-  color: #18bc9d;
+  color: #7CB4EC;
   text-decoration: none;
 }
 
@@ -15,7 +20,7 @@ h5 {
 #sidebar {
   text-align: center;
   padding: 2rem 1rem;
-  background-color: #f8f9fa;
+  background-color: #001c55;
   overflow-y: auto;
 }
 
@@ -26,59 +31,142 @@ h5 {
 
 /* add the three horizontal bars icon for the toggle */
 .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  color: #FFFFFF;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Hamburger_icon_white.svg/1024px-Hamburger_icon_white.svg.png");
 }
 
 .navbar-toggler {
-  color: rgba(0, 0, 0, 0.5);
+  color: #FFFFFF;
   border-color: rgba(0, 0, 0, 0.1);
 }
 
 #upload-data {
   height: 60px;
   line-height: 60px;
-  border-width: 1px;
-  border-style: dashed;
   border-radius: 10px;
   text-align: center;
-  background-color: #18bc9d;
-  color: white
+  background-color: #0e6ba8;
+  color: white;
+  margin-bottom: 10px;
+}
+
+#upload-data:hover {
+  background-color: #a6e1fa;
+}
+
+.dropdown .Select-placeholder{
+  color: white;
+}
+
+.dropdown .Select-menu-outer{
+  border-radius: 15px;
+  background-color: white;
+}
+
+
+.dropdown .Select-control{
+  border-radius: 15px;
+  color: white;
+  height: 100%;
+  width: 100%;
+  border: 0px;
+  background-color: #7CB4EC;
+}
+.dropdown .VirtualizedSelectFocusedOption{
+  border-radius: 15px;
+  color: white;
+  background-color: #7CB4EC;
+}
+
+
+.dropdown .Select-placeholder{
+  color: white;
+}
+
+.dropdown .Select-menu-outer{
+  border-radius: 15px;
+  background-color: white;
+}
+
+.multi-dropdown .Select-control{
+  border-radius: 15px;
+  color: white;
+  height: 100%;
+  width: 100%;
+  border: 0px;
+  background-color: #7CB4EC;
+}
+.multi-dropdown .VirtualizedSelectFocusedOption{
+  border-radius: 15px;
+  color: white;
+  background-color: #7CB4EC;
+}
+
+.multi-dropdown .Select-multi-value-wrapper .Select-value{
+  background: white;
+  color: black;
+  border-radius: 10px;
+  width: 100%;
+}
+.multi-dropdown .Select-value-icon{
+  text-align: left;
+}
+
+
+.multi-dropdown .Select-placeholder{
+  color: white;
+}
+
+.multi-dropdown .Select-menu-outer{
+  border-radius: 15px;
+  background-color: white;
 }
 
 /*css for StandardMenu class*/
+
 .clientcode {
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #5ebfff;
+  background-color: #0e6ba8;
   color: white;
-  margin-left: 15px;
-  margin-right: 15px;
+  padding: 2px 0px;
+  height: 100%;
+  width: 100%
+}
+.clientcode:hover {
+  color: #222222;
+  background-color: #a6e1fa;
 }
 
 .graph-visible{
   min-width: 32%;
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #5ebfff;
+  background-color: #0e6ba8;
   color: white;
-  margin: 0px 1px 1px 1px;
+  margin: 5px 1px;
+}
+
+.graph-visible:hover {
+  color: #222222;
+  background-color: #a6e1fa;
 }
 
 .graph-hidden{
   min-width: 32%;
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #5ebfff;
+  background-color: #0e6ba8;
   color: white;
   margin: 0px 1px 1px 1px;
   display: none;
 }
 
 .add-graph {
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
   background-color: #18bc9d;
@@ -86,15 +174,22 @@ h5 {
   margin: auto;
   width: 100%;
 }
-
+.add-graph:hover {
+  background-color: #65D2BD;
+}
 .remove-graph {
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #e74c3c;
+  background-color: #E74C3C;
   color: white;
   margin: auto;
   width: 100%;
+}
+
+.remove-graph:hover {
+
+  background-color: #EF877D;
 }
 
 .line-above {
@@ -104,7 +199,7 @@ h5 {
 
 /*css NestedFiltering */
 .add-filter {
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
   background-color: #18bc9d;
@@ -112,13 +207,22 @@ h5 {
   width: 100%;
 }
 
+.add-filter:hover {
+  background-color: #65D2BD;
+}
+
 .apply-filter {
-  border-width: 1px;
+  border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #5ebfff;
+  background-color: #0e6ba8;
   color: white;
   width: 100%;
+}
+
+.apply-filter:hover {
+  color: #222222;
+  background-color: #a6e1fa;
 }
 
 .remove-filter {
@@ -129,6 +233,16 @@ h5 {
   color: white;
   margin-top: 2px;
   margin-right: 15px;
+}
+
+
+.remove-filter:hover {
+  background-color: #EF877D;
+}
+
+.filter-input {
+  margin-top: 5px;
+  border-radius: 10px;
 }
 
 #select-file {
@@ -143,6 +257,21 @@ h5 {
    color: red
 }
 
+.message {
+   color: white
+}
+
+
+.nav-link {
+  color: white;
+  border-bottom: white;
+  border-bottom-width: 5px;
+}
+
+.nav-link active {
+  color: #a6e1fa;
+  background-color: #E74C3C;
+}
 @media (min-width: 48em) {
   #sidebar {
     position: fixed;
@@ -152,6 +281,19 @@ h5 {
     width: 20rem;
     text-align: left;
     transition: margin 0.3s ease-in-out, padding 0.3s ease-in-out;
+  }
+
+  ::-webkit-scrollbar {
+    width: 1em;
+  }
+
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: lightblue;
+    outline: 1px solid slategrey;
   }
 
   #sidebar-toggle {
@@ -206,4 +348,8 @@ h5 {
     margin-right: 2rem;
     transition: margin-left 0.3s ease-in-out;
   }
+}
+
+.show-table{
+  color: #FFFFFF;
 }
