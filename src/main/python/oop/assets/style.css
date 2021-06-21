@@ -14,7 +14,7 @@ h5 {
 }
 
 #titleLink:hover{
-  color: #7CB4EC;
+  color: #5865F2;
   text-decoration: none;
 }
 
@@ -53,8 +53,8 @@ h5 {
 }
 
 #upload-data:hover {
-  background-color: #FFFFFF;
-  color: black;
+  background-color: #8F98F6;
+  color: white;
 }
 
 .dropdown .Select-value-label{
@@ -131,7 +131,7 @@ h5 {
 }
 .clientcode:hover {
   color: white;
-  background-color: #3A43A1;
+  background-color: #8F98F6;
 }
 
 .graph-visible{
@@ -154,7 +154,7 @@ h5 {
   border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #0e6ba8;
+  background-color: #8F98F6;
   color: white;
   margin: 0px 1px 1px 1px;
   display: none;
@@ -216,8 +216,7 @@ h5 {
 }
 
 .apply-filter:hover {
-  color: white;
-  background-color: #3A43A1;
+  background-color: #8F98F6;
 }
 
 .remove-filter {
