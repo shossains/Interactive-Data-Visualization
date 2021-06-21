@@ -78,7 +78,8 @@ class NestedFiltering(DashComponent):
                                         'index': add_filter_clicks
                                     },
                                     placeholder='Select ...',
-                                    clearable=False)
+                                    clearable=False,
+                                    className='dropdown')
                             ])
                             , id='dropdrown-graph'),
                         dbc.Col(
@@ -97,7 +98,8 @@ class NestedFiltering(DashComponent):
                                         {'label': '>=', 'value': '>='},
                                         {'label': '!=', 'value': '!='},
                                     ],
-                                    clearable=False)
+                                    clearable=False,
+                                    className='dropdown')
                             ])
                             , id='dropdown-graph'),
                     ]),
@@ -108,7 +110,8 @@ class NestedFiltering(DashComponent):
                                     'type': 'query-text_input',
                                     'index': add_filter_clicks},
                                     placeholder='Input value',
-                                    debounce=True
+                                    debounce=True,
+                                    className='filter-input'
                                 )
                             ])
                         ),

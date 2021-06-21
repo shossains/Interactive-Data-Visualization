@@ -3,8 +3,6 @@ __all__ = ['Dashboard']
 from unittest import mock
 import pandas as pd
 
-
-
 from src.main.python.oop.Components.Content.PlotContent import PlotContent
 from src.main.python.oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
@@ -41,7 +39,6 @@ class Dashboard(DashComponent):
                                    'z-index': '99'}
         self.SidebarCollapsedStyle = {'padding-top': '62px'}
 
-
     def layout(self, params=None):
         """
         Shows the html layout of the main dashboard. Toolselector, Table, PlotContent and InstructionsContent  are integrated within the
@@ -51,7 +48,7 @@ class Dashboard(DashComponent):
         """
         sidebar_header = dbc.Row(
             [
-                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink' ,href='/'))),
+                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink', href='/'))),
                 dbc.Col(
                     [
                         html.Button(
@@ -81,7 +78,7 @@ class Dashboard(DashComponent):
                 html.P(id='dummy3'),
                 html.P(id='dummy4')
             ]
-        , style=self.SidebarHeaderStyle)
+            , style=self.SidebarHeaderStyle)
         sidebar = html.Div(
             [
                 sidebar_header,
@@ -94,8 +91,8 @@ class Dashboard(DashComponent):
                                 id='upload-data',
                                 children=html.Div(
                                     ['Drag and Drop or ',
-                                    html.A('Select Files')
-                                ]),
+                                     html.A('Select Files')
+                                     ]),
                                 # Allow multiple files to be uploaded
                                 multiple=True
                             ),
@@ -105,7 +102,8 @@ class Dashboard(DashComponent):
                     dbc.Nav(
                         [
                             dbc.NavLink("Home", href="/", active="exact", id="navlink-home"),
-                            dbc.NavLink("Instructions", href="/instructions", active="exact", id="navlink-instructions"),
+                            dbc.NavLink("Instructions", href="/instructions", active="exact",
+                                        id="navlink-instructions"),
                             dbc.NavLink("Plot", href="/plotting", active="exact", id="navlink-plotting"),
                         ],
                         vertical=True,
@@ -201,7 +199,21 @@ class Dashboard(DashComponent):
             :return: displays selected content
             """
             if pathname == "/":
-                return html.P("This is the content of the home page!"), None
+                page = dbc.Container([
+                    html.Div([
+                        html.H1("Welcome to the interactive data visualiser"),
+                        html.P(
+                            "This interactive data visualizer is built for TU Delft research group Pattern Recognition "
+                            "and Bioinformatics, commissioned by Arman Naseri Jahfari"),
+                        html.H6("Made by"),
+                        html.H4("Glenn van den Belt"),
+                        html.H4("Shaan Hossain"),
+                        html.H4("Joost Jansen"),
+                        html.H4("Adrian Kuiper"),
+                        html.H4("Philip Tempelman"),
+                    ], id='home')
+                ])
+                return page, None
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
@@ -225,7 +237,7 @@ if __name__ == '__main__':
 
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
-    DashApp.run(debug=True)
+    DashApp.run(debug=False)
 
 else:
     '''
@@ -239,9 +251,7 @@ else:
     # app = DashApp.app
     # # app.run(debug=True)
 
-
     plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
     app = DashApp.app
-

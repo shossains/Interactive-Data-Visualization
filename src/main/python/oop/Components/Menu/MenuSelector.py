@@ -36,15 +36,15 @@ class MenuSelector(DashComponent):
             # Selector for menu
             html.Div([
                 html.H5("Menu"),
-                self.querystring(params)(
-                    dcc.Dropdown)(
+                dcc.Dropdown(
                     id='select-menu',
                     options=[
                         {'label': 'Standard menu', 'value': 'standard-menu'},
                         {'label': 'Other menu  (not implemented)', 'value': 'other-menu'}
                     ],
                     value='standard-menu',
-                    clearable=False
+                    clearable=False,
+                    className='dropdown',
                 ),
             ]),
             html.Div([self.StandardMenu.layout(params)], id='view-standard-menu'),
@@ -106,7 +106,6 @@ class MenuSelector(DashComponent):
                 return {}
             if value == "select":
                 return {}
-
 
             if len(value) == 1:
                 for i in self.dfList:
