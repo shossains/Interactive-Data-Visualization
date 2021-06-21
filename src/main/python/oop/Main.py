@@ -199,7 +199,16 @@ class Dashboard(DashComponent):
             :return: displays selected content
             """
             if pathname == "/":
-                return html.P("This is the content of the home page!"), None
+                page = dbc.Container([
+                    html.H1("Welcome to the interactive data visualiser", style={'text-align': 'center'}),
+                    html.H6("Made by", style={'text-align': 'center'}),
+                    html.H4("Glenn van den Belt", style={'text-align': 'center'}),
+                    html.H4("Shaan Hossain", style={'text-align': 'center'}),
+                    html.H4("Joost Jansen", style={'text-align': 'center'}),
+                    html.H4("Adrian Kuiper", style={'text-align': 'center'}),
+                    html.H4("Philip Tempelman", style={'text-align': 'center'}),
+                ])
+                return page, None
             elif pathname == "/instructions":
                 return html.Div([self.Instructions.layout()]), None
             elif pathname == "/plotting":
