@@ -200,13 +200,18 @@ class Dashboard(DashComponent):
             """
             if pathname == "/":
                 page = dbc.Container([
-                    html.H1("Welcome to the interactive data visualiser", style={'text-align': 'center'}),
-                    html.H6("Made by", style={'text-align': 'center'}),
-                    html.H4("Glenn van den Belt", style={'text-align': 'center'}),
-                    html.H4("Shaan Hossain", style={'text-align': 'center'}),
-                    html.H4("Joost Jansen", style={'text-align': 'center'}),
-                    html.H4("Adrian Kuiper", style={'text-align': 'center'}),
-                    html.H4("Philip Tempelman", style={'text-align': 'center'}),
+                    html.Div([
+                        html.H1("Welcome to the interactive data visualiser"),
+                        html.P(
+                            "This interactive data visualizer is built for TU Delft research group Pattern Recognition "
+                            "and Bioinformatics, commissioned by Arman Naseri Jahfari"),
+                        html.H6("Made by"),
+                        html.H4("Glenn van den Belt"),
+                        html.H4("Shaan Hossain"),
+                        html.H4("Joost Jansen"),
+                        html.H4("Adrian Kuiper"),
+                        html.H4("Philip Tempelman"),
+                    ], id='home')
                 ])
                 return page, None
             elif pathname == "/instructions":
