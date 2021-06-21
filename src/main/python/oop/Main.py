@@ -3,8 +3,6 @@ __all__ = ['Dashboard']
 from unittest import mock
 import pandas as pd
 
-
-
 from src.main.python.oop.Components.Content.PlotContent import PlotContent
 from src.main.python.oop.Components.Content import InstructionsContent
 from dash_bootstrap_components.themes import FLATLY
@@ -41,7 +39,6 @@ class Dashboard(DashComponent):
                                    'z-index': '99'}
         self.SidebarCollapsedStyle = {'padding-top': '62px'}
 
-
     def layout(self, params=None):
         """
         Shows the html layout of the main dashboard. Toolselector, Table, PlotContent and InstructionsContent  are integrated within the
@@ -51,7 +48,7 @@ class Dashboard(DashComponent):
         """
         sidebar_header = dbc.Row(
             [
-                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink' ,href='/'))),
+                dbc.Col(html.H4(html.A("Interactive data visualizer", id='titleLink', href='/'))),
                 dbc.Col(
                     [
                         html.Button(
@@ -81,7 +78,7 @@ class Dashboard(DashComponent):
                 html.P(id='dummy3'),
                 html.P(id='dummy4')
             ]
-        , style=self.SidebarHeaderStyle)
+            , style=self.SidebarHeaderStyle)
         sidebar = html.Div(
             [
                 sidebar_header,
@@ -94,8 +91,8 @@ class Dashboard(DashComponent):
                                 id='upload-data',
                                 children=html.Div(
                                     ['Drag and Drop or ',
-                                    html.A('Select Files')
-                                ]),
+                                     html.A('Select Files')
+                                     ]),
                                 # Allow multiple files to be uploaded
                                 multiple=True
                             ),
@@ -105,7 +102,8 @@ class Dashboard(DashComponent):
                     dbc.Nav(
                         [
                             dbc.NavLink("Home", href="/", active="exact", id="navlink-home"),
-                            dbc.NavLink("Instructions", href="/instructions", active="exact", id="navlink-instructions"),
+                            dbc.NavLink("Instructions", href="/instructions", active="exact",
+                                        id="navlink-instructions"),
                             dbc.NavLink("Plot", href="/plotting", active="exact", id="navlink-plotting"),
                         ],
                         vertical=True,
@@ -239,9 +237,7 @@ else:
     # app = DashApp.app
     # # app.run(debug=True)
 
-
     plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
     app = DashApp.app
-

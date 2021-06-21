@@ -74,7 +74,7 @@ class PlotContent(DashComponent):
                                     style={
                                         'display': 'none',
                                         'width': '100%'
-                                    }
+                                    },
                                 )],
                         type='graph')
                     )

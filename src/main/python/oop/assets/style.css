@@ -1,3 +1,5 @@
+
+
 h6{
    color: #FFFFFF;
 }
@@ -20,7 +22,7 @@ h5 {
 #sidebar {
   text-align: center;
   padding: 2rem 1rem;
-  background-color: #001c55;
+  background-color: #202225;
   overflow-y: auto;
 }
 
@@ -45,24 +47,23 @@ h5 {
   line-height: 60px;
   border-radius: 10px;
   text-align: center;
-  background-color: #0e6ba8;
+  background-color: #5865F2;
   color: white;
   margin-bottom: 10px;
 }
 
 #upload-data:hover {
-  background-color: #a6e1fa;
+  background-color: #FFFFFF;
+  color: black;
 }
 
-.dropdown .Select-placeholder{
-  color: white;
+.dropdown .Select-value-label{
+  color: white !important;
 }
-
 .dropdown .Select-menu-outer{
   border-radius: 15px;
   background-color: white;
 }
-
 
 .dropdown .Select-control{
   border-radius: 15px;
@@ -70,22 +71,12 @@ h5 {
   height: 100%;
   width: 100%;
   border: 0px;
-  background-color: #7CB4EC;
+  background-color: #36393F;
 }
 .dropdown .VirtualizedSelectFocusedOption{
   border-radius: 15px;
   color: white;
-  background-color: #7CB4EC;
-}
-
-
-.dropdown .Select-placeholder{
-  color: white;
-}
-
-.dropdown .Select-menu-outer{
-  border-radius: 15px;
-  background-color: white;
+  background-color: #36393F;
 }
 
 .multi-dropdown .Select-control{
@@ -94,12 +85,12 @@ h5 {
   height: 100%;
   width: 100%;
   border: 0px;
-  background-color: #7CB4EC;
+  background-color: #36393FC;
 }
 .multi-dropdown .VirtualizedSelectFocusedOption{
   border-radius: 15px;
   color: white;
-  background-color: #7CB4EC;
+  background-color: #36393F;
 }
 
 .multi-dropdown .Select-multi-value-wrapper .Select-value{
@@ -128,7 +119,7 @@ h5 {
   border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #0e6ba8;
+  background-color: #5865F2;
   color: white;
   padding: 2px 0px;
   height: 100%;
@@ -136,7 +127,7 @@ h5 {
 }
 .clientcode:hover {
   color: #222222;
-  background-color: #a6e1fa;
+  background-color: #FFFFFF;
 }
 
 .graph-visible{
@@ -144,14 +135,14 @@ h5 {
   border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #0e6ba8;
+  background-color: #36393F;
   color: white;
   margin: 5px 1px;
 }
 
 .graph-visible:hover {
-  color: #222222;
-  background-color: #a6e1fa;
+  color: white;
+  background-color: #5865F2;
 }
 
 .graph-hidden{
@@ -215,14 +206,14 @@ h5 {
   border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #0e6ba8;
+  background-color: #5865F2;
   color: white;
   width: 100%;
 }
 
 .apply-filter:hover {
-  color: #222222;
-  background-color: #a6e1fa;
+  color: white;
+  background-color: #3A43A1;
 }
 
 .remove-filter {
@@ -292,8 +283,8 @@ h5 {
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: lightblue;
-    outline: 1px solid slategrey;
+    background-color: #36393F;
+    outline: 1px solid #36393F;
   }
 
   #sidebar-toggle {
@@ -352,4 +343,11 @@ h5 {
 
 .show-table{
   color: #FFFFFF;
+}
+
+.graphs {
+  display: block;
+  width: 100%;
+  color: yellow;
+  background-color: #2c3e50;
 }
