@@ -8,6 +8,18 @@ h5 {
   color: #FFFFFF;
 }
 
+#home {
+  text-align: center;
+}
+
+#home h6 {
+  color: black;
+}
+
+p {
+  font-size: 20px;
+}
+
 #instruction {
   color: black;
 }
