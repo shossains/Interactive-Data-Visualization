@@ -79,13 +79,17 @@ h5 {
   background-color: #36393F;
 }
 
+.multi-dropdown .Select-value-label{
+  color: black !important;
+}
+
 .multi-dropdown .Select-control{
   border-radius: 15px;
   color: white;
   height: 100%;
   width: 100%;
   border: 0px;
-  background-color: #36393FC;
+  background-color: #36393F;
 }
 .multi-dropdown .VirtualizedSelectFocusedOption{
   border-radius: 15px;
@@ -126,8 +130,8 @@ h5 {
   width: 100%
 }
 .clientcode:hover {
-  color: #222222;
-  background-color: #FFFFFF;
+  color: white;
+  background-color: #3A43A1;
 }
 
 .graph-visible{
