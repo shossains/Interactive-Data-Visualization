@@ -232,7 +232,7 @@ if __name__ == '__main__':
 
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
-    DashApp.run(debug=True)
+    DashApp.run(debug=False)
 
 else:
     '''
