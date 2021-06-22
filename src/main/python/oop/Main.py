@@ -232,12 +232,11 @@ if __name__ == '__main__':
     """"
     Main function to be run
     """
-
     plot_factory = VisualFactories.FigureFactories()
 
     dashboard = Dashboard(plot_factory)
-    DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
-    DashApp.run(debug=False)
+    DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY, suppress_callback_exceptions=True)
+    DashApp.run(debug=True)
 
 else:
     '''
@@ -253,5 +252,5 @@ else:
 
     plot_factory = VisualFactories.FigureFactories()
     dashboard = Dashboard(plot_factory)
-    DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY)
+    DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY, suppress_callback_exceptions=True)
     app = DashApp.app

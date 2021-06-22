@@ -162,6 +162,12 @@ class StandardMenu(DashComponent):
             # Empty space for styling
             dbc.Row(html.Br()),
 
+            dcc.Checklist(id='plot-selection', options=[{'label': 'Plot selected data', 'value': 'plot-selection'}],
+                          className='show-table'),
+
+            # Empty space for styling
+            dbc.Row(html.Br()),
+
             dbc.Row([
                 dbc.Col(
                     html.Button('Graph++', id='add-graph', n_clicks=3, className='add-graph', style={})
@@ -372,9 +378,11 @@ class StandardMenu(DashComponent):
                       State('select-variable-y-normal-plot', 'value'),
                       State('select-characteristics-normal-plot', 'value'),
                       State('select-plot-options-normal-plot', 'value'),
-                      State({'type': 'graph-content', 'index': MATCH}, 'figure')
-                      )
-        def plot_graph(n_clicks_graph_button, xvalue, yvalue, color_based_characteristic, plot_type, figure):
+                      State({'type': 'graph-content', 'index': MATCH}, 'figure'),
+                      State('plot-selection', 'value'),
+                      State('main_table', 'selected_rows')
+                      , prevent_initial_call=True)
+        def plot_graph(n_clicks_graph_button, xvalue, yvalue, color_based_characteristic, plot_type, figure, plotSelection, selectedRows):
             """
             Updates a graph with altered data by filters and client code. The graph can be displayed in a number of different ways.
             :param n_clicks_graph_button: Number of times the graph button is pressed. This is the sign to update the current graphs.
@@ -385,14 +393,22 @@ class StandardMenu(DashComponent):
             :param figure: Selected figure wich needs to be updated
             :return: Graph object with the displayed plot
             """
-            if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
-                return figure
-            if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
-                return figure
-
             title = figure['layout']['title']['text']
-            return self.plot_factory.graph_methods(self.df, xvalue, yvalue, color_based_characteristic, plot_type,
-                                                   title)
+
+            if plotSelection:
+                print(selectedRows)
+
+                df2 = self.df.iloc[selectedRows]
+                return self.plot_factory.graph_methods(df2, xvalue, yvalue, color_based_characteristic, plot_type,
+                                                       title)
+            else:
+                if xvalue is None or yvalue is None or color_based_characteristic is None or self.df is None:
+                    return figure
+                if xvalue == "select" or yvalue == "select" or color_based_characteristic == "select" or plot_type == "select":
+                    return figure
+
+                return self.plot_factory.graph_methods(self.df, xvalue, yvalue, color_based_characteristic, plot_type,
+                                                       title)
 
         @app.callback(Output('add-graph', 'n_clicks'),
                       Output('remove-graph', 'n_clicks'),
