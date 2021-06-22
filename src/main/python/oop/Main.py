@@ -20,7 +20,7 @@ from src.main.python.oop.Dataframe import Dataframe
 class Dashboard(DashComponent):
     def __init__(self, plotfactory):
         """
-        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table, PlotContent and InstructionsContent
+        Initializes the main component of the dashboard. Makes the subclasses ToolSelector, Table, PlotContent and Instructions Content
         @rtype: object
         """
         super().__init__(title="Interactive data visualiser")
@@ -154,6 +154,7 @@ class Dashboard(DashComponent):
 
                 # IMPORTANT: Dont forget if you add new classes to give the data
                 self.MenuSelector.set_data(self.dfList)
+
                 # self.GraphPlot.set_data(self.dfList[0][0]) how it used to go
                 print("data uploaded")
 
@@ -236,7 +237,7 @@ if __name__ == '__main__':
 
     dashboard = Dashboard(plot_factory)
     DashApp = DashApp(dashboard, querystrings=True, bootstrap=FLATLY, suppress_callback_exceptions=True)
-    DashApp.run(debug=True)
+    DashApp.run(debug=False)
 
 else:
     '''

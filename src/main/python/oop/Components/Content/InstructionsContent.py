@@ -29,7 +29,7 @@ class Instructions(DashComponent):
 
                 html.H5("Before uploading csv files", id='instruction'),
                 html.P("Make sure that the names of the columns in the csv file do not contain any spaces. For example"
-                       " Heart Rate must be turned into Heart_rate, as the visualizer will not be able to filter"
+                       " Heart Rate must be turned into Heart_rate, as the visualizer will not be able to filter "
                        "correctly 100% of the time"),
                 html.Br(),
 

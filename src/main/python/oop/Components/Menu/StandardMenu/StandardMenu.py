@@ -24,6 +24,7 @@ class StandardMenu(DashComponent):
         self.original_data = df
         self.NestedFiltering = NestedFiltering(plot_factory, df, "Nested filtering")
         self.totalButtons = 10
+        self.plot_factory.show_table(self.df, True)
 
     def layout(self, params=None):
         """
@@ -137,7 +138,7 @@ class StandardMenu(DashComponent):
             # TODO: For a new button add: html.Button("Example show text", id="new_button_id", n_clicks=0, className='clientcode')
 
             dbc.Row(html.Br()),
-            dbc.Row(html.H6("Manipulate data with client code")),
+            dbc.Row(html.H6("Manipulate data with custom function")),
             dbc.Row([
                     html.Button("Add new column (example)", id="example-function-1-button", n_clicks=0,
                                 className='clientcode'),
