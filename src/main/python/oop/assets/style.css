@@ -168,10 +168,15 @@ p {
   border-width: 0px;
   border-radius: 10px;
   text-align: center;
-  background-color: #8F98F6;
+  background-color: #36393F;
   color: white;
   margin: 0px 1px 1px 1px;
   display: none;
+}
+
+.graph-hidden:hover {
+  color: white;
+  background-color: #5865F2;
 }
 
 .add-graph {
