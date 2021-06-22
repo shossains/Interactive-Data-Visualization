@@ -19,7 +19,6 @@ class Dataframe:
         try:
             if 'csv' in filename:
                 # Assume that the user uploaded a CSV or TXT file
-                # global df
                 self.data = pd.read_csv(
                     io.StringIO(decoded.decode('utf-8')))
             elif 'xls' in filename:

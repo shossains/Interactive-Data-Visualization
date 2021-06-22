@@ -55,6 +55,14 @@ class Instructions(DashComponent):
                        ]),
                 html.Br(),
 
+                html.H5("Plotting multiple graphs", id='instruction'),
+                html.P(["To plot multiple graphs, select multiple files in the 'File(s)' dropdown menu. When multiple "
+                        "files have been selected, the dataframes of those files will be merged and therefore treated "
+                        "as one dataframe. One can still distinguish multiple files in one graph by selecting the "
+                        "'Different Files' in the color label dropdown menu"
+                       ]),
+                html.Br(),
+
                 html.H5("Procesing your own code", id='instruction'),
                 html.P("To process your own code click on one the buttons under 'process data with client code' "
                        "to apply your own code on the graph"),
@@ -66,6 +74,14 @@ class Instructions(DashComponent):
                        "lasso/box select on the graph, where the selected data points in the graph will be ticked "
                        "in the table."),
                 html.Br(),
+
+                html.H5("Running Tests", id='instruction'),
+                html.P("The test suite in dash_test directory can be run using python -m pytest dash_test in the"
+                       " command line, while having the Main.py running and the debug mode on false. To run these"
+                       " tests, selenium and any kind of web driver such as Chromedriver is required. For more"
+                       " information on the testing APIs and explanation see https://dash.plotly.com/testing"),
+                html.Br(),
+
             ], id='Instructions')
         ], fluid=True)
         return page
